@@ -6,9 +6,9 @@ BUILD_NUMBER = 1
 VERSION = f'1.0.0({BUILD_NUMBER})'
 
 # Flask settings
-DEBUG = True
+DEBUG = False
 HOST = '0.0.0.0'
-PORT = 5000
+PORT = 62100
 
 ENABLED_ORAL_EXAM_TOPICS = [
     "Benefits of travel",

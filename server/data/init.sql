@@ -11,9 +11,10 @@ create table users (
     -- the third digit represents the ability to view other user's exam result
     -- the fourth digit represents the ability to view user's own exam result
     -- the fifth digit represents the ability to read/write and remove user's own artifact
+    -- the eighth digit represents the administrator permission
     permission              integer not null default 0,
     avatar                  blob not null,
-    avatarMime              string not null default 'image/png',
+    avatarMime              string not null default 'image/png'
 );
 
 create table config (
@@ -22,8 +23,8 @@ create table config (
     chatbotAvatar       blob not null,
     chatbotAvatarMime   string not null default 'image/png',
     enableRegister      integer not null default 1,
-    googleApiKey        string not null,
-)
+    googleApiKey        string not null
+);
 
 create table oralEnglishExamResult (
     id                        integer primary key autoincrement,
@@ -35,7 +36,7 @@ create table oralEnglishExamResult (
     vocabularyFeedback        string not null,
     fluencyFeedback          string not null,
     chats                     string not null default '[]',
-    userId                    integer not null,
+    userId                    integer not null
 );
 
 create table artifact (
@@ -43,15 +44,19 @@ create table artifact (
     content       blob not null,
     mimetype      string not null,
     expireTime    integer not null,
-    userId        integer not null,
+    userId        integer not null
 );
 
 create table academicalPassageExamPaper (
     id                  integer primary key autoincrement,
+    createTime          integer not null,
+    userId              integer not null,
     -- store markdown content of the paper
-    passage             string not null,
+    passages            string not null,
     -- json string of the answer sheet format
     answerSheetFormat   string not null,
+    answers             string not null,
+    duration            integer not null
 );
 
 create table academicalPassageExamResult (
@@ -65,7 +70,7 @@ create table academicalPassageExamResult (
     band                integer not null,
     -- store the user's feedback
     feedback            string not null,
-    userId              integer not null,
+    userId              integer not null
 );
 
 create table essayWritingExamResult (
@@ -79,5 +84,5 @@ create table essayWritingExamResult (
     band                integer not null,
     -- store the user's feedback
     feedback            string not null,
-    userId              integer not null,
+    userId              integer not null
 );
