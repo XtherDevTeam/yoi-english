@@ -78,7 +78,7 @@ create table essayWritingExamResult (
     -- store the id of the exam paper
     completeTime        integer not null,
     problemStatement    string not null,
-    answer             string not null,
+    answer              string not null,
     -- store the user's score
     score               integer not null,
     band                integer not null,

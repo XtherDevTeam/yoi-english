@@ -31,6 +31,13 @@ def initialize():
 def get_user_info(userId):
     return DataProvider.getUserInfoByID(userId)
 
+@app.route('/v1/user/info')
+def get_current_user_info():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    userId = flask.session['userAuth']
+    return DataProvider.getUserInfoByID(userId)
+
 @app.route('/v1/user/register')
 def register_user():
     form: dict[str, typing.Any] = flask.request.json

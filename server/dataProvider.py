@@ -381,4 +381,23 @@ class _DataProvider:
         self.db.query("delete from academicalPassageExamPaper where id = ?", (examId,))
         return self.makeResult(True)
     
+    
+    def finializeReadingExamSession(self, sessionDetail: dict[str | typing.Any]) -> dict[str | typing.Any]:
+        """
+        Finialize a reading exam session.
+
+        Args:
+            sessionDetail (dict[str | typing.Any]): The detail of the session.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        examId = sessionDetail['examId']
+        userId = sessionDetail['userId']
+        score = sessionDetail['score']
+        completeTime = sessionDetail['completeTime']
+        self.db.query("insert into academicalPassageExamResult (examId, userId, score, completeTime) values (?,?,?,?)", (examId, userId, score, completeTime))
+        return self.makeResult(True)
+    
 DataProvider = _DataProvider()
