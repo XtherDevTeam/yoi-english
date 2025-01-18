@@ -6,6 +6,7 @@ import typing
 import logger
 import hashlib
 import pathlib
+import tools
 
 class DatabaseObject:
     """
@@ -66,6 +67,45 @@ class DatabaseObject:
         """Close the database connection."""
         self.db.close()
 
+class ExamSessionManager:
+    def __init__(self, dataProvider: '_DataProvider'):
+        self.DataProvider = dataProvider
+        self.session_pool = {}
+        self.deamon = threading.Thread(target=self.deamonThreadWrapper)
+        pass
+    
+    def deamonThreadWrapper(self):
+        while True:
+            # check for expired sessions
+            for examSessionId, examSession in self.session_pool.items():
+                if examSession['endTime'] < int(time.time()):
+                    # remove the session from the pool
+                    del self.session_pool[examSessionId]
+                    # update the exam session status in the database
+            time.sleep(60)
+    
+    def createReadingExamSession(self, examId: int, userId: int, duration: int) -> int:
+        # create a new exam session
+        sessionId: str = tools.RandomHashProvider()
+        examSession = {
+            'examId': examId,
+            'userId': userId,
+            'duration': duration,
+            'startTime': int(time.time()),
+            'endTime': int(time.time()) + duration,
+            'answers': []
+        }
+        self.session_pool[sessionId] = examSession
+        return sessionId
+    
+    def updateReadingExamSessionAnswer(self, exameSessionId: str, answer: str) -> bool:
+        # update the answer of the exam session
+        if exameSessionId in self.session_pool:
+            examSession = self.session_pool[exameSessionId]
+            examSession['answers'].append(answer)
+            return True
+        return False
+
 class _DataProvider:
     def __init__(self, db_path: str = './blob/database.db'):
         self.db = DatabaseObject(db_path)
@@ -81,14 +121,14 @@ class _DataProvider:
             bool: True if initialized, False otherwise.
         """
         try:
-            return len(self.db.query("select count(*) from config")) != 0
+            return len(self.db.query("select 1 from config")) != 0
         except:
             logger.Logger.log('Running initialization script')
             with open(f'./data/init.sql', 'r') as file:
                 self.db.runScript(file.read())
                 self.db.db.commit()
                 
-    def addSalt(pwd: str) -> str:
+    def addSalt(self, pwd: str) -> str:
         """
         Add salt to the password.
 
@@ -101,7 +141,7 @@ class _DataProvider:
         return hashlib.md5(f'_@YoimiyaIsMyWaifu_{pwd}'.encode('utf-8')).hexdigest()
 
 
-    def makeResult(ok: bool = True, data: typing.Any = None) -> dict[str | typing.Any]:
+    def makeResult(self, ok: bool = True, data: typing.Any = None) -> dict[str | typing.Any]:
         """
         Make a result object.
 
@@ -127,13 +167,11 @@ class _DataProvider:
             chatbotPersona (str): The persona of the chatbot
             googleApiKey (str): The Google API key for Gemini models
         """
-        passwordSalted = self.addSalt(password)
-    
-        avatar = pathlib.Path('./data/avatar.png').read_bytes()
         chatbotAvatar = pathlib.Path('./data/chatbotAvatar.png').read_bytes()
-        
-        self.createUser(userName, password, email, 114514, 114514, 0b11111000)
+        print(email, password, userName)
+        self.createUser(userName, password, email, 114514, 114514, 0b11111100)
         self.db.query("insert into config (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey) values (?,?,?,?)", (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey))
+        return self.makeResult(True)
         
     def checkIfUserHasPermission(self, userId: int, permission: str) -> dict[str | typing.Any]:
         """
@@ -141,29 +179,57 @@ class _DataProvider:
 
         Args:
             userId (int): The ID of the user.
-            permission (str): The permission to be checked.
+            permission (str): The permission to be checked, includes 'new_exam_paper_creat', 'artifact_creat', 'all_exam_result_view','self_exam_result_view', 'artifact_rw', 'administrator'.
 
         Returns:
             dict[str | typing.Any]: The result object.
         """
         user = self.getUserInfoByID(userId)
         if user is None:
-            return self.makeResult(False, message='User not found')
+            return self.makeResult(False, data='User not found')
         
         if user['permission'] & 0b00000001:
             return self.makeResult(True)
         if permission == 'new_exam_paper_creat':
-            return self.makeResult(True) if user['permission'] & 0b10000000 else self.makeResult(False, message='No permission')
+            return self.makeResult(True) if user['permission'] & 0b10000000 else self.makeResult(False, data='No permission')
         elif permission == 'artifact_creat':
-            return self.makeResult(True) if user['permission'] & 0b01000000 else self.makeResult(False, message='No permission')
+            return self.makeResult(True) if user['permission'] & 0b01000000 else self.makeResult(False, data='No permission')
         elif permission == 'all_exam_result_view':
-            return self.makeResult(True) if user['permission'] & 0b00100000 else self.makeResult(False, message='No permission')
+            return self.makeResult(True) if user['permission'] & 0b00100000 else self.makeResult(False, data='No permission')
         elif permission == 'self_exam_result_view':
-            return self.makeResult(True) if user['permission'] & 0b00010000 else self.makeResult(False, message='No permission')
+            return self.makeResult(True) if user['permission'] & 0b00010000 else self.makeResult(False, data='No permission')
         elif permission == 'artifact_rw':
-            return self.makeResult(True) if user['permission'] & 0b00001000 else self.makeResult(False, message='No permission')
+            return self.makeResult(True) if user['permission'] & 0b00001000 else self.makeResult(False, data='No permission')
+        elif permission == 'administrator':
+            return self.makeResult(True) if user['permission'] & 0b00000001 else self.makeResult(False, data='No permission')
         else:
-            return self.makeResult(False, message='Invalid permission')
+            return self.makeResult(False, data='Invalid permission')
+        
+        
+    def getUserCapabilities(self, userId: int) -> dict[str | typing.Any]:
+        """
+        Get the capabilities of the user.
+
+        Args:
+            userId (int): The ID of the user.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        user = self.db.query("select permission from users where id = ?", (userId,), one=True)
+        if user is None:
+            return self.makeResult(False, data='User not found')
+        
+        capability = {
+            'new_exam_paper_creat': bool(user['permission'] & 0b10000000),
+            'artifact_creat': bool(user['permission'] & 0b01000000),
+            'all_exam_result_view': bool(user['permission'] & 0b00100000),
+            'self_exam_result_view': bool(user['permission'] & 0b00010000),
+            'artifact_rw': bool(user['permission'] & 0b00001000),
+            'administrator': bool(user['permission'] & 0b00000001)
+        }
+        return self.makeResult(True, data=capability)
         
         
     def getUserInfoByID(self, userId: int) -> dict[str | typing.Any]:
@@ -178,7 +244,12 @@ class _DataProvider:
         """
         
         # select infos except avatar, avatarMime
-        return self.db.query("select id, username, email, oralExamQuota, oralExamResultViewQuota, permission from users where id = ?", (userId,), one=True)
+        data = self.db.query("select id, username, email, oralExamQuota, oralExamResultViewQuota, permission from users where id = ?", (userId,), one=True)
+        if data is None:
+            return None
+        else:
+            data['capabilities'] = self.getUserCapabilities(userId)['data']
+            return data
     
     def getUserInfoByUsername(self, username: str) -> dict[str | typing.Any]:
         """
@@ -191,7 +262,12 @@ class _DataProvider:
             dict[str | typing.Any]: The user information.
         """
         
-        return self.db.query("select * from users where username = ?", (username,), one=True)
+        data = self.db.query("select * from users where username = ?", (username,), one=True)
+        if data is None:
+            return None
+        else:
+            data['capabilities'] = self.getUserCapabilities(data['id'])['data']
+            return data
     
     def checkIfUsernameExists(self, username: str) -> bool:
         """
@@ -233,15 +309,17 @@ class _DataProvider:
         """
         
         if self.checkIfUsernameExists(username):
-            return self.makeResult(False, message='Username already exists')
+            return self.makeResult(False, data='Username already exists')
         if self.checkIfEmailExists(email):
-            return self.makeResult(False, message='Email already exists')
+            return self.makeResult(False, data='Email already exists')
         
+        avatar = pathlib.Path('./data/avatar.png').read_bytes()
+        print(email, password, username)
         passwordSalted = self.addSalt(password)
-        self.db.query("insert into users (username, passwordSalted, email, oralExamQuota, oralExamResultViewQuota, permission) values (?,?,?,?,?,?)", (username, passwordSalted, email, oralExamQuota, oralExamResultViewQuota, permission))
+        self.db.query("insert into users (username, passwordSalted, email, oralExamQuota, oralExamResultViewQuota, permission, avatar, avatarMime) values (?,?,?,?,?,?,?,?)", (username, passwordSalted, email, oralExamQuota, oralExamResultViewQuota, permission, avatar, 'image/png'))
         return self.makeResult(True)
     
-    def checkUserIdentity(self, username: str, password: str) -> dict[str | typing.Any]:
+    def checkUserIdentityByUsername(self, username: str, password: str) -> dict[str | typing.Any]:
         """
         Check the identity of the user.
 
@@ -258,7 +336,27 @@ class _DataProvider:
         if user:
             return self.makeResult(True, data=user)
         else:
-            return self.makeResult(False, message='Invalid username or password')
+            return self.makeResult(False, data='Invalid username or password')
+        
+    def checkUserIdentityByEmail(self, email: str, password: str) -> dict[str | typing.Any]:
+        """
+        Check the identity of the user.
+
+        Args:
+            email (str): The email of the user.
+            password (str): The password of the user.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        passwordSalted = self.addSalt(password)
+        
+        user = self.db.query("select * from users where email = ? and passwordSalted = ?", (email, passwordSalted), one=True)
+        if user:
+            return self.makeResult(True, data=user)
+        else:
+            return self.makeResult(False, data='Invalid email or password')
         
     def getRecentOralEnglishExamResults(self, userId: int):
         """
@@ -399,5 +497,133 @@ class _DataProvider:
         completeTime = sessionDetail['completeTime']
         self.db.query("insert into academicalPassageExamResult (examId, userId, score, completeTime) values (?,?,?,?)", (examId, userId, score, completeTime))
         return self.makeResult(True)
+    
+    
+    def getGoogleApiKey(self) -> str | None:
+        """
+        Get the Google API key.
+
+        Returns:
+            str | None: The Google API key, or None if not set.
+        """
+        
+        d = self.db.query("select googleApiKey from config", one=True)
+        return d['googleApiKey'] if d else None
+    
+    
+    def getUserAvatarByID(self, userId: int) -> typing.Tuple[bytes, str] | None:
+        """
+        Get the avatar of the user by ID.
+
+        Args:
+            userId (int): The ID of the user.
+
+        Returns:
+            typing.Tuple[bytes, str] | None: The avatar of the user, or None if not set.
+        """
+        
+        d = self.db.query("select avatar, avatarMime from users where id = ?", (userId,), one=True)
+        return (d['avatar'], d['avatarMime']) if d else None
+    
+    
+    def getUsers(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get all users.
+
+        Args:
+            filter (dict[str | typing.Any], optional): The filter of the users. Defaults to None.
+
+        Returns:
+            list[dict[str | typing.Any]]: The list of all users.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        
+        if 'permissions' in filter:
+            # convert permission to binary
+            perm_bin = 0
+            if 'new_exam_paper_creat' in filter['permissions']:
+                perm_bin = perm_bin | 0b10000000 if filter['permissions']['new_exam_paper_creat'] else perm_bin & ~0b10000000
+            if 'artifact_creat' in filter['permissions']:
+                perm_bin = perm_bin | 0b01000000 if filter['permissions']['artifact_creat'] else perm_bin & ~0b01000000
+            if 'all_exam_result_view' in filter['permissions']:
+                perm_bin = perm_bin | 0b00100000 if filter['permissions']['all_exam_result_view'] else perm_bin & ~0b00100000
+            if'self_exam_result_view' in filter['permissions']:
+                perm_bin = perm_bin | 0b00010000 if filter['permissions']['self_exam_result_view'] else perm_bin & ~0b00010000
+            if 'artifact_rw' in filter['permissions']:
+                perm_bin = perm_bin | 0b00001000 if filter['permissions']['artifact_rw'] else perm_bin & ~0b00001000
+            if 'administrator' in filter['permissions']:
+                perm_bin = perm_bin | 0b00000001 if filter['permissions']['administrator'] else perm_bin & ~0b00000001
+                
+            filterSqlCond += f" and permission & {perm_bin} = {perm_bin}"
+        if 'username' in filter:
+            filterSqlCond += f" and username like '%{filter['username']}%'"
+        if 'email' in filter:
+            filterSqlCond += f" and email like '%{filter['email']}%'"
+        
+        print("Built conditon", filterSqlCond)
+        
+        data = self.db.query(f"select id, username, email, oralExamQuota, oralExamResultViewQuota, permission from users where 1=1 {filterSqlCond}")
+        for i in data:
+            i['capabilities'] = self.getUserCapabilities(i['id'])['data']
+        return data
+    
+    
+    def updateUserPermission(self, userId: int, specPermission: str, value: bool) -> dict[str | typing.Any]:
+        """
+        Update the permission of the user.
+
+        Args:
+            userId (int): The ID of the user.
+            specPermission (str): The specific permission to be updated.
+            value (bool): The value of the permission.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        user = self.db.query("select permission from users where id = ?", (userId,), one=True)
+        if user is None:
+            return self.makeResult(False, data='User not found')
+        
+        perm_bin = user['permission']
+        if specPermission == 'new_exam_paper_creat':
+            perm_bin = perm_bin | 0b10000000 if value else perm_bin & ~0b10000000
+        elif specPermission == 'artifact_creat':
+            perm_bin = perm_bin | 0b01000000 if value else perm_bin & ~0b01000000
+        elif specPermission == 'all_exam_result_view':
+            perm_bin = perm_bin | 0b00100000 if value else perm_bin & ~0b00100000
+        elif specPermission =='self_exam_result_view':
+            perm_bin = perm_bin | 0b00010000 if value else perm_bin & ~0b00010000
+        elif specPermission == 'artifact_rw':
+            perm_bin = perm_bin | 0b00001000 if value else perm_bin & ~0b00001000
+        elif specPermission == 'administrator':
+            perm_bin = perm_bin | 0b00000001 if value else perm_bin & ~0b00000001
+        else:
+            return self.makeResult(False, data='Invalid permission')
+        
+        self.db.query("update users set permission = ? where id = ?", (perm_bin, userId))
+        return self.makeResult(True)
+    
+    
+    def updateUserAvatar(self, userId: int, avatar: bytes, avatarMime: str) -> dict[str | typing.Any]:
+        """
+        Update the avatar of the user.
+
+        Args:
+            userId (int): The ID of the user.
+            avatar (bytes): The avatar of the user.
+            avatarMime (str): The MIME type of the avatar.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        self.db.query("update users set avatar = ?, avatarMime = ? where id = ?", (avatar, avatarMime, userId))
+        return self.makeResult(True)
+    
     
 DataProvider = _DataProvider()

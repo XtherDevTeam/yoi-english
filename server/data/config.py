@@ -9,6 +9,7 @@ VERSION = f'1.0.0({BUILD_NUMBER})'
 DEBUG = False
 HOST = '0.0.0.0'
 PORT = 62100
+SECRET_KEY = "YoimiyaIsMyWaifu"
 
 ENABLED_ORAL_EXAM_TOPICS = [
     "Benefits of travel",

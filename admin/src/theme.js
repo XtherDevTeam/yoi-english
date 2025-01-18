@@ -1,4 +1,8 @@
 import { createTheme } from '@mui/material';
+import imgBackground3 from './assets/background-3.png'
+
+import imgOops from './assets/oops.jpg'
+import loginBackground from './assets/loginBackground.jpg'
 
 let darkTheme = {
   "breakpoints": {
@@ -2878,7 +2882,65 @@ let lightTheme = {
   }
 }
 
+darkTheme = createTheme(darkTheme)
+lightTheme = createTheme(lightTheme)
+
+let theme = () => {
+  if (window.localStorage.getItem('themeMode') === null) {
+    setThemeMode('light')
+    return lightTheme
+  }
+
+  document.getElementsByTagName('body')[0].style.backgroundColor = window.localStorage.getItem('themeMode') === 'light' ? '#fafafa' : '#303030'
+  return window.localStorage.getItem('themeMode') === 'light' ? lightTheme : darkTheme
+}
+
+
+let setThemeMode = (mode) => {
+  let event = new Event('themeModeChange')
+  window.localStorage.setItem('themeMode', mode)
+  event.newValue = mode
+  window.dispatchEvent(event)
+}
+
+let rotateThemeMode = () => {
+  let mode = window.localStorage.getItem('themeMode') === 'light' ? 'dark' : 'light'
+  setThemeMode(mode)
+}
+
+let getCurrentThemeMode = () => {
+  return window.localStorage.getItem('themeMode')
+}
+
+let listenToThemeModeChange = (callback) => {
+  window.addEventListener('themeModeChange', (e) => {
+    callback(e.newValue)
+  })
+}
+
+const Background = (props) => (<div style={{
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  backgroundImage: `url(${props.img})`,
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  zIndex: -2000,
+  transition: 'background-image 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
+}}>{props.children}</div>)
+
+
 export default {
     lightTheme,
-    darkTheme
+    darkTheme,
+    theme,
+    setThemeMode,
+    rotateThemeMode,
+    listenToThemeModeChange,
+    imgBackground3,
+    imgOops,
+    Background,
+    getCurrentThemeMode,
+    loginBackground
 }
