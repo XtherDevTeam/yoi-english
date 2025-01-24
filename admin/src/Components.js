@@ -65,9 +65,15 @@ import Chip from '@mui/material/Chip'
 import { TransitionGroup } from 'react-transition-group'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import LinearProgress from '@mui/material/LinearProgress'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import Zoom from '@mui/material/Zoom'
+
 import Profile from './components/Profile'
 import headimg from './assets/headimg.jpg'
 import UserManagement from './components/UserManagement'
+import Artifacts from './components/Artifacts'
+import Examination from './components/Examination'
 
 import * as Icons from '@mui/icons-material'
 
@@ -92,5 +98,6 @@ export {
   InputLabel, Switch, FormGroup, Fade, Grow,
   TransitionGroup, Collapse, SwipeableDrawer, Icons,
   LinearProgress, CircularProgress, Profile, headimg, UserManagement,
-  Chip
+  Chip, DateTimePicker, Artifacts, LocalizationProvider, AdapterDayjs,
+  Examination, Zoom
 }

@@ -39,8 +39,15 @@ function ask_ai(model, temperature, system_prompt, user_prompt, token) {
     model, temperature, system_prompt, user_prompt, token
   }).then(r => {
     return r.data
-  }).catch(r => {
-    return ""
+  })
+}
+
+function ask_ai_only_user_prompt(user_prompt) {
+  return axios.post(`${serverUrl}/api/v1/admin/ask_ai`, {
+    user_prompt,
+    system_prompt: ""
+  }).then(r => {
+    return r.data
   })
 }
 
@@ -81,12 +88,164 @@ function avatar(uid = null) {
 }
 
 function getUsers(filters = {}) {
-  return axios.post(`${serverUrl}/api/v1/admin/users/list`, {"filters": filters}).then(r => {
+  return axios.post(`${serverUrl}/api/v1/admin/users/list`, { "filters": filters }).then(r => {
     return r.data
   })
 }
 
+function getArtifacts(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/artifact/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+function deleteArtifact(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/artifact/delete`, { artifactId: id }).then(r => {
+    return r.data
+  })
+}
+
+function getArtifactDownloadUrl(id) {
+  return `${serverUrl}/api/v1/artifact/get?id=${id}`
+}
+
+function artifactCreateUrl(isPrivate = false) {
+  return `${serverUrl}/api/v1/artifact/create?isPrivate=${isPrivate}`
+}
+
+function getReadingExaminationList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/reading/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+function getReadingExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/reading/get`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
+function createReadingExamination(title, passages, answerSheetFormat, duration, availableTime) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/reading/create`, {
+    "title": title,
+    "passages": passages,
+    "answerSheetFormat": answerSheetFormat,
+    "duration": duration,
+    "availableTime": availableTime
+  }).then(r => {
+    return r.data
+  })
+}
+
+function deleteReadingExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/reading/delete`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
+
+function getWritingExaminationList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/writing/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+function getWritingExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/writing/get`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
+function createWritingExamination(title, availableTime, duration, problemStatement, onePossibleVersion) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/writing/create`, {
+    "title": title,
+    "availableTime": availableTime,
+    "duration": duration,
+    "problemStatement": problemStatement,
+    "onePossibleVersion": onePossibleVersion
+  }).then(r => {
+    return r.data
+  })
+}
+
+
+function updateWritingExamination(id, title, availableTime, duration, problemStatement, onePossibleVersion) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/writing/update`, {
+    "examId": id,
+    "title": title,
+    "availableTime": availableTime,
+    "duration": duration,
+    "problemStatement": problemStatement,
+    "onePossibleVersion": onePossibleVersion
+  }).then(r => {
+    return r.data
+  })
+}
+
+function updateReadingExamination(id, title, passages, answerSheetFormat, duration, availableTime) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/reading/update`, {
+    "examId": id,
+    "title": title,
+    "passages": passages,
+    "answerSheetFormat": answerSheetFormat,
+    "duration": duration,
+    "availableTime": availableTime
+  }).then(r => {
+    return r.data
+  })
+}
+
+
+function deleteWritingExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/writing/delete`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
+function createUser(username, password, email, oralExamQuota, oralExamViewQuota, permissions) {
+  return axios.post(`${serverUrl}/api/v1/admin/users/create`, {
+    "username": username,
+    "password": password,
+    "email": email,
+    "oralExamQuota": oralExamQuota,
+    "oralExamViewQuota": oralExamViewQuota,
+    "permissions": permissions
+  }).then(r => {
+    return r.data
+  })
+}
+
+function deleteUser(uid) {
+  return axios.post(`${serverUrl}/api/v1/admin/users/delete`, { "userId": uid }).then(r => {
+    return r.data
+  })
+}
+
+
+function updateUsername(username) {
+  return axios.post(`${serverUrl}/api/v1/user/update_username`, { "newUsername": username }).then(r => {
+    return r.data
+  })
+}
+
+function updatePassword(oldPassword, newPassword) {
+  return axios.post(`${serverUrl}/api/v1/user/update_password`, { "oldPassword": oldPassword, "newPassword": newPassword }).then(r => {
+    return r.data
+  })
+}
+
+function updateEmail(email) {
+  return axios.post(`${serverUrl}/api/v1/user/update_email`, { "newEmail": email }).then(r => {
+    return r.data
+  })
+}
+
+
 export default {
   checkIfLoggedIn, checkIfInitialized, refreshServerUrl, ask_ai, initialize, signin,
-  userInfo, avatar, getUsers
+  userInfo, avatar, getUsers, getArtifacts, deleteArtifact, getArtifactDownloadUrl, artifactCreateUrl,
+  getReadingExaminationList, createReadingExamination, getReadingExamination, deleteReadingExamination,
+  getWritingExaminationList, createWritingExamination, getWritingExamination, ask_ai_only_user_prompt,
+  updateWritingExamination, deleteWritingExamination, updateReadingExamination, createUser, deleteUser,
+  updateUsername, updatePassword, updateEmail
 }

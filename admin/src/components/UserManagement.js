@@ -4,20 +4,19 @@ import * as Mui from "../Components";
 
 const PermissionCheckbox = ({ perm, permName, setFilterPerms, filterPerms }) => {
   const [checked, setChecked] = React.useState(filterPerms[perm] == "true");
-  const handleCheckboxChange = () => {
+  React.useEffect(() => {
+    console.log(perm, permName, filterPerms, setFilterPerms, checked)
     let newFilterPerms = { ...filterPerms };
+    console.log('11111 ', newFilterPerms, filterPerms)
     newFilterPerms[perm] = checked ? "true" : "unset";
     setFilterPerms(newFilterPerms);
-  };
-  React.useEffect(() => {
-    handleCheckboxChange()
   }, [checked]);
 
   return <>
     <Mui.FormControlLabel
       control={
         <Mui.Checkbox
-          checked={filterPerms[perm]}
+          checked={filterPerms[perm] == "true"}
           onChange={(e) => {
             setChecked(e.target.checked);
           }}
@@ -33,6 +32,133 @@ const PermissionCheckbox = ({ perm, permName, setFilterPerms, filterPerms }) => 
 const PermissionChip = ({ perm, permName, permValue }) => {
   return <Mui.Chip label={`${permName}: ${permValue ? "true" : "false"}`} />
 };
+
+
+const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [oralExamQuota, setOralExamQuota] = React.useState(100);
+  const [oralExamViewQuota, setOralExamViewQuota] = React.useState(10);
+  const [capabilities, setCapabilities] = React.useState({
+    "new_exam_paper_creat": "unset",
+    "artifact_creat": "unset",
+    "all_exam_result_view": "unset",
+    "self_exam_result_view": "unset",
+    "artifact_rw": "unset",
+    "administrator": "unset"
+  });
+  const [filterPermList, setFilterPermList] = React.useState({
+    "new_exam_paper_creat": "New exam paper creation",
+    "artifact_creat": "Artifact creation",
+    "all_exam_result_view": "Able to view all exam results",
+    "self_exam_result_view": "Able to View exam result of oneself",
+    "artifact_rw": "Able to read and write artifact",
+    "administrator": "Administrator"
+  });
+
+  const buildPermissions = () => {
+    let permList = {};
+    for (let i in capabilities) {
+      if (capabilities[i] == "true") {
+        permList[i] = true;
+      } else {
+        permList[i] = false;
+      }
+    }
+    return permList;
+  }
+
+  return <>
+    <Mui.Dialog open={open} onClose={onClose}>
+      <Mui.DialogTitle>Create User</Mui.DialogTitle>
+      <Mui.DialogContent>
+        <Mui.Grid container spacing={1} style={{ padding: 10 }}>
+          <Mui.Grid item xs={12}>
+            <Mui.Typography variant="body1">
+              You can create users for students with the necessary permissions.
+              If you are to create an administrator account, please keep in mind that it will have the same permissions as yours.
+            </Mui.Typography>
+          </Mui.Grid>
+          <Mui.Grid item xs={12}>
+            <Mui.TextField
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              fullWidth
+            />
+          </Mui.Grid>
+          <Mui.Grid item xs={12}>
+            <Mui.TextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+            />
+          </Mui.Grid>
+          <Mui.Grid item xs={12}>
+            <Mui.TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+            />
+          </Mui.Grid>
+          <Mui.Grid item xs={6}>
+            <Mui.TextField
+              label="Oral examination quota"
+              type="number"
+              value={oralExamQuota}
+              onChange={(e) => setOralExamQuota(e.target.value)}
+              fullWidth
+            />
+          </Mui.Grid>
+          <Mui.Grid item xs={6}>
+            <Mui.TextField
+              label="Oral examination view quota"
+              type="number"
+              value={oralExamViewQuota}
+              onChange={(e) => setOralExamViewQuota(e.target.value)}
+              fullWidth
+            />
+          </Mui.Grid>
+          <Mui.Grid item xs={12}>
+            <Mui.Typography variant="h6">Permissions</Mui.Typography>
+
+          </Mui.Grid>
+          <Mui.Grid item xs={12}>
+            {Object.keys(filterPermList).map((perm) => (
+              <PermissionCheckbox key={`fi-` + perm} perm={perm} permName={filterPermList[perm]} setFilterPerms={setCapabilities} filterPerms={capabilities} />
+            ))}
+          </Mui.Grid>
+        </Mui.Grid>
+      </Mui.DialogContent>
+      <Mui.DialogActions>
+        <Mui.Button onClick={onClose}>Cancel</Mui.Button>
+        <Mui.Button onClick={() => {
+          Api.createUser(
+            username,
+            email,
+            password,
+            oralExamQuota,
+            oralExamViewQuota,
+            buildPermissions(capabilities)).then((response) => {
+              if (response.status) {
+                onCreate();
+              } else {
+                onErr(response.message);
+              }
+            }).catch((error) => {
+              onErr(error.toString());
+            });
+          onClose();
+        }}>Create</Mui.Button>
+      </Mui.DialogActions>
+    </Mui.Dialog>
+  </>
+}
+
 
 const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
   const [showDetails, setShowDetails] = React.useState(false);
@@ -155,6 +281,7 @@ const UserManagement = () => {
     "artifact_rw": "unset",
     "administrator": "unset"
   });
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertDetail, setAlertDetail] = React.useState({
     type: "success",
@@ -165,7 +292,7 @@ const UserManagement = () => {
 
   const buildFilter = () => {
     // filter the unset perms and translate strings to boolean values
-    let filteredPerms = filterPerms;
+    let filteredPerms = { ...filterPerms }; // deep copy this motherfucking object
     for (let key in filteredPerms) {
       if (filteredPerms[key] === "unset") {
         delete filteredPerms[key];
@@ -198,7 +325,7 @@ const UserManagement = () => {
         });
         setAlertOpen(true);
       }
-      
+
     }).catch((error) => {
       setAlertDetail({
         type: "error",
@@ -225,6 +352,17 @@ const UserManagement = () => {
           {alertDetail.message}
         </Mui.Alert>
       </Mui.Snackbar>
+      <CreateUserDialog open={createDialogOpen} onClose={() => { setCreateDialogOpen(false) }} onCreate={() => {
+        setCreateDialogOpen(false);
+        updateUsers();
+      }} onErr={(message) => {
+        setAlertDetail({
+          type: "error",
+          title: "Error",
+          message: message
+        });
+        setAlertOpen(true);
+      }} />
       <Mui.CardContent>
         <Mui.Box sx={{ marginTop: "10px", width: "100%", borderBottom: 1, borderColor: 'divider' }}>
           <Mui.Grid container spacing={1}>
@@ -258,7 +396,7 @@ const UserManagement = () => {
             </Mui.Grid>
             <Mui.Grid item xs={12}>
               {Object.keys(filterPermList).map((perm) => (
-                <PermissionCheckbox key={perm} perm={perm} permName={filterPermList[perm]} setFilterPerms={setFilterPerms} filterPerms={filterPerms} />
+                <PermissionCheckbox key={`fj-` + perm} perm={perm} permName={filterPermList[perm]} setFilterPerms={setFilterPerms} filterPerms={filterPerms} />
               ))}
             </Mui.Grid>
           </Mui.Grid>
@@ -282,6 +420,9 @@ const UserManagement = () => {
             </Mui.TableBody>
           </Mui.Table>
         </Mui.TableContainer>
+        <Mui.Fab color="primary" aria-label="add" onClick={() => { setCreateDialogOpen(true) }} sx={{ position: "fixed", bottom: "10px", right: "10px" }}>
+          <Mui.Icons.Add />
+        </Mui.Fab>
       </Mui.CardContent>
     </>
   );

@@ -43,8 +43,10 @@ create table artifact (
     id            integer primary key autoincrement,
     content       blob not null,
     mimetype      string not null,
+    createTime    integer not null,
     expireTime    integer not null,
-    userId        integer not null
+    userId        integer not null,
+    isPrivate     integer not null default 0,
 );
 
 create table academicalPassageExamPaper (
@@ -52,11 +54,14 @@ create table academicalPassageExamPaper (
     createTime          integer not null,
     userId              integer not null,
     -- store markdown content of the paper
+    title               string not null,
     passages            string not null,
     -- json string of the answer sheet format
     answerSheetFormat   string not null,
     answers             string not null,
-    duration            integer not null
+    duration            integer not null,
+    expireTime          integer not null,
+    availableTime       integer not null,
 );
 
 create table academicalPassageExamResult (
@@ -72,6 +77,21 @@ create table academicalPassageExamResult (
     feedback            string not null,
     userId              integer not null
 );
+
+
+create table essayWritingExamPaper (
+    id                  integer primary key autoincrement,
+    createTime          integer not null,
+    userId              integer not null,
+    -- store markdown content of the paper
+    title               string not null,
+    problemStatement    string not null,
+    onePossibleVersion  string not null,
+    duration            integer not null,
+    expireTime          integer not null,
+    availableTime       integer not null
+);
+
 
 create table essayWritingExamResult (
     id                  integer primary key autoincrement,

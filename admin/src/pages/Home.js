@@ -163,6 +163,12 @@ function Home() {
             {currentTab === 1 && <Mui.Fade in={true}>
               {currentTab === 1 && <Mui.Fade key={1} exit={false}><div style={{ width: "100%" }}><Mui.UserManagement /></div></Mui.Fade>}
             </Mui.Fade>}
+            {currentTab === 2 && <Mui.Fade in={true}>
+              {currentTab === 2 && <Mui.Fade key={2} exit={false}><div style={{ width: "100%" }}><Mui.Examination /></div></Mui.Fade>}
+            </Mui.Fade>}
+            {currentTab === 3 && <Mui.Fade in={true}>
+              {currentTab === 3 && <Mui.Fade key={3} exit={false}><div style={{ width: "100%" }}><Mui.Artifacts /></div></Mui.Fade>}
+            </Mui.Fade>}
           </Mui.TransitionGroup>
         </Mui.Paper>
       </Mui.Box>
