@@ -10,19 +10,25 @@ import {
 import * as Theme from './theme';
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 })
 
 function mdTheme() {
-    const scheme = useColorScheme()
-    // print('THEME',dark)
-    const theme = scheme === 'dark' ? {...MD3DarkTheme, colors: Theme.default.dark.colors} : {...MD3LightTheme, colors: Theme.default.light.colors}
-    return theme
+  const scheme = useColorScheme()
+  // print('THEME',dark)
+  const theme = scheme === 'dark' ? { ...MD3DarkTheme, colors: Theme.default.dark.colors } : { ...MD3LightTheme, colors: Theme.default.light.colors }
+  return theme
 }
 
-export { mdTheme, styles };
+function markedTheme() {
+  const scheme = useColorScheme()
+  const theme = scheme === 'dark' ? Theme.default.darkMarkedStyles : Theme.default.lightMarkedStyles
+  return theme
+}
+
+export { mdTheme, styles, markedTheme };

@@ -16,20 +16,30 @@ function refreshServerUrl() {
 
 refreshServerUrl()
 
+// modify axios default config, such as content type
+console.log(axios.defaults.headers)
+// use fetch as backend
+axios.defaults.adapter = 'fetch';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.post['Accept'] = 'application/json';
+
 function checkIfLoggedIn() {
   return axios.get(`${serverUrl}/api/v1/service/info`).then(r => {
-    if (r.data.data.authenticated_session === -1) {
+    if (r.data.authenticated_session === -1) {
       storage.removeItem('loginStatus', r => { })
     }
-    return r.data.data.authenticated_session !== -1
+    return r.data.authenticated_session
   }).catch(r => {
+    console.log(Object.keys(r), r.code, r.name, r.config, r.cause)
     return false;
   })
 }
 
 function getUserName() {
   return axios.get(`${serverUrl}/api/v1/service/info`).then(r => {
-    return r.data.data.session_username
+    return r.data.session_username
   }).catch(r => {
     return 'guest'
   })
@@ -37,311 +47,179 @@ function getUserName() {
 
 function checkIfInitialized() {
   return axios.get(`${serverUrl}/api/v1/service/info`).then(r => {
-    return r.data.data.initialized
+    return r.data.initialized
   }).catch(r => { throw r })
 }
 
-function initialize(username, password) {
-  return axios.post(`${serverUrl}/api/v1/initialize`, {
-    userName: username,
-    password
-  })
-}
-
-function signIn(password) {
+function signIn(email, password) {
   return axios.post(`${serverUrl}/api/v1/user/login`, {
+    email,
     password
-  }).then(r => {
+  }, { withCredentials: true }).then(r => {
     if (r.data.status) {
       storage.setItem('loginStatus', true, r => { })
     }
-    return r
+    return r.data
   })
-}
-
-function characterList() {
-  return axios.post(`${serverUrl}/api/v1/char_list`)
-}
-
-function chatEstablish(charName, msgChain) {
-  return axios.post(`${serverUrl}/api/v1/chat/establish`, {
-    charName,
-    msgChain
-  })
-}
-
-function chatMessage(session, msgChain) {
-  return axios.post(`${serverUrl}/api/v1/chat/message`, {
-    session,
-    msgChain
-  })
-}
-
-function chatTerminate(session) {
-  return axios.post(`${serverUrl}/api/v1/chat/terminate`, {
-    session
-  })
-}
-
-function attachmentUploadAudio() {
-  return `${serverUrl}/api/v1/attachment/upload/audio`
-}
-
-function attachmentUploadImage() {
-  return `${serverUrl}/api/v1/attachment/upload/image`
-}
-
-function attachmentDownload(attachmentId) {
-  return `${serverUrl}/api/v1/attachment/${attachmentId}`
-}
-
-function attachmentUrl(attachmentId) {
-  return `/api/v1/attachment/${attachmentId}`
-}
-
-function charAvatar(charId) {
-  // console.log(`${serverUrl}/api/v1/char/${charId}/avatar`)
-  return `${serverUrl}/api/v1/char/${charId}/avatar`
-}
-
-function charHistory(charId, offset = 0) {
-  return axios.post(`${serverUrl}/api/v1/char/${charId}/history/${offset}`)
-}
-
-function charNew(charName, useTTSService, useStickerSet, charPrompt, pastMemories, exampleChats) {
-  return axios.post(`${serverUrl}/api/v1/char/new`, {
-    charName,
-    useTTSService,
-    useStickerSet,
-    charPrompt,
-    pastMemories,
-    exampleChats
-  })
-}
-
-function getAvatar() {
-  return `${serverUrl}/api/v1/avatar`
-}
-
-function createStickerSet(setName) {
-  return axios.post(`${serverUrl}/api/v1/sticker/create_set`, { setName })
-}
-
-function deleteStickerSet(setId) {
-  return axios.post(`${serverUrl}/api/v1/sticker/delete_set`, { setId })
-}
-
-function addStickerToSet(setId, stickerName) {
-  return `${serverUrl}/api/v1/sticker/add?setId=${encodeURIComponent(setId)}&stickerName=${encodeURIComponent(stickerName)}`
-}
-
-function deleteSticker(stickerId) {
-  return axios.post(`${serverUrl}/api/v1/sticker/delete`, { stickerId })
-}
-
-function renameStickerSet(setId, newSetName) {
-  return axios.post(`${serverUrl}/api/v1/sticker/rename_set`, { setId, newSetName })
-}
-
-function stickerGet(setId, name) {
-  return `${serverUrl}/api/v1/sticker/get?setId=${encodeURIComponent(setId)}&name=${encodeURIComponent(name)}`
-}
-
-function stickerSetList() {
-  return axios.post(`${serverUrl}/api/v1/sticker/set_list`)
-}
-
-function stickerList(setId) {
-  return axios.post(`${serverUrl}/api/v1/sticker/list`, { setId })
-}
-
-function editCharacter(id, charName, charPrompt, pastMemories, exampleChats, useStickerSet, useTTSService) {
-  return axios.post(`${serverUrl}/api/v1/char/${id}/edit`, {
-    useStickerSet,
-    charName,
-    charPrompt,
-    pastMemories,
-    exampleChats,
-    useTTSService
-  })
-}
-
-function getCharacterInfo(id) {
-  return axios.post(`${serverUrl}/api/v1/char/${id}/info`)
-}
-
-function getStickerSetInfo(setId) {
-  return axios.post(`${serverUrl}/api/v1/sticker/set_info`, {setId})
-}
-
-function stt() {
-  return `${serverUrl}/api/v1/stt`
-}
-
-function updateAvatar() {
-  return `${serverUrl}/api/v1/avatar/update`
-}
-
-function updateCharacterAvatar(id) {
-  return `${serverUrl}/api/v1/char/${id}/avatar/update`
-}
-
-function splitEmotionAndText(emotions, text) {
-  text = '' + text; // Convert to string if not already, don't even know why this is necessary
-  // Construct the regular expression pattern
-  const pattern = new RegExp("\\((?:" + emotions.join("|") + ")\\)", "g");
-
-  // Split the text using the pattern
-  const splited = text.split(pattern);
-
-  // Create the result array
-  const result = [];
-  let resultIndex = 0;
-
-  // Iterate through matches and add to the result
-  for (const match of text.matchAll(pattern)) {
-    result.push(`text:${splited[resultIndex]}`);
-    result.push(`emo:${match[0].substring(1, match[0].length - 1)}`); // Extract the emotion without parentheses
-    resultIndex++;
-  }
-  if (resultIndex < splited.length) {
-    result.push(`text:${splited[resultIndex]}`);
-  }
-
-  return result;
 }
 
 function getServiceInfo() {
-  return axios.get(`${serverUrl}/api/v1/service/info`)
-}
-
-function updateUserPersona(persona) {
-  return axios.post(`${serverUrl}/api/v1/update_persona`, {persona})
-}
-
-function createTTSService(name, description, url, ttsInferYamlPath) {
-  return axios.post(`${serverUrl}/api/v1/tts/service/create`, {
-    name,
-    description,
-    url,
-    ttsInferYamlPath
+  return axios.get(`${serverUrl}/api/v1/service/info`).then(r => {
+    return r.data
   })
 }
 
-function addTTSReferenceAudio(serviceId, name, text, path, language) {
-  return axios.post(`${serverUrl}/api/v1/tts/ref_audio/add`, {
-    serviceId,
-    name,
-    text,
-    path,
-    language,
+function getUserInfo(userId) {
+  return axios.post(`${serverUrl}/api/v1/user/${userId}/info`).then(r => {
+    return r.data
   })
 }
 
-function deleteTTSReferenceAudio(id) {
-  return axios.post(`${serverUrl}/api/v1/tts/ref_audio/delete`, {
-    id,
+function userAvatar(userId) {
+  return `${serverUrl}/api/v1/user/${userId}/avatar`
+}
+
+function myAvatar() {
+  return `${serverUrl}/api/v1/user/avatar`
+}
+
+function myInfo() {
+  return axios.post(`${serverUrl}/api/v1/user/info`).then(r => {
+    return r.data
   })
 }
 
-function getTTSServiceList() {
-  return axios.post(`${serverUrl}/api/v1/tts/service/list`)
-}
-
-function getTTSServiceInfo(id) {
-  return axios.post(`${serverUrl}/api/v1/tts/service/${id}`)
-}
-
-function deleteTTSService(id) {
-  return axios.post(`${serverUrl}/api/v1/tts/service/delete`, {
-    id,
+function recentResults() {
+  return axios.post(`${serverUrl}/api/v1/user/recent_results`).then(r => {
+    return r.data
   })
 }
 
-function updateTTSService(id, name, description, url, ttsInferYamlPath) {
-  return axios.post(`${serverUrl}/api/v1/tts/service/update`, {
-    id,
-    name,
-    description,
-    url,
-    ttsInferYamlPath
+function getReadingExamList() {
+  return axios.post(`${serverUrl}/api/v1/exam/reading/list`).then(r => {
+    return r.data
   })
 }
 
-function chatKeepAlive(session) {
-  return axios.post(`${serverUrl}/api/v1/chat/keep_alive`, {
-    session,
+function getWritingExamList() {
+  return axios.post(`${serverUrl}/api/v1/exam/writing/list`).then(r => {
+    return r.data
   })
 }
 
-function updateUserName(userName) {
-  return axios.post(`${serverUrl}/api/v1/update_username`, {
-    userName})
-}
-
-function updatePassword(password) {
-  return axios.post(`${serverUrl}/api/v1/update_password`, {
-    password
-  })
-}
-function rtVcEstablish(charName) {
-  return axios.post(`${serverUrl}/api/v1/rtvc/establish`, {
-    charName
+function getOralExamList() {
+  return axios.post(`${serverUrl}/api/v1/exam/oral/list`).then(r => {
+    return r.data
   })
 }
 
-function rtVcTerminate(session) {
-  return axios.post(`${serverUrl}/api/v1/rtvc/terminate`, {
-    session
+function getOngoingSession() {
+  return axios.post(`${serverUrl}/api/v1/exam/session/ongoing`).then(r => {
+    return r.data
   })
 }
+
+function establishReadingExamSession(examId) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/reading/establish`, {
+    examId
+  }).then(r => {
+    return r.data
+  })
+}
+
+
+function establishWritingExamSession(examId) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/writing/establish`, {
+    examId
+  }).then(r => {
+    return r.data
+  })
+}
+
+function getSessionDetails(type, sessionId) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/${type}/get_details`, {
+    sessionId
+  }).then(r => {
+    return r.data
+  })
+}
+
+function updateWritingExamSessionAnswer(sessionId, answer) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/writing/update_answer`, {
+    sessionId,
+    answer
+  }).then(r => {
+    return r.data
+  })
+}
+
+function updateReadingExamSessionAnswer(sessionId, answers) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/reading/update_answer`, {
+    sessionId,
+    answer: answers
+  }).then(r => {
+    return r.data
+  })
+}
+
+function finalizeWritingExamSession(sessionId, answer = undefined) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/writing/finalize`, {
+    sessionId,
+    answer
+  }).then(r => {
+    return r.data
+  })
+}
+
+function finalizeReadingExamSession(sessionId, answer = undefined) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/reading/finalize`, {
+    sessionId,
+    answer
+  }).then(r => {
+    return r.data
+  })
+}
+
+function getWritingExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/exam_result/writing/get`, {
+    id
+  }).then(r => {
+    return r.data
+  })
+}
+
+function getReadingExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/exam_result/reading/get`, {
+    id
+  }).then(r => {
+    return r.data
+  })
+}
+
 
 export {
-  addStickerToSet,
-  addTTSReferenceAudio,
-  attachmentDownload,
-  attachmentUploadAudio,
-  attachmentUploadImage,
-  attachmentUrl,
-  characterList,
-  charAvatar,
-  charHistory,
-  charNew,
-  chatEstablish,
-  chatKeepAlive,
-  chatMessage,
-  chatTerminate,
-  checkIfInitialized,
   checkIfLoggedIn,
-  createStickerSet,
-  createTTSService,
-  deleteSticker,
-  deleteStickerSet,
-  deleteTTSReferenceAudio,
-  deleteTTSService,
-  editCharacter,
-  getAvatar,
-  getCharacterInfo,
-  getServiceInfo,
-  getStickerSetInfo,
-  getTTSServiceInfo,
-  getTTSServiceList,
   getUserName,
-  initialize,
-  refreshServerUrl,
-  renameStickerSet,
-  rtVcEstablish,
-  rtVcTerminate,
+  checkIfInitialized,
   signIn,
-  splitEmotionAndText,
-  stickerGet,
-  stickerList,
-  stickerSetList,
-  stt,
-  updateAvatar,
-  updateCharacterAvatar,
-  updatePassword,
-  updateTTSService,
-  updateUserName,
-  updateUserPersona,
+  getServiceInfo,
+  refreshServerUrl,
+  getUserInfo,
+  userAvatar,
+  myAvatar,
+  myInfo,
+  recentResults,
+  getReadingExamList,
+  getWritingExamList,
+  getOralExamList,
+  getOngoingSession,
+  establishReadingExamSession,
+  establishWritingExamSession,
+  getSessionDetails,
+  updateWritingExamSessionAnswer,
+  updateReadingExamSessionAnswer,
+  finalizeWritingExamSession,
+  finalizeReadingExamSession,
+  getWritingExamResult,
+  getReadingExamResult
 };

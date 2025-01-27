@@ -31,16 +31,7 @@
             "usesCleartextTraffic": true
           }
         }
-      ],
-      [
-        "@livekit/react-native-expo-plugin",
-        {
-          "android": {
-            "audioType": "communication"
-          }
-        }
-      ],
-      ["@config-plugins/react-native-webrtc", {}]
+      ]
     ],
     "ios": {
       "supportsTablet": true,
@@ -70,6 +61,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
@@ -90,6 +82,7 @@
     },
     "extra": {
       "eas": {
+        "projectId": "f6404a7e-5b84-4a83-b895-1f0b4788d237"
       }
     },
     "owner": "jerrychau"

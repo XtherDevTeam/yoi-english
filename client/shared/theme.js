@@ -87,7 +87,167 @@ let dark = {
   }
 }
 
+const createMarkedStyles = (theme) => {
+  const { colors, spacing } = theme;
+
+  return {
+    em: {
+      fontStyle: 'italic',
+      color: colors.onSurface,
+    },
+    strong: {
+      fontWeight: 'bold',
+      color: colors.onSurface,
+    },
+    strikethrough: {
+      textDecorationLine: 'line-through',
+      color: colors.onSurfaceVariant,
+    },
+    text: {
+      color: colors.onSurface,
+    },
+    paragraph: {
+      marginBottom: spacing?.medium,
+    },
+    link: {
+      color: colors.primary,
+      textDecorationLine: 'underline',
+    },
+    blockquote: {
+      borderLeftWidth: 4,
+      borderLeftColor: colors.primary,
+      paddingLeft: spacing?.medium,
+      marginBottom: spacing?.medium,
+      color: colors.onSurface,
+      backgroundColor: colors.surfaceVariant,
+    },
+    h1: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.large,
+    },
+    h2: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.medium,
+    },
+    h3: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.medium,
+    },
+    h4: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.medium,
+    },
+    h5: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.small,
+    },
+    h6: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+      marginBottom: spacing?.small,
+    },
+    codespan: {
+      backgroundColor: colors.surfaceVariant,
+      paddingHorizontal: spacing?.small / 2,
+      borderRadius: 4,
+      color: colors.onSurface,
+      fontFamily: 'monospace',
+    },
+    code: {
+      backgroundColor: colors.surfaceVariant,
+      padding: spacing?.medium,
+      borderRadius: 4,
+      marginBottom: spacing?.medium,
+      fontFamily: 'monospace',
+      color: colors.onSurface,
+    },
+    hr: {
+      borderBottomWidth: 1,
+      borderBottomColor: colors.outlineVariant,
+      marginVertical: spacing?.large,
+    },
+    list: {
+      marginBottom: spacing?.medium,
+    },
+    li: {
+      color: colors.onSurface,
+      marginBottom: spacing?.small / 2,
+      
+    },
+    image: {
+      width: '100%',
+      height: 200,
+      resizeMode: 'contain',
+      marginBottom: spacing?.medium,
+    },
+    table: {
+      borderWidth: 1,
+      borderColor: colors.outlineVariant,
+      marginBottom: spacing?.medium,
+    },
+    tableRow: {
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      borderColor: colors.outlineVariant,
+    },
+    tableCell: {
+      flex: 1,
+      padding: spacing?.small,
+      color: colors.onSurface,
+      borderWidth: 1,
+      borderColor: colors.outlineVariant,
+    },
+    bullet_list_icon: {
+      color: colors.onSurface,
+      marginRight: spacing?.small,
+    },
+    ordered_list_icon: {
+      color: colors.onSurface,
+      marginRight: spacing?.small,
+    },
+    ordered_list_content: {
+      color: colors.onSurface,
+      marginLeft: spacing?.small,
+    },
+    bullet_list_content: {
+      color: colors.onSurface,
+      marginLeft: spacing?.small,
+    },
+  };
+};
+
+const lightMarkedStyles = createMarkedStyles({
+  ...light,
+  spacing: {
+    small: 4,
+    medium: 8,
+    large: 16,
+  }
+});
+
+const darkMarkedStyles = createMarkedStyles({
+  ...dark,
+  spacing: {
+    small: 4,
+    medium: 8,
+    large: 16,
+  }
+});
+
 export default {
   light,
-  dark
+  dark,
+  lightMarkedStyles,
+  darkMarkedStyles,
 }
