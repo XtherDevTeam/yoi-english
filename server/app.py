@@ -1,10 +1,13 @@
 import typing
 from dataProvider import DataProvider
+from examSessionManager import ExamSessionManager
 import flask_cors
 import flask
 import data.config
 import chatModel
 import io
+import time
+import os
 
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
@@ -55,6 +58,12 @@ def makeFileResponse(file: bytes, mime: str):
     return flask.send_file(io.BytesIO(file), as_attachment=not isPreview, mimetype=mime)
 
 
+@app.before_request
+def before_request():
+    if DataProvider.getGoogleApiKey() is not None:
+        chatModel.genai.configure(api_key=DataProvider.getGoogleApiKey())
+
+
 @app.after_request
 def after_request(response):
     DataProvider.db.db.commit()
@@ -67,7 +76,8 @@ def service_status():
         'version': data.config.VERSION,
         'buildNumber': data.config.BUILD_NUMBER,
         'authenticated_session': flask.session.get('userAuth') if 'userAuth' in flask.session else -1,
-        'initialized': DataProvider.checkIfInitialized()
+        'initialized': DataProvider.checkIfInitialized(),
+        "authorized_organization": data.config.AUTHORIZED_ORGANIZATION,
     }
     
 @app.route("/v1/admin/initialize", methods=['POST'])
@@ -84,32 +94,8 @@ def initialize():
     print(email, password, username)
     return DataProvider.initialize(username, password, email, chatbot_name, chatbot_persona, google_api_key)
     
-@app.route('/v1/user/<int:userId>/info')
-def get_user_info(userId):
-    return DataProvider.getUserInfoByID(userId)
 
-@app.route('/v1/user/<int:userId>/avatar')
-def get_user_avatar_by_id(userId):
-    avatar, mime = DataProvider.getUserAvatarByID(userId)
-    if avatar:
-        byteIO = io.BytesIO(avatar)
-        return flask.send_file(byteIO, mimetype=mime)
-    else:
-        return DataProvider.makeResult(False, 'User avatar not found.')
-
-@app.route('/v1/user/avatar')
-def get_user_avatar():
-    if 'userAuth' not in flask.session:
-        return DataProvider.makeResult(False, 'Please login first.')
-    userId = flask.session['userAuth']
-    avatar, mime = DataProvider.getUserAvatarByID(userId)
-    if avatar:
-        byteIO = io.BytesIO(avatar)
-        return flask.send_file(byteIO, mimetype=mime)
-    else:
-        return DataProvider.makeResult(False, 'User avatar not found.')
-
-@app.route('/v1/user/info')
+@app.route('/v1/user/info', methods=['POST'])
 def get_current_user_info():
     if 'userAuth' not in flask.session:
         return DataProvider.makeResult(False, 'Please login first.')
@@ -138,7 +124,9 @@ def login():
         result = DataProvider.checkUserIdentityByEmail(email, password)
         if result['status']:
             flask.session['userAuth'] = result['data']['id']
-        return DataProvider.makeResult(True)
+            return DataProvider.makeResult(True)
+        else:
+            return result
 
 
 @app.route('/v1/user/logout', methods=['POST'])
@@ -148,7 +136,49 @@ def logout():
     return DataProvider.makeResult(True, 'Logout successfully.')
 
 
-@app.route('/v1/user/recent_results')
+@app.route('/v1/user/info', methods=['POST'])
+def get_user_info():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId))
+
+
+@app.route('/v1/user/avatar', methods=['GET'])
+def get_user_avatar_by_id():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    data, mime =  DataProvider.getUserAvatarByID(userId)
+    if data:
+        return makeFileResponse(data, mime)
+    else:
+        return DataProvider.makeResult(False, 'User avatar not found.')
+
+
+@app.route('/v1/user/<int:userId>/avatar', methods=['GET'])
+def get_user_avatar_by_id_admin(userId):
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+
+    data, mime =  DataProvider.getUserAvatarByID(userId)
+    if data:
+        return makeFileResponse(data, mime)
+    else:
+        return DataProvider.makeResult(False, 'User avatar not found.')
+
+
+@app.route('/v1/user/<int:userId>/info', methods=['POST'])
+def get_user_info_id(userId):
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId, True))
+
+
+@app.route('/v1/user/recent_results', methods=['POST'])
 def get_recent_results():
     if 'userAuth' not in flask.session:
         return DataProvider.makeResult(False, 'Please login first.')
@@ -156,7 +186,7 @@ def get_recent_results():
     userId = flask.session['userAuth']
     return DataProvider.getRecentExamResults(userId)
 
-@app.route('/v1/user/exam_results')
+@app.route('/v1/user/exam_results', methods=['POST'])
 def get_exam_results():
     if 'userAuth' not in flask.session:
         return DataProvider.makeResult(False, 'Please login first.')
@@ -166,7 +196,7 @@ def get_exam_results():
     examType = filters.get('examType')
     
     
-@app.route('/v1/admin/exams/reading/list')
+@app.route('/v1/admin/exams/reading/list', methods=['POST'])
 def get_reading_exams():
     if 'userAuth' not in flask.session:
         return DataProvider.makeResult(False, 'Please login first.')
@@ -184,7 +214,7 @@ def get_reading_exams():
     return DataProvider.getAllReadingExams(filters)
         
         
-@app.route('/v1/admin/exams/reading/delete')
+@app.route('/v1/admin/exams/reading/delete', methods=['POST'])  
 def delete_reading_exam():
     if 'userAuth' not in flask.session:
         return DataProvider.makeResult(False, 'Please login first.')
@@ -746,6 +776,305 @@ def update_writing_exam_admin():
             problemStatement=problemStatement,
             onePossibleVersion=onePossibleVersion
         )
+
+
+@app.route('/v1/exam/reading/list', methods=['POST'])
+def get_reading_exam_list():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    return DataProvider.makeResult(True, DataProvider.getAllReadingExams())
+
+
+@app.route('/v1/exam/writing/list', methods=['POST'])
+def get_writing_exam_list():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+
+    
+    return DataProvider.makeResult(True, DataProvider.getAllWritingExams())
+
+
+@app.route('/v1/exam/oral/list', methods=['POST'])
+def get_oral_exam_list():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    filters = {
+        'availableTime': [int(time.time()), 0]
+    }
+    
+    return DataProvider.makeResult(True, DataProvider.getAllOralExams(filters))
+
+
+@app.route('/v1/exam/session/reading/establish', methods=['POST'])
+def establish_reading_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:
+        return DataProvider.makeResult(False, 'You have an ongoing session.')
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examId = form.get('examId')
+    if examId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        sid = ExamSessionManager.createReadingExamSession(examId, userId)
+        if sid is None:
+            return DataProvider.makeResult(False, 'Failed to establish session.')
+        else:
+            return DataProvider.makeResult(True, {
+               'sessionId': sid
+            })
+            
+            
+@app.route('/v1/exam/session/writing/establish', methods=['POST'])
+def establish_writing_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:
+        return DataProvider.makeResult(False, 'You have an ongoing session.')
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examId = form.get('examId')
+    if examId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.makeResult(True, {
+           'sessionId': ExamSessionManager.createWritingExamSession(examId, userId)
+        })
+    
+    
+@app.route('/v1/exam/session/reading/get_details', methods=['POST'])
+def get_reading_exam_session_details():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    if sessionId is None:
+        return DataProvider.makeResult(False, 'Session ID is required.')
+    else:
+        return DataProvider.makeResult(True, ExamSessionManager.getSessionDetails(sessionId))
+    
+
+@app.route('/v1/exam/session/reading/update_answer', methods=['POST'])
+def update_reading_exam_session_answer():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    answer = form.get('answer')
+    if sessionId is None or answer is None or ExamSessionManager.getSessionDetails(sessionId) is None:
+        return DataProvider.makeResult(False, 'Session ID and answer are required.')
+    elif ExamSessionManager.getSessionDetails(sessionId)['userId'] != userId:
+        return DataProvider.makeResult(False, 'You are not authorized to update this session.')
+    else:
+        return DataProvider.makeResult(True, ExamSessionManager.updateReadingExamSessionAnswer(sessionId, answer))
+    
+    
+@app.route('/v1/exam/session/reading/finalize', methods=['POST'])
+def finalize_reading_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    answer = form.get('answer')
+    if sessionId is None:
+        return DataProvider.makeResult(False, 'Session ID is required.')
+    else:
+        if answer is not None:
+            ExamSessionManager.updateReadingExamSessionAnswer(sessionId, answer)
+        return ExamSessionManager.finalizeReadingExamSession(sessionId)
+    
+@app.route('/v1/exam/session/writing/get_details', methods=['POST'])
+def get_writing_exam_session_details():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    if sessionId is None:
+        return DataProvider.makeResult(False, 'Session ID is required.')
+    else:
+        return DataProvider.makeResult(True, ExamSessionManager.getSessionDetails(sessionId))
+    
+
+@app.route('/v1/exam/session/writing/update_answer', methods=['POST'])
+def update_writing_exam_session_answer():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    answer = form.get('answer')
+    if sessionId is None or answer is None or ExamSessionManager.getSessionDetails(sessionId) is None:
+        return DataProvider.makeResult(False, 'Session ID and answer are required.')
+    elif ExamSessionManager.getSessionDetails(sessionId)['userId'] != userId:
+        return DataProvider.makeResult(False, 'You are not authorized to update this session.')
+    else:
+        return DataProvider.makeResult(True, ExamSessionManager.updateWritingExamSessionAnswer(sessionId, answer))
+    
+    
+@app.route('/v1/exam/session/writing/finalize', methods=['POST'])
+def finalize_writing_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    answer = form.get('answer')
+    
+    if sessionId is None:
+        return DataProvider.makeResult(False, 'Session ID is required.')
+    else:
+        if answer is not None:
+            ExamSessionManager.updateWritingExamSessionAnswer(sessionId, answer)
+        
+        return ExamSessionManager.finalizeWritingExamSession(sessionId)
+
+
+@app.route('/v1/exam/session/ongoing', methods=['POST'])
+def get_ongoing_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    result = ExamSessionManager.getOngoingSessionOfUser(userId)
+    return DataProvider.makeResult(True, result) if result else DataProvider.makeResult(False, 'No ongoing session.')
+
+
+@app.route('/v1/exam_result/reading/list', methods=['POST'])
+def get_reading_exam_result_list():
+    ...
+    
+
+@app.route('/v1/exam_result/writing/list', methods=['POST'])
+def get_writing_exam_result_list():
+    ...
+    
+    
+@app.route('/v1/exam_result/oral/list', methods=['POST'])
+def get_oral_exam_result_list():
+    ...
+    
+    
+@app.route('/v1/exam_result/reading/get', methods=['POST'])
+def get_reading_exam_result():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.getAcademicalEnglishExamResultById(recordId)
+    
+    
+@app.route('/v1/exam_result/writing/get', methods=['POST'])
+def get_writing_exam_result():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.getWritingExamResultById(recordId)
+    
+    
+@app.route('/v1/exam_result/oral/get', methods=['POST'])
+def get_oral_exam_result():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        ...
+
+
 
 
 

@@ -14,7 +14,9 @@ create table users (
     -- the eighth digit represents the administrator permission
     permission              integer not null default 0,
     avatar                  blob not null,
-    avatarMime              string not null default 'image/png'
+    avatarMime              string not null default 'image/png',
+    overallPerformance      string not null default '',
+    overallBand             string not null default 'A',
 );
 
 create table config (
@@ -68,8 +70,9 @@ create table academicalPassageExamResult (
     id                  integer primary key autoincrement,
     -- store the id of the exam paper
     completeTime        integer not null,
+    examSessionId       string not null,
     examPaperId         integer not null,
-    answerSheet         string not null,
+    answerSheet         string not null default '[]',
     -- store the user's score
     correctAnsCount     integer not null,
     band                integer not null,
@@ -96,11 +99,10 @@ create table essayWritingExamPaper (
 create table essayWritingExamResult (
     id                  integer primary key autoincrement,
     -- store the id of the exam paper
+    examPaperId         integer not null,
     completeTime        integer not null,
-    problemStatement    string not null,
-    answer              string not null,
+    answer              string not null default '',
     -- store the user's score
-    score               integer not null,
     band                integer not null,
     -- store the user's feedback
     feedback            string not null,

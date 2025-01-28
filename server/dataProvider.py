@@ -8,6 +8,7 @@ import logger
 import hashlib
 import pathlib
 import tools
+import chatModel
 
 class DatabaseObject:
     """
@@ -67,45 +68,7 @@ class DatabaseObject:
     def close(self):
         """Close the database connection."""
         self.db.close()
-
-class ExamSessionManager:
-    def __init__(self, dataProvider: '_DataProvider'):
-        self.DataProvider = dataProvider
-        self.session_pool = {}
-        self.deamon = threading.Thread(target=self.deamonThreadWrapper)
-        pass
-    
-    def deamonThreadWrapper(self):
-        while True:
-            # check for expired sessions
-            for examSessionId, examSession in self.session_pool.items():
-                if examSession['endTime'] < int(time.time()):
-                    # remove the session from the pool
-                    del self.session_pool[examSessionId]
-                    # update the exam session status in the database
-            time.sleep(60)
-    
-    def createReadingExamSession(self, examId: int, userId: int, duration: int) -> int:
-        # create a new exam session
-        sessionId: str = tools.RandomHashProvider()
-        examSession = {
-            'examId': examId,
-            'userId': userId,
-            'duration': duration,
-            'startTime': int(time.time()),
-            'endTime': int(time.time()) + duration,
-            'answers': []
-        }
-        self.session_pool[sessionId] = examSession
-        return sessionId
-    
-    def updateReadingExamSessionAnswer(self, exameSessionId: str, answer: str) -> bool:
-        # update the answer of the exam session
-        if exameSessionId in self.session_pool:
-            examSession = self.session_pool[exameSessionId]
-            examSession['answers'].append(answer)
-            return True
-        return False
+        
 
 class _DataProvider:
     def __init__(self, db_path: str = './blob/database.db'):
@@ -233,23 +196,28 @@ class _DataProvider:
         return self.makeResult(True, data=capability)
         
         
-    def getUserInfoByID(self, userId: int) -> dict[str | typing.Any]:
+    def getUserInfoByID(self, userId: int, simple: bool = False) -> dict[str | typing.Any]:
         """
         Get user information by user ID.
 
         Args:
             userId (int): The ID of the user.
+            simple (bool, optional): Whether to return only the basic information. Defaults to False.
 
         Returns:
             dict[str | typing.Any]: The user information.
         """
         
         # select infos except avatar, avatarMime
-        data = self.db.query("select id, username, email, oralExamQuota, oralExamResultViewQuota, permission from users where id = ?", (userId,), one=True)
+        data = self.db.query("select id, username, email, oralExamQuota, oralExamResultViewQuota, permission, overallPerformance, overallBand from users where id = ?", (userId,), one=True)
         if data is None:
             return None
         else:
             data['capabilities'] = self.getUserCapabilities(userId)['data']
+            if simple:
+                del data['oralExamQuota']
+                del data['oralExamResultViewQuota']
+
             return data
     
     def getUserInfoByUsername(self, username: str) -> dict[str | typing.Any]:
@@ -393,7 +361,8 @@ class _DataProvider:
         """
         
         durationOfAMonth = timedelta(days=30).total_seconds()
-        return self.db.query("select * from oralEnglishExamResults where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
+        data = self.db.query("select * from oralEnglishExamResult where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
+        return data
     
     def getRecentAcademicalEnglishExamResults(self, userId: int):
         """
@@ -407,8 +376,12 @@ class _DataProvider:
         """
         
         durationOfAMonth = timedelta(days=30).total_seconds()
-        return self.db.query("select * from academicalEnglishExamResults where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
-
+        data = self.db.query("select * from academicalPassageExamResult where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
+        for i, exam in enumerate(data):
+            # get the exam paper
+            data[i]['examPaper'] = self.getWritingExamById(exam['examPaperId'])['data']
+            
+        return data
 
     def getRecentExamResults(self, userId: int) -> dict[str | typing.Any]:
         """
@@ -421,7 +394,26 @@ class _DataProvider:
             dict[str | typing.Any]: The recent exam results.
         """
         
-        return {'oralEnglishExamResults': self.getRecentOralEnglishExamResults(userId), 'academicalEnglishExamResults': self.getRecentAcademicalEnglishExamResults(userId)}
+        return {'oralEnglishExamResults': self.getRecentOralEnglishExamResults(userId), 'readingExamResults': self.getRecentAcademicalEnglishExamResults(userId), 'writingExamResults': self.getRecentWritingExamResults(userId)}
+    
+    def getRecentWritingExamResults(self, userId: int):
+        """
+        Get recent writing exam results of the user.
+
+        Args:
+            userId (int): The ID of the user.
+
+        Returns:
+            list[dict[str | typing.Any]]: The recent writing exam results.
+        """
+        
+        durationOfAMonth = timedelta(days=30).total_seconds()
+        data = self.db.query("select * from essayWritingExamResult where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
+        for i, exam in enumerate(data):
+            # get the exam paper
+            data[i]['examPaper'] = self.getWritingExamById(exam['examPaperId'])['data']
+        return data
+    
     
     def getOralEnglishExamResultById(self, examId: int) -> dict[str | typing.Any]:
         """
@@ -434,7 +426,7 @@ class _DataProvider:
             dict[str | typing.Any]: The oral English exam result.
         """
         
-        return self.db.query("select * from oralEnglishExamResults where id = ?", (examId,), one=True)
+        return self.db.query("select * from oralEnglishExamResult where id = ?", (examId,), one=True)
     
     def getAcademicalEnglishExamResultById(self, examId: int) -> dict[str | typing.Any]:
         """
@@ -447,7 +439,32 @@ class _DataProvider:
             dict[str | typing.Any]: The academical English exam result.
         """
         
-        return self.db.query("select * from academicalEnglishExamResults where id = ?", (examId,), one=True)
+        data = self.db.query("select * from academicalPassageExamResult where id = ?", (examId,), one=True)
+        if data is None:
+            return self.makeResult(False, data='Exam not found')
+        else:
+            data['examPaper'] = self.getReadingExamById(data['examPaperId'])['data']
+            data['answerSheet'] = json.loads(data['answerSheet'])
+            return self.makeResult(True, data=data)
+    
+    
+    def getWritingExamResultById(self, examId: int) -> dict[str | typing.Any]:
+        """
+        Get writing exam result by ID.
+
+        Args:
+            examId (int): The ID of the exam.
+
+        Returns:
+            dict[str | typing.Any]: The writing exam result.
+        """
+        
+        data = self.db.query("select * from essayWritingExamResult where id = ?", (examId,), one=True)
+        if data is None:
+            return self.makeResult(False, data='Exam not found')
+        else:
+            data['examPaper'] = self.getWritingExamById(data['examPaperId'])['data']
+            return self.makeResult(True, data=data)
     
     def createReadingExam(self, userId: int, title: str, availableTime: int, expireTime: int, passages: str, answerSheetFormat: str, duration: int) -> dict[str | typing.Any]:
         """
@@ -483,9 +500,72 @@ class _DataProvider:
         if 'title' in filter:
             filterSqlCond += f" and title like '%{filter['title']}%'"
         if 'availableTime' in filter:
-            filterSqlCond += f" and availableTime >= {filter['availableTime'][0]} and expireTime <= {filter['availableTime'][1]}"
+            if filter['availableTime'][0] != 0:
+                filterSqlCond += f" and availableTime >= {filter['availableTime'][0]}"
+            if filter['availableTime'][1] != 0:
+                filterSqlCond += f" and availableTime <= {filter['availableTime'][1]}"
         
-        return self.db.query(f"select * from academicalPassageExamPaper where 1=1 {filterSqlCond}")
+        result = self.db.query(f"select id, title, availableTime, userId, duration, expireTime from academicalPassageExamPaper where 1=1 {filterSqlCond}")
+        for i in result:
+            isAvailable = int(time.time()) > i['availableTime'] and int(time.time()) < i['expireTime']
+            i['isAvailable'] = isAvailable
+            
+        return result
+    
+    
+    def getAllWritingExams(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get all writing exams.
+
+        Returns:
+            list[dict[str | typing.Any]]: The list of all writing exams.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'title' in filter:
+            filterSqlCond += f" and title like '%{filter['title']}%'"
+        if 'availableTime' in filter:
+            if filter['availableTime'][0] != 0:
+                filterSqlCond += f" and availableTime >= {filter['availableTime'][0]}"
+            if filter['availableTime'][1] != 0:
+                filterSqlCond += f" and availableTime <= {filter['availableTime'][1]}"
+        
+        result = self.db.query(f"select id, title, availableTime, userId, duration, expireTime from essayWritingExamPaper where 1=1 {filterSqlCond}")
+        for i in result:
+            isAvailable = int(time.time()) > i['availableTime'] and int(time.time()) < i['expireTime']
+            i['isAvailable'] = isAvailable
+            
+        return result
+    
+    def getAllOralExams(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get all oral exams.
+
+        Returns:
+            list[dict[str | typing.Any]]: The list of all oral exams.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'title' in filter:
+            filterSqlCond += f" and title like '%{filter['title']}%'"
+        if 'availableTime' in filter:
+            if filter['availableTime'][0] != 0:
+                filterSqlCond += f" and availableTime >= {filter['availableTime'][0]}"
+            if filter['availableTime'][1] != 0:
+                filterSqlCond += f" and availableTime <= {filter['availableTime'][1]}"
+        
+        return self.db.query(f"select id, title, availableTime, userId, duration from oralEnglishExamPaper where 1=1 {filterSqlCond}")
+    
     
     def deleteReadingExam(self, examId: int) -> dict[str | typing.Any]:
         """
@@ -1022,5 +1102,89 @@ class _DataProvider:
         self.db.query("update users set username = ? where id = ?", (newUsername, userId))
         return self.makeResult(True)
         
+        
+    def submitReadingExamResult(self, userId: int, completeTime: int, examId: int, answerSheet: dict[str | typing.Any]) -> dict[str | typing.Any]:
+        """
+        Submit the reading exam result.
+
+        Args:
+            userId (int): The ID of the user.
+            completeTime (int): The time when the exam is completed.
+            examId (int): The ID of the exam.
+            answerSheet (dict[str | typing.Any]): The answer sheet of the exam, in JSON format.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        exam = self.getReadingExamById(examId)['data']
+        
+        problem_count = len(exam['answerSheetFormat'])
+        correct_count = 0
+        error_answers = []
+        band = ''
+        
+        # check the submission
+        for ori, ans in zip(exam['answerSheetFormat'], answerSheet):
+            if ori['answer'] == ans:
+                correct_count += 1
+            else:
+                error_answers.append(ori['answer'])
+                
+        # judge overall band
+        if correct_count >= problem_count * 0.7:
+            band = 'A'
+        elif correct_count >= problem_count * 0.5:
+            band = 'B'
+        elif correct_count >= problem_count * 0.3:
+            band = 'C'
+        else:
+            band = 'D'
+            
+        # call AI to anaylyze the answer sheet
+        feedback = chatModel.AnalyzeReadingExamResult(
+            exam['passages'],
+            correct_count, 
+            problem_count,
+            band,
+            error_answers,
+            exam['answerSheetFormat']
+        )
+        
+        # insert the result
+        self.db.query("insert into academicalPassageExamResult (userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback) values (?,?,?,?,?,?,?)", (userId, completeTime, examId, json.dumps(answerSheet), correct_count, band, feedback))
+        
+        # fetch the result back from the database
+        res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        return self.makeResult(True, data=res)
+    
+    def submitWritingExamResult(self, userId: int, completeTime: int, examId: int, composition: str) -> dict[str | typing.Any]:
+        """
+        Submit the writing exam result.
+
+        Args:
+            userId (int): The ID of the user.
+            completeTime (int): The time when the exam is completed.
+            examId (int): The ID of the exam.
+            composition (str): The composition of the user.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        exam = self.getWritingExamById(examId)['data']
+
+        # call AI to anaylyze the composition
+        band, feedback = chatModel.AnalyzeWritingExamResult(
+            exam['problemStatement'],
+            exam['onePossibleVersion'],
+            composition
+        )
+        
+        # insert the result
+        self.db.query("insert into essayWritingExamResult (userId, completeTime, examPaperId, answer, band, feedback) values (?,?,?,?,?,?)", (userId, completeTime, examId, composition, band, feedback))
+        
+        # fetch the result back from the database
+        res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        return self.makeResult(True, data=res)
     
 DataProvider = _DataProvider()

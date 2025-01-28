@@ -139,8 +139,8 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
         <Mui.Button onClick={() => {
           Api.createUser(
             username,
-            email,
             password,
+            email,
             oralExamQuota,
             oralExamViewQuota,
             buildPermissions(capabilities)).then((response) => {

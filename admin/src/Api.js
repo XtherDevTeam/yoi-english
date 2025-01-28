@@ -78,7 +78,7 @@ function signin(email, password) {
 }
 
 function userInfo(uid = null) {
-  return axios.get(`${serverUrl}/api/v1/user${uid ? `/${uid}` : ''}/info`).then(r => {
+  return axios.post(`${serverUrl}/api/v1/user${uid ? `/${uid}` : ''}/info`).then(r => {
     return r.data
   })
 }

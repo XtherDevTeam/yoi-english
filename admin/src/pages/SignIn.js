@@ -78,11 +78,13 @@ export default function NotMatch() {
               if (res.status) {
                 navigate("/")
               } else {
-                setAlertDetail({ type: "error", title: "Error", message: res.data })
+                console.log(res)
+                setAlertDetail({ type: "error", title: "Error", message: res.message })
                 setAlertOpen(true)
               }
             }).catch((err) => {
-              setAlertDetail({ type: "error", title: "Error", message: toString(err) })
+              console.log(err)
+              setAlertDetail({ type: "error", title: "Error", message: "" + err })
               setAlertOpen(true)
             })
           }}>Go</Mui.Button>

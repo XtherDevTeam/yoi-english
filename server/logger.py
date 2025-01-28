@@ -22,4 +22,4 @@ class _Logger():
         self.io.write(f'[{self.name}][{tools.TimeProvider()}] {message} {" ".join(str(arg) for arg in args)}\n')
         self.io.flush()
         
-Logger = _Logger('IELTS AI Examiner', 'stdout')
+Logger = _Logger('Yoi English Server', 'stdout')
