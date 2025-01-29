@@ -196,6 +196,19 @@ function getReadingExamResult(id) {
   })
 }
 
+// /v1/exam_result/reading/list
+function getReadingExamResultList() {
+  return axios.post(`${serverUrl}/api/v1/exam_result/reading/list`).then(r => {
+    return r.data
+  })
+}
+
+// /v1/exam_result/writing/list
+function getWritingExamResultList() {
+  return axios.post(`${serverUrl}/api/v1/exam_result/writing/list`).then(r => {
+    return r.data
+  })
+}
 
 export {
   checkIfLoggedIn,
@@ -221,5 +234,7 @@ export {
   finalizeWritingExamSession,
   finalizeReadingExamSession,
   getWritingExamResult,
-  getReadingExamResult
+  getReadingExamResult,
+  getReadingExamResultList,
+  getWritingExamResultList
 };

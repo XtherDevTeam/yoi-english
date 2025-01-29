@@ -55,7 +55,7 @@ export default function ReadingExamResultView({ navigation, route }) {
     <PaperProvider theme={theme}>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="写作测试结果" />
+        <Appbar.Content title="阅读测试记录" />
       </Appbar.Header>
       {loading && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -64,7 +64,7 @@ export default function ReadingExamResultView({ navigation, route }) {
       </View>}
       {(!loading && examResult) && <ScrollView style={{ height: '100%', width: '100%' }}>
         <Card style={{ margin: 10, padding: 10 }}>
-          <Card.Title title={'测试结果'} subtitle={examResult.examPaper.title} />
+          <Card.Title title={'测试记录'} subtitle={examResult.examPaper.title} />
           <Card.Content>
             <Text>
               <Text variant="titleMedium">总体评分：</Text>

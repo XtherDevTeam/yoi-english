@@ -28,6 +28,7 @@ import WritingExamParticipation from './pages/WritingExamParticipation';
 import ReadingExamParticipation from './pages/ReadingExamParticipation';
 import WritingExamResultView from './pages/WritingExamResultView';
 import ReadingExamResultView from './pages/ReadingExamResultView';
+import ExaminationResult from './pages/ExaminationResult';
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -46,6 +47,9 @@ function MainPage({ }) {
       <Tab.Screen name="测试" options={{
         tabBarIcon: "book"
       }} component={Examinations} />
+      <Tab.Screen name="测试记录" options={{
+        tabBarIcon: "history"
+      }} component={ExaminationResult} />
       <Tab.Screen name="设置" options={{
         tabBarIcon: "cog"
       }} component={Settings} />
