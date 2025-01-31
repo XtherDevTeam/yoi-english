@@ -1008,12 +1008,40 @@ def get_ongoing_exam_session():
 
 @app.route('/v1/exam_result/reading/list', methods=['POST'])
 def get_reading_exam_result_list():
-    ...
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    filters = {
+        'userId': userId
+    }
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        return DataProvider.makeResult(True, DataProvider.getReadingExamResultList(filters))
     
 
 @app.route('/v1/exam_result/writing/list', methods=['POST'])
 def get_writing_exam_result_list():
-    ...
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    filters = {
+        'userId': userId
+    }
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        return DataProvider.makeResult(True, DataProvider.getWritingExamResultList(filters))
     
     
 @app.route('/v1/exam_result/oral/list', methods=['POST'])
@@ -1075,7 +1103,107 @@ def get_oral_exam_result():
         ...
 
 
+@app.route('/v1/admin/exam_session/list', methods=['POST'])
+def get_exam_session_list():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    return DataProvider.makeResult(True, ExamSessionManager.getExaminationSessionList())
 
+
+@app.route('/v1/admin/exam_result/reading/list', methods=['POST'])
+def get_reading_exam_result_list_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    filters = form.get('filters')
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        return DataProvider.makeResult(True, DataProvider.getReadingExamResultList(filters))
+    
+    
+@app.route('/v1/admin/exam_result/writing/list', methods=['POST'])
+def get_writing_exam_result_list_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    filters = form.get('filters')
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        return DataProvider.makeResult(True, DataProvider.getWritingExamResultList(filters))
+    
+    
+@app.route('/v1/admin/exam_result/oral/list', methods=['POST'])
+def get_oral_exam_result_list_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    filters = form.get('filters')
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        ...
+
+
+@app.route('/v1/admin/exam_result/reading/get', methods=['POST'])
+def get_reading_exam_result_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam result ID is required.')
+    else:
+        return DataProvider.getAcademicalEnglishExamResultById(recordId)
+    
+
+@app.route('/v1/admin/exam_result/writing/get', methods=['POST'])
+def get_writing_exam_result_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam result ID is required.')
+    else:
+        return DataProvider.getWritingExamResultById(recordId)
 
 
 if __name__ == '__main__':

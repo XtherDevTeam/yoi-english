@@ -130,3 +130,38 @@ def AnalyzeWritingExamResult(problem_statement: str, one_possible_version: str, 
     # get band from [band][/band]
     band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
     return band, final
+
+
+def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tuple[str, str]:
+    """
+    Analyze the overall assessment and generate a report.
+
+    Args:
+        reading_feedback (str): The reading feedback.
+        writing_feedback (str): The writing feedback.
+
+    Returns:
+        tuple[str, str]: The band and the report.
+    """
+    overall = f"""
+    Reading Feedback:
+    {reading_feedback}
+    
+    Writing Feedback:
+    {writing_feedback}
+    """
+    prompt = Prompt(data.config.PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT, {
+       "recent_feedbacks": overall
+    })
+    logger.Logger.log(prompt)
+    resp = ChatGoogleGenerativeAI('gemini-1.5-flash', 0.7).initiate([prompt])
+    
+    # get content from [result][/result]
+    final = resp[resp.find('[feedback]') + 10:resp.rfind('[/feedback]')]
+    # get band from [band][/band]
+    band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
+    return band, final
+
+
+def PromptForOralEnglishExamInitiation() -> str:
+    return data.config.PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION

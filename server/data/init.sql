@@ -17,6 +17,7 @@ create table users (
     avatarMime              string not null default 'image/png',
     overallPerformance      string not null default '',
     overallBand             string not null default 'A',
+    overallAssessmentTrigger integer not null default 0
 );
 
 create table config (

@@ -74,6 +74,8 @@ import headimg from './assets/headimg.jpg'
 import UserManagement from './components/UserManagement'
 import Artifacts from './components/Artifacts'
 import Examination from './components/Examination'
+import ExaminationResult from './components/ExaminationResult'
+import OngoingSession from './components/OngoingSession'
 
 import * as Icons from '@mui/icons-material'
 
@@ -99,5 +101,5 @@ export {
   TransitionGroup, Collapse, SwipeableDrawer, Icons,
   LinearProgress, CircularProgress, Profile, headimg, UserManagement,
   Chip, DateTimePicker, Artifacts, LocalizationProvider, AdapterDayjs,
-  Examination, Zoom
+  Examination, Zoom, ExaminationResult, OngoingSession
 }

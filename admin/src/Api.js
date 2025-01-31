@@ -240,6 +240,48 @@ function updateEmail(email) {
   })
 }
 
+// /v1/admin/exam_session/list
+function getExamSessionList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_session/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+
+// /v1/admin/exam_result/reading/list
+function getReadingExamResultList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/reading/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+// /v1/admin/exam_result/writing/list
+function getWritingExamResultList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/writing/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+// /v1/admin/exam_result/reading/get
+function getReadingExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/reading/get`, { id }).then(r => {
+    return r.data
+  })
+}
+
+// /v1/admin/exam_result/writing/get
+function getWritingExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/writing/get`, { id }).then(r => {
+    return r.data
+  })
+}
+
+function signOut() {
+  return axios.post(`${serverUrl}/api/v1/user/logout`).then(r => {
+    return r.data
+  })
+}
+
 
 export default {
   checkIfLoggedIn, checkIfInitialized, refreshServerUrl, ask_ai, initialize, signin,
@@ -247,5 +289,6 @@ export default {
   getReadingExaminationList, createReadingExamination, getReadingExamination, deleteReadingExamination,
   getWritingExaminationList, createWritingExamination, getWritingExamination, ask_ai_only_user_prompt,
   updateWritingExamination, deleteWritingExamination, updateReadingExamination, createUser, deleteUser,
-  updateUsername, updatePassword, updateEmail
+  updateUsername, updatePassword, updateEmail, getReadingExamResultList, getReadingExamResult,
+  getWritingExamResultList, getWritingExamResult, signOut, getExamSessionList
 }

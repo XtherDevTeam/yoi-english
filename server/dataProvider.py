@@ -379,7 +379,7 @@ class _DataProvider:
         data = self.db.query("select * from academicalPassageExamResult where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
         for i, exam in enumerate(data):
             # get the exam paper
-            data[i]['examPaper'] = self.getWritingExamById(exam['examPaperId'])['data']
+            data[i]['examPaper'] = self.getReadingExamById(exam['examPaperId'])['data']
             
         return data
 
@@ -445,6 +445,7 @@ class _DataProvider:
         else:
             data['examPaper'] = self.getReadingExamById(data['examPaperId'])['data']
             data['answerSheet'] = json.loads(data['answerSheet'])
+            data['username'] = self.getUserInfoByID(data['userId'])['username']
             return self.makeResult(True, data=data)
     
     
@@ -464,6 +465,7 @@ class _DataProvider:
             return self.makeResult(False, data='Exam not found')
         else:
             data['examPaper'] = self.getWritingExamById(data['examPaperId'])['data']
+            data['username']= self.getUserInfoByID(data['userId'])['username']
             return self.makeResult(True, data=data)
     
     def createReadingExam(self, userId: int, title: str, availableTime: int, expireTime: int, passages: str, answerSheetFormat: str, duration: int) -> dict[str | typing.Any]:
@@ -1186,5 +1188,138 @@ class _DataProvider:
         # fetch the result back from the database
         res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
+    
+    
+    def getReadingExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get the list of all reading exam results.
+
+        Args:
+            filter (dict[str | typing.Any], optional): The filter of the results. Defaults to None.
+        Returns:
+            list[dict[str | typing.Any]]: The list of all reading exam results.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'examId' in filter:
+            filterSqlCond += f" and examPaperId = {filter['examId']}"
+        if 'completeTime' in filter:
+            filterSqlCond += f" and completeTime >= {filter['completeTime'][0]} and completeTime <= {filter['completeTime'][1]}"
+        
+        res = self.db.query(f"select id, band, completeTime, examPaperId, userId from academicalPassageExamResult where 1=1 {filterSqlCond} order by completeTime desc")
+        for i in res:
+            i['examPaper'] = {
+                'title': self.getReadingExamById(i['examPaperId'])['data']['title'],
+            }
+            i['username'] = self.getUserInfoByID(i['userId'])['username']
+        return res
+    
+    
+    def getWritingExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get the list of all writing exam results.
+
+        Args:
+            filter (dict[str | typing.Any], optional): The filter of the results. Defaults to None.
+        Returns:
+            list[dict[str | typing.Any]]: The list of all writing exam results.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'examId' in filter:
+            filterSqlCond += f" and examPaperId = {filter['examId']}"
+        if 'completeTime' in filter:
+            filterSqlCond += f" and completeTime >= {filter['completeTime'][0]} and completeTime <= {filter['completeTime'][1]}"
+        
+        res = self.db.query(f"select id, band, completeTime, examPaperId, userId from essayWritingExamResult where 1=1 {filterSqlCond} order by completeTime desc")
+        for i in res:
+            i['examPaper'] = {
+                'title': self.getWritingExamById(i['examPaperId'])['data']['title'],
+            }
+            i['username'] = self.getUserInfoByID(i['userId'])['username']
+        return res
+    
+    
+    def getOralExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get the list of all oral exam results.
+
+        Args:
+            filter (dict[str | typing.Any], optional): The filter of the results. Defaults to None.
+        Returns:
+            list[dict[str | typing.Any]]: The list of all oral exam results.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'examId' in filter:
+            filterSqlCond += f" and examPaperId = {filter['examId']}"
+        if 'completeTime' in filter:
+            filterSqlCond += f" and completeTime >= {filter['completeTime'][0]} and completeTime <= {filter['completeTime'][1]}"
+        
+        res = self.db.query(f"select * from oralExamResult where 1=1 {filterSqlCond} order by completeTime desc")
+        for i in res:
+            i['examPaper'] = self.getOralExamById(i['examPaperId'])['data']
+        return res
+    
+    
+    def triggerOverallAssessment(self, userId: int) -> dict[str | typing.Any]:
+        """
+        Trigger the overall assessment.
+
+        Args:
+            userId (int): The ID of the user.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        # get all writing exams feedback
+        writing = "\n\n".join(i['feedback'] for i in self.db.query("select feedback from essayWritingExamResult where userId = ? order by completeTime ", (userId,)))
+        # get all reading exams feedback
+        reading = "\n\n".join(i['feedback'] for i in self.db.query("select feedback from academicalPassageExamResult where userId = ? order by completeTime ", (userId,)))
+        
+        # call AI to anaylyze the feedback
+        overall_band, overall_feedback = chatModel.AnalyzeOverallAssessment(writing, reading)
+        self.db.query("update users set overallBand = ?, overallPerformance = ? where id = ?", (overall_band, overall_feedback, userId))
+        return self.makeResult(True)
+    
+    
+    def increaseOverallAssessmentTrigger(self, userId: int) -> dict[str | typing.Any]:
+        """
+        Increase the overall assessment trigger of the user.
+
+        Args:
+            userId (int): The ID of the user.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        self.db.query("update users set overallAssessmentTrigger = overallAssessmentTrigger + 1 where id = ?", (userId,))
+        # query back
+        res = self.db.query("select overallAssessmentTrigger from users where id = ?", (userId,), one=True)['overallAssessmentTrigger']
+        if res % 4 == 0:
+            self.triggerOverallAssessment(userId)
+            
+        return self.makeResult(True)
+
+
     
 DataProvider = _DataProvider()

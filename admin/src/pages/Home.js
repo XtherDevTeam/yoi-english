@@ -30,7 +30,10 @@ function Home() {
     //     setAlertDetail({ type: 'error', title: 'Error', message: error.message });
     //     setAlertOpen(true);
     // });
-    window.location.href = "/signin";
+    Api.signOut().then(response => {
+      window.location.href = "/signin";
+    })
+
   }
 
   React.useEffect(() => {
@@ -147,6 +150,24 @@ function Home() {
                 <Mui.ListItemText primary="Artifacts" />
               </Mui.ListItemButton>
             </Mui.ListItem>
+
+            <Mui.ListItem key="ExaminationResults" disablePadding>
+              <Mui.ListItemButton onClick={() => { setCurrentTab(4) }}>
+                <Mui.ListItemIcon>
+                  <Mui.Icons.Assessment />
+                </Mui.ListItemIcon>
+                <Mui.ListItemText primary="Examination Results" />
+              </Mui.ListItemButton>
+            </Mui.ListItem>
+
+            <Mui.ListItem key="OngoingSessions" disablePadding>
+              <Mui.ListItemButton onClick={() => { setCurrentTab(5) }}>
+                <Mui.ListItemIcon>
+                  <Mui.Icons.AccessTime />
+                </Mui.ListItemIcon>
+                <Mui.ListItemText primary="Ongoing Sessions" />
+              </Mui.ListItemButton>
+            </Mui.ListItem>
           </Mui.List>
         </Mui.Box>
       </Mui.Drawer>
@@ -168,6 +189,12 @@ function Home() {
             </Mui.Fade>}
             {currentTab === 3 && <Mui.Fade in={true}>
               {currentTab === 3 && <Mui.Fade key={3} exit={false}><div style={{ width: "100%" }}><Mui.Artifacts /></div></Mui.Fade>}
+            </Mui.Fade>}
+            {currentTab === 4 && <Mui.Fade in={true}>
+              {currentTab === 4 && <Mui.Fade key={4} exit={false}><div style={{ width: "100%" }}><Mui.ExaminationResult /></div></Mui.Fade>}
+            </Mui.Fade>}
+            {currentTab === 5 && <Mui.Fade in={true}>
+              {currentTab === 5 && <Mui.Fade key={5} exit={false}><div style={{ width: "100%" }}><Mui.OngoingSession /></div></Mui.Fade>}
             </Mui.Fade>}
           </Mui.TransitionGroup>
         </Mui.Paper>

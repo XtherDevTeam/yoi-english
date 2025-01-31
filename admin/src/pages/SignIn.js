@@ -88,6 +88,21 @@ export default function NotMatch() {
               setAlertOpen(true)
             })
           }}>Go</Mui.Button>
+          <Mui.Button size="small" onClick={() => {
+            Api.signin("test_acc@mail.xiaokang00010.top", "evaluation").then((res) => {
+              if (res.status) {
+                navigate("/")
+              } else {
+                console.log(res)
+                setAlertDetail({ type: "error", title: "Error", message: res.message })
+                setAlertOpen(true)
+              }
+            }).catch((err) => {
+              console.log(err)
+              setAlertDetail({ type: "error", title: "Error", message: "" + err })
+              setAlertOpen(true)
+            })
+          }}>Sign in with test account</Mui.Button>
         </Mui.CardActions>
       </Mui.Card>
       <Mui.Container style={{ height: '100vh', overflowY: 'hidden' }}>

@@ -1,2 +1,5 @@
 flask
 flask_cors
+livekit-api
+livekit
+websockets_proxy
