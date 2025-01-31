@@ -29,15 +29,25 @@ create table config (
     googleApiKey        string not null
 );
 
+create table oralEnglishExamPaper (
+    id                  integer primary key autoincrement,
+    createTime          integer not null,
+    userId              integer not null,
+    title               string not null,
+    warmUpTopics        string not null default '[]',
+    mainTopic           string not null,
+    availableTime       integer not null,
+    expireTime          integer not null
+);
+
 create table oralEnglishExamResult (
     id                        integer primary key autoincrement,
     completeTime              integer not null,
     band                      integer not null,
     overallFeedback           string not null,
-    grammarFeedback           string not null,
-    pronunciationFeedback     string not null,
-    vocabularyFeedback        string not null,
-    fluencyFeedback          string not null,
+    contentFeedback           string not null,
+    pronounciationFeedback    string not null,
+    answerDetails             string not null default '[]',
     chats                     string not null default '[]',
     userId                    integer not null
 );

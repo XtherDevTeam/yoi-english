@@ -778,6 +778,118 @@ def update_writing_exam_admin():
         )
 
 
+@app.route('/v1/admin/examination/oral/list', methods=['POST'])
+def get_oral_exam_list_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    filters = form.get('filters')
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    
+    return DataProvider.makeResult(True, DataProvider.getAllOralExams(filters))
+
+
+@app.route('/v1/admin/examination/oral/delete', methods=['POST'])
+def delete_oral_exam_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examId = form.get('examId')
+    if examId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.deleteOralExam(examId)
+
+@app.route('/v1/admin/examination/oral/create', methods=['POST'])
+def create_oral_exam_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    title = form.get('title')
+    availableTime = form.get('availableTime')
+    warmUpTopics = form.get('warmUpTopics')
+    mainTopic = form.get('mainTopic')
+    
+    if not title or not availableTime or not warmUpTopics or not mainTopic:
+        return DataProvider.makeResult(False, 'Title, available time, duration, warm up topics and main topic are required.')
+    else:
+        return DataProvider.createOralExam(
+            userId=userId,
+            title=title,
+            availableTime=availableTime[0],
+            expireTime=availableTime[1],
+            warmUpTopics=warmUpTopics,
+            mainTopic=mainTopic
+        )
+
+
+@app.route('/v1/admin/examination/oral/get', methods=['POST'])
+def get_oral_exam_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examId = form.get('examId')
+    if examId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.getOralExamById(examId)
+
+
+@app.route('/v1/admin/examination/oral/update', methods=['POST'])
+def update_oral_exam_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    examId = form.get('examId')
+    title = form.get('title')
+    availableTime = form.get('availableTime')
+    warmUpTopics = form.get('warmUpTopics')
+    mainTopic = form.get('mainTopic')
+    
+    if not examId or not title or not availableTime or not warmUpTopics or not mainTopic:
+        return DataProvider.makeResult(False, 'Exam ID, title, available time, duration, warm up topics and main topic are required.')
+    else:
+        return DataProvider.updateOralExam(
+            examId=examId,
+            title=title,
+            availableTime=availableTime[0],
+            expireTime=availableTime[1],
+            warmUpTopics=warmUpTopics,
+            mainTopic=mainTopic
+        )
+
+
 @app.route('/v1/exam/reading/list', methods=['POST'])
 def get_reading_exam_list():
     if 'userAuth' not in flask.session:

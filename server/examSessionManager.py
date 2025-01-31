@@ -1,5 +1,6 @@
 import os
 import json
+import queue
 import time
 import data.config
 import google.genai.live
@@ -23,7 +24,8 @@ import av
 
 
 class SpeakingExaminationLLMState():
-    DISCONNECTED = -1
+    DISCONNECTED = -2
+    PARTI_INITIATION = -1
     PARTI_CONVERSATION = 0
     PartII_AWAIT_TASK_CARD = 1
     PARTII_STUDENT_PREPARATION = 2
@@ -58,7 +60,11 @@ class SpeakingExaminationSessionBackend():
         self.videoBroadcastingThread: threading.Thread = None
         self.loggerCallbackId: int = None
         self.exitCallback: typing.Callable = None
-        self.llmPreSession = None
+        self.llmSession: chatModel.ChatGoogleGenerativeAI = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.7, system_prompt=chatModel.PromptForOralEnglishExamInitiation(), tools=[])
+        self.userManualInterruption = False
+        self.userAnswers: queue.Queue[bytes] = queue.Queue()
+        self.data_buffer_for_conv = b''
+        
 
         
     async def start(self, botToken: str, loop: asyncio.AbstractEventLoop): 
@@ -68,32 +74,6 @@ class SpeakingExaminationSessionBackend():
         self.connected = True
         self.loggerCallbackId = logger.Logger.registerCallback(lambda s: self.connectionLogs.append(s))
         logger.Logger.log('Connecting to LiveKit server...')
-        
-        if os.getenv("ALL_PROXY") is not None:
-            logger.Logger.log("ALL_PROXY environment variable detected, patching google.genai.live.connect")
-            proxy = websockets_proxy.Proxy.from_url(os.getenv("ALL_PROXY"))
-            def fake_connect(*args, **kwargs):
-                return websockets_proxy.proxy_connect(*args, proxy=proxy, **kwargs)
-            google.genai.live.connect = fake_connect
-
-        client = google.genai.Client(http_options={'api_version': 'v1alpha'})
-        model_id = "gemini-2.0-flash-exp"
-        config = {
-            "response_modalities": ["TEXT"], 
-            "system_instruction": chatModel.PromptForOralEnglishExamInitiation(),
-            "temperature": 0.7
-        }
-        # patch for proxy
-        if os.getenv("ALL_PROXY") is not None:
-            logger.Logger.log("ALL_PROXY environment variable detected, patching google.genai.live.connect")
-            proxy = websockets_proxy.Proxy.from_url(os.getenv("ALL_PROXY"))
-            def fake_connect(*args, **kwargs):
-                return websockets_proxy.proxy_connect(*args, proxy=proxy, **kwargs)
-            google.genai.live.connect = fake_connect
-
-        self.llmPreSession = client.aio.live.connect(model=model_id, config=config)
-        self.llmSession: google.genai.live.AsyncSession = await self.llmPreSession.__aenter__() # to simulate async context manager
-        asyncio.ensure_future(self.chatRealtime())
 
         @self.chatRoom.on("track_subscribed")
         def on_track_subscribed(track: livekit.rtc.Track, publication: livekit.rtc.RemoteTrackPublication, participant: livekit.rtc.RemoteParticipant):
@@ -124,6 +104,11 @@ class SpeakingExaminationSessionBackend():
         def on_connected() -> None:
             logger.Logger.log("connected")
 
+        @self.chatRoom.on("userManualInterruption")
+        def on_user_manual_interruption():
+            logger.Logger.log("user manual interruption")
+            self.userManualInterruption = True
+
         logger.Logger.log('connecting to room...')
         await self.chatRoom.connect(
             f"wss://{data.config.LIVEKIT_API_EXTERNAL_URL}", botToken)
@@ -145,13 +130,9 @@ class SpeakingExaminationSessionBackend():
         logger.Logger.log('chat session started')
         logger.Logger.log('Sending the first system prompt...')
         
-        self.llmState = SpeakingExaminationLLMState.PARTI_CONVERSATION
-        self.llmSession.send(input=chatModel.Prompt(
-            data.config.PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM,
-            {
-                'specific_topics': ', '.join(self.warmUpTopics)
-            }
-        ))
+        asyncio.ensure_future(self.chat())
+        self.llmState = SpeakingExaminationLLMState.PARTI_INITIATION
+        
     
     def terminateSession(self) -> None:
         """
@@ -172,8 +153,6 @@ class SpeakingExaminationSessionBackend():
 
         asyncio.ensure_future(f())
 
-    
-
 
     def drawLogs(self) -> numpy.ndarray:
         img = PIL.Image.new('RGBA', (data.config.LIVEKIT_VIDEO_WIDTH, data.config.LIVEKIT_VIDEO_HEIGHT), color='black')
@@ -192,10 +171,6 @@ class SpeakingExaminationSessionBackend():
         img_np = numpy.array(img)
         # logger.Logger.log(img_np.shape)
         return img_np
-
-
-    def terminateSession(self):
-        self.connected = False
 
 
     def runVideoBroadcastingLoop(self, videoSource) -> None:
@@ -230,108 +205,207 @@ class SpeakingExaminationSessionBackend():
 
 
 
-    async def chatRealtime(self):
-        # 预计是要做成状态机那种模式
-        buffer = ''
+    async def chat(self):
         while True:
-            async for response in self.llmSession.receive():
-                # recv a turn of chat
-                if response.text is not None:
-                    buffer += response.text
-            
-            if not self.connected:
-                logger.Logger.log('Session terminated, stopping chatRealtime loop')
-                await self.llmPreSession.__aexit__(None, None, None) # memory stored, close the session safely
-                break
-            
-            logger.Logger.log(f'Received chat message: {buffer}')
             match self.llmState:
                 case SpeakingExaminationLLMState.DISCONNECTED:
                     logger.Logger.log('LLM state: DISCONNECTED')
-                    pass
-                case SpeakingExaminationLLMState.PARTI_CONVERSATION:
-                    self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
-                    self.llmStateInfo['PartI_Conversation_Answers'].append(
-                        self.data_buffer_for_conv
-                    )
-                    if self.llmStateInfo['PartI_Conversation_Round_Counter'] == 2:
-                        # send last turn signal
-                        self.llmSession.send(input='[system_prompt]Last turn[/system_prompt]')
-                        # wait for the user to finish the last turn
-                    if self.llmStateInfo['PartI_Conversation_Round_Counter'] == 3:
-                        if not '[last_turn_ends][/last_turn_ends]' in buffer.strip():
-                            # wrong signal, warning
-                            logger.Logger.log('Wrong signal for last turn, ignoring and continue conversation')
-                        
-                        # finalize this round of conversation.
-                        self.llmState = SpeakingExaminationLLMState.PartII_AWAIT_TASK_CARD
-                        self.llmStateInfo['PartI_Conversation_Questions'] = []
-                        self.llmStateInfo['PartI_Conversation_Answers'] = []
-                        self.llmStateInfo['PartI_Conversation_Round_Counter'] = 0
-                        self.llmSession.send(input=chatModel.Prompt(
-                            data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1,
-                            {
-                                'specific_topics': self.specificTopic
-                            }
-                        ))
-                        continue
-                    
-                    # anyway, collect the questions here
+                    break
+                case SpeakingExaminationLLMState.PARTI_INITIATION:
+                    resp = self.llmSession.initiate([chatModel.Prompt(data.config.PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM, {
+                        'specific_topics': self.warmUpTopics
+                    })])
                     self.llmStateInfo['PartI_Conversation_Questions'].append(
-                        buffer.strip()
+                        resp
                     )
-                    # send to client for TTS through livekit
-                    self.chatRoom.emit('tts', buffer.strip())
-                case SpeakingExaminationLLMState.PartII_AWAIT_TASK_CARD:
-                    # now we process the task card and send off the begin words
-                    task_card = buffer[buffer.rfind('[task_card]') + 12:buffer.rfind('[/task_card]')].strip()
-                    begin_word = buffer[buffer.rfind('[begin_word]') + 13:buffer.rfind('[/begin_word]')].strip()
-                    self.llmStateInfo['PartII_Task_Card'] = task_card
+                    self.chatRoom.emit('tts', resp)
                     self.chatRoom.emit('control', {
-                        'type': 'task_card_send_off',
-                        'content': task_card
+                        'event': 'next_state',
+                        'data': 'PartI_Conversation'
                     })
-                    self.chatRoom.emit('tts', begin_word)
-                    self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION
+                    self.llmState = SpeakingExaminationLLMState.PARTI_CONVERSATION
+                case SpeakingExaminationLLMState.PARTI_CONVERSATION:
+                    while self.userAnswers.empty():
+                        await asyncio.sleep(0.1)
+                        
+                    self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
+                    user_answer = self.userAnswers.get()
+                    # add to answer
+                    self.llmStateInfo['PartI_Conversation_Answers'].append(
+                        user_answer
+                    )
+                    # send to AI
+                    resp = self.llmSession.chat([{
+                        'mime_type': 'audio/pcm',
+                        'data': user_answer
+                    }])
+                    self.chatRoom.emit('tts', resp)
+                    if self.llmStateInfo['PartI_Conversation_Round_Counter'] == 2:
+                        self.chatRoom.emit('control', {
+                            'event': 'next_state',
+                            'data': 'PartII_Await_Task_Card'
+                        })
+                        self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION
+                        resp = self.llmSession.initiate([chatModel.Prompt(data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1, {
+                            'specific_topic': self.specificTopic
+                        })])
+                        
+                        # parse task card
+                        task_card = resp[resp.rfind('[task_card]')+12:resp.rfind('[/task_card]')]
+                        self.llmStateInfo['PartII_Task_Card'] = task_card
+                        # parse begin word
+                        begin_word = resp[resp.rfind('[begin_word]')+13:resp.rfind('[/begin_word]')]
+                        self.llmStateInfo['PartII_Begin_Word'] = begin_word
+                        # emit tts
+                        self.chatRoom.emit('tts', begin_word)
+                        # emit task card
+                        self.chatRoom.emit('control', {
+                            'event': 'next_state',
+                            'data': 'PartII_Preparation',
+                            'task_card': task_card
+                        })
+                    else:
+                        self.chatRoom.emit('control', {
+                            'event': 'resume_recording',
+                            'data': 'PartI_Conversation'
+                        })
+                case SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION:
+                    # wait for student to prepare
+                    current_time = time.time()
+                    while self.userAnswers.empty() and current_time + 60 > time.time():
+                        await asyncio.sleep(0.1)
+                        
+                    # drop answers
+                    if not self.userAnswers.empty():
+                        self.userAnswers.get()
+                        
+                    # start student statement
                     self.chatRoom.emit('control', {
-                        'type': 'preparation_timer_start'
+                        'event': 'next_state',
+                        'data': 'PartII_Student_Statement'
                     })
-                    self.llmStateInfo['userManualInterruption'] = False
-                    seconds = 0
-                    while not self.llmStateInfo['userManualInterruption'] and seconds <= 60:
-                        await asyncio.sleep(1)
-                    self.llmStateInfo['userManualInterruption'] = False
-                    self.chatRoom.emit('control', {
-                        'type': 'statement_timer_start'
-                    })
-                    await asyncio.sleep(60)
-                    self.llmSession.send(input=data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2)
                     self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT
-                    self.llmStateInfo['userManualInterruption'] = False
-                    seconds = 0
-                    while not self.llmStateInfo['userManualInterruption'] and seconds <= 120:
-                        await asyncio.sleep(1)
-                    self.llmStateInfo['userManualInterruption'] = False    
-                    self.llmState = SpeakingExaminationLLMState.PARTII_FOLLOW_UP_QUESTIONING
+                case SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT:
+                    # wait for student statement
+                    current_time = time.time()
+                    while self.userAnswers.empty() and current_time + 120 > time.time():
+                        await asyncio.sleep(0.1)
+                        
+                    # get answers
+                    if self.userAnswers.empty():
+                        self.llmState['PartII_Student_Statement_Answer'] = b''
+                    else:
+                        self.llmState['PartII_Student_Statement_Answer'] = self.userAnswers.get()
+                        
+                    resp = self.llmSession.chat([{
+                        'mime_type': 'audio/pcm',
+                        'data': self.llmState['PartII_Student_Statement_Answer']
+                    }])
+                    self.llmStateInfo['PartII_Follow_Up_Questions'].append(
+                        resp
+                    )
+                    self.chatRoom.emit('tts', resp)
                     self.chatRoom.emit('control', {
-                        'type': 'follow_up_questioning'
+                        'event': 'next_state',
+                        'data': 'PartII_Follow_Up_Questioning'
                     })
+                    self.llmState = SpeakingExaminationLLMState.PARTII_FOLLOW_UP_QUESTIONING
+                    self.llmStateInfo['PartII_Follow_Up_Round_Counter'] = 0
                 case SpeakingExaminationLLMState.PARTII_FOLLOW_UP_QUESTIONING:
-                    # follow up questioning
-                    # increase the counter
-                    self.llmStateInfo['PartII_Follow_Up_Questioning_Round_Counter'] += 1
-                    # send to client for TTS through livekit
-                    self.chatRoom.emit('tts', buffer.strip())
-                    # up for user input processor to enter the next state
+                    # wait for user answer
+                    answer = b''
+                    while self.userAnswers.empty():
+                        await asyncio.sleep(0.1)
+                        
+                    # increase round counter
+                    self.llmStateInfo['PartII_Follow_Up_Round_Counter'] += 1
+                    # get answer
+                    answer = self.userAnswers.get()
+                    # add to answer
+                    self.llmStateInfo['PartII_Follow_Up_Answers'].append(
+                        answer
+                    )
+                    # if all rounds are done, start discussing
+                    if self.llmStateInfo['PartII_Follow_Up_Round_Counter'] == 3:
+                        self.chatRoom.emit('control', {
+                            'event': 'next_state',
+                            'data': 'PartIII_Discussion'
+                        })
+                        resp = self.llmSession.chat([
+                            {
+                                'mime_type': 'audio/pcm',
+                                'data': answer,
+                            },
+                            data.config.PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM,
+                        ])
+                        self.llmStateInfo['PartIII_Discussion_Questions'].append(
+                            resp
+                        )
+                        self.chatRoom.emit('tts', resp)
+                        self.llmState = SpeakingExaminationLLMState.PARTIII_DISCUSSING
+                        self.llmStateInfo['PartIII_Discussion_Round_Counter'] = 0
+                    else:
+                        self.chatRoom.emit('control', {
+                            'event': 'resume_recording',
+                            'data': 'PartII_Follow_Up_Questioning'
+                        })
+                        resp = self.llmSession.chat([{
+                            'mime_type': 'audio/pcm',
+                            'data': answer
+                        }])
+                        # send to AI
+                        self.chatRoom.emit('tts', resp)
+                        self.llmStateInfo['PartII_Follow_Up_Questions'].append(
+                            resp
+                        )
                 case SpeakingExaminationLLMState.PARTIII_DISCUSSING:
-                    # discuss the answer
-                    # counter increase
+                    # wait for user answer
+                    answer = b''
+                    while self.userAnswers.empty():
+                        await asyncio.sleep(0.1)
+                     
+                    # increase the counter
                     self.llmStateInfo['PartIII_Discussion_Round_Counter'] += 1
-                    # send to client for TTS through livekit
-                    self.chatRoom.emit('tts', buffer.strip())
-                    # up for user input processor to enter the next state
-    
-            buffer = ''
+                    # get answer
+                    answer = self.userAnswers.get()
+                    # add to answer
+                    self.llmStateInfo['PartIII_Discussion_Answers'].append(
+                        answer
+                    )
+                    if self.llmStateInfo['PartIII_Discussion_Round_Counter'] == 3:
+                        # end of discussion
+                        self.chatRoom.emit('control', {
+                            'event': 'await_for_analyze_result',
+                        })
+                        resp = self.llmSession.chat([{
+                            'mime_type': 'audio/pcm',
+                            'data': answer
+                        }, data.config.PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT])
+                        # parse feedback
+                        feedback = resp[resp.rfind('[feedback]')+10:resp.rfind('[/feedback]')]
+                        self.llmStateInfo['Feedback'] = feedback
+                        self.chatRoom.emit('control', {
+                            'event': 'feedback',
+                            'data': feedback
+                        })
+                        # emit tts
+                        self.terminateSession()
+                        self.llmState = SpeakingExaminationLLMState.DISCONNECTED
+                    else:
+                        # start next round
+                        self.chatRoom.emit('control', {
+                            'event': 'next_state',
+                            'data': 'PartIII_Discussion'
+                        })
+                        resp = self.llmSession.chat([{
+                            'mime_type': 'audio/pcm',
+                            'data': answer
+                        }])
+                        self.llmStateInfo['PartIII_Discussion_Questions'].append(
+                            resp
+                        )
+                        self.chatRoom.emit('tts', resp)
+        
             
             
     async def processUserInput(self, stream: livekit.rtc.AudioStream, mimeType: str) -> None:
@@ -352,11 +426,11 @@ class SpeakingExaminationSessionBackend():
             if frames % limit_to_send == 0:
                 if SpeakingExaminationLLMState.isConversationState(self.llmState) or self.llmState == SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT:
                     self.data_buffer_for_conv += data_chunk
-                else:
-                    self.data_buffer_for_conv = b''
                     
-                await self.llmSesion.send({"data": data_chunk, "mime_type": "audio/pcm"})
-                
+                if self.userManualInterruption:
+                    self.userAnswers.put(self.data_buffer_for_conv)
+                    self.data_buffer_for_conv = b''
+                    self.userManualInterruption = False
                 
                 data_chunk = b''
                     
@@ -366,34 +440,30 @@ class SpeakingExaminationSessionBackend():
                 last_sec_frames = 0
 
     
-    def onExit(self, func: typing.Callable[[], None]):
+    def onExit(self, func: typing.Callable[[dict[str, typing.Any]], None]):
         """
         Binding a callback function to the exit event.
         When the chat session is terminated, the callback function will be called.
 
         Args:
-            func (typing.Callable[[], None]): A callable, which will be called when the chat session is terminated.
+            func (typing.Callable[[], None]): A callable, which will be called when the chat session is terminated. With a dictionary as the argument, which contains the following keys:
+                - `PartI_Conversation_Questions`: A list of conversation questions for the first part of the exam.
+                - `PartI_Conversation_Answers`: A list of conversation answers for the first part of the exam.
+                - `PartI_Conversation_Round_Counter`: The number of rounds of conversation for the first part of the exam.
+                - `PartII_Task_Card`: The task card for the second part of the exam.
+                - `PartII_Begin_Word`: The begin word for the second part of the exam.
+                - `PartII_Preparation_Questions`: A list of preparation questions for the second part of the exam.
+                - `PartII_Preparation_Answers`: A list of preparation answers for the second part of the exam.
+                - `PartII_Student_Statement_Answer`: The student statement answer for the second part of the exam.
+                - `PartII_Follow_Up_Questions`: A list of follow-up questions for the second part of the exam.
+                - `PartII_Follow_Up_Answers`: A list of follow-up answers for the second part of the exam.
+                - `PartII_Follow_Up_Round_Counter`: The number of rounds of follow-up questions for the second part of the exam.
+                - `PartIII_Discussion_Questions`: A list of discussion questions for the third part of the exam.
+                - `PartIII_Discussion_Answers`: A list of discussion answers for the third part of the exam.
+                - `PartIII_Discussion_Round_Counter`: The number of rounds of discussion for the third part of the exam.
+                - `Feedback`: The feedback for the exam.
         """
         self.exitCallback = func
-        
-    def onUserAnswered(self, func: typing.Callable[[bytes], None]): 
-        """
-        Binding a callback function to the user answered event.
-
-        Args:
-            func (typing.Callable[[bytes], None]): A callable, which receives a 16-bit PCM audio data chunk representing the user's answer.
-        """
-        self.userAnsweredCallback = func
-
-    def onNewQuestion(self, func: typing.Callable[[str], None]):
-        """
-        Binding a callback function to the new question event.
-        When AI asks a new question, the callback function will be called with the question string.
-
-        Args:
-            func (typing.Callable[[str], None]): A callable, which receives a string representing the new question.
-        """
-        self.newQuestionCallback = func
         
     
 
@@ -502,6 +572,11 @@ class _ExamSessionManager:
         }
         self.session_pool[sessionId] = examSession
         return sessionId
+    
+    
+    def createOralExamSession(self, examId: int, userId: int) -> str:
+        ...
+    
     
     def updateWritingExamSessionAnswer(self, exameSessionId: str, answer: str) -> bool:
         # update the answer of the exam session

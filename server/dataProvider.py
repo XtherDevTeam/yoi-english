@@ -948,6 +948,105 @@ class _DataProvider:
         return self.makeResult(True, data=exam)
     
     
+    def createOralExam(self, userId: int, title: str, availableTime: int, expireTime: int, warmUpTopics: list[str], mainTopic: str):
+        """
+        Create a new oral exam.
+
+        Args:
+            userId (int): The ID of the user.
+            title (str): The title of the exam.
+            warmUpTopics (list[str]): The warm-up topics of the exam.
+            mainTopic (str): The main topic of the exam.
+            availableTime (int): When the exam is available.
+            expireTime (int): When the exam is expired.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        self.db.query("insert into oralEnglishExamPaper (userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic) values (?,?,?,?,?,?)", (userId, int(time.time()), availableTime, expireTime, title, json.dumps(warmUpTopics), mainTopic))
+        # get id (the latest inserted sorted by time)
+        exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic from oralEnglishExamPaper order by createTime desc limit 1", one=True)
+        return self.makeResult(True, data=exam)
+    
+    def getOralExams(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
+        """
+        Get all oral exams.
+
+        Args:
+            filter (dict[str | typing.Any], optional): The filter of the exams. Defaults to None.
+
+        Returns:
+            list[dict[str | typing.Any]]: The list of all oral exams.
+        """
+        
+        if filter is None:
+            filter = {}
+            
+        filterSqlCond = ''
+        if 'userId' in filter:
+            filterSqlCond += f" and userId = {filter['userId']}"
+        if 'title' in filter:
+            filterSqlCond += f" and title like '%{filter['title']}%'"
+        if 'availableTime' in filter:
+            filterSqlCond += f" and availableTime >= {filter['availableTime'][0]} and expireTime <= {filter['availableTime'][1]}"
+        
+        return self.db.query(f"select * from oralEnglishExamPaper where 1=1 {filterSqlCond}")
+    
+    
+    def getOralExamById(self, examId: int) -> dict[str | typing.Any]:
+        """
+        Get the oral exam by ID.
+
+        Args:
+            examId (int): The ID of the exam.
+
+        Returns:
+            dict[str | typing.Any] | None: The oral exam, or false result if not found.
+        """
+        
+        res = self.db.query("select id, userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic from oralEnglishExamPaper where id = ?", (examId,), one=True)
+        if res is None:
+            return self.makeResult(False, data='Oral exam not found')
+        else:
+            res["warmUpTopics"] = json.loads(res["warmUpTopics"])
+            return self.makeResult(True, data=res)
+    
+    
+    def updateOralExam(self, examId: int, title: str, availableTime: int, expireTime: int, warmUpTopics: list[str], mainTopic: str) -> dict[str | typing.Any]:
+        """
+        Update the oral exam.
+
+        Args:
+            examId (int): The ID of the exam.
+            title (str): The title of the exam.
+            availableTime (int): When the exam is available.
+            expireTime (int): When the exam is expired.
+            warmUpTopics (list[str]): The warm-up topics of the exam.
+            mainTopic (str): The main topic of the exam.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        self.db.query("update oralEnglishExamPaper set title = ?, availableTime = ?, expireTime = ?, warmUpTopics = ?, mainTopic = ? where id = ?", (title, availableTime, expireTime, json.dumps(warmUpTopics), mainTopic, examId))
+        return self.makeResult(True)
+    
+    def deleteOralExam(self, examId: int) -> dict[str | typing.Any]:
+        """
+        Delete an oral exam.
+
+        Args:
+            examId (int): The ID of the exam.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        self.db.query("delete from oralEnglishExamPaper where id = ?", (examId,))
+        return self.makeResult(True)
+    
+    
     def deleteWritingExam(self, examId: int) -> dict[str | typing.Any]:
         """
         Delete a writing exam.

@@ -269,12 +269,10 @@ Guidelines:
 4. Encourage depth, lead student to think critically, and provide a clear and concise response.
 
 You ought to transit the topic and respond once you finish thinking.
-You should keep on asking until the `[system_prompt]Last turn[/system_prompt]` is received.
-After that you are expected to ask one last question, once the question is answered you need to send off a signal `[last_turn_ends][/last_turn_ends]`.
-Once you have finishing signaling, you will receive the prompt for analysis and feedback wrapped in `[system_prompt][/system_prompt]`.
+You should keep on asking until you receive the prompt for analysis and feedback wrapped in `[system_prompt][/system_prompt]`.
 """
 
-PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT_1 = """
+PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT = """
 [system_prompt]
 Part 4: Conclusion
 
@@ -286,7 +284,6 @@ Guidelines:
 3. Respond with an overall band and a clear and concise feedback on the student's performance, and suggest areas for improvement.
 
 Response format:
-Your response should contain an overall band in `A`, `B`, `C`, or `D` which wrapped in the format of `[band][/band]`.
 The feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance. The feedback should be wrapped in the format of `[feedback][/feedback]`.
 
 Notice: 
