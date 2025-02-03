@@ -119,7 +119,7 @@ class _DataProvider:
         return {'status': ok, 'data': data} if ok else {'status': ok, 'message': data}
 
                 
-    def initialize(self, userName: str, password: str, email: str, chatbotName: str, chatbotPersona: str, googleApiKey: str) -> None:
+    def initialize(self, userName: str, password: str, email: str, chatbotName: str, chatbotPersona: str, googleApiKey: str, AIDubEndpoint: str, AIDubModel: str) -> None:
         """
         Initialize the database with user information.
 
@@ -130,11 +130,13 @@ class _DataProvider:
             chatbotName (str): The name of the chatbot
             chatbotPersona (str): The persona of the chatbot
             googleApiKey (str): The Google API key for Gemini models
+            AIDubEndpoint (str): The endpoint of the AI Dubbing model
+            AIDubModel (str): The name of the AI Dubbing model
         """
         chatbotAvatar = pathlib.Path('./data/chatbotAvatar.png').read_bytes()
         print(email, password, userName)
         self.createUser(userName, password, email, 114514, 114514, 0b11111100)
-        self.db.query("insert into config (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey) values (?,?,?,?)", (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey))
+        self.db.query("insert into config (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey, AIDubEndpoint, AIDubModel) values (?,?,?,?,?,?)", (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey, AIDubEndpoint, AIDubModel))
         return self.makeResult(True)
         
     def checkIfUserHasPermission(self, userId: int, permission: str) -> dict[str | typing.Any]:
@@ -566,7 +568,11 @@ class _DataProvider:
             if filter['availableTime'][1] != 0:
                 filterSqlCond += f" and availableTime <= {filter['availableTime'][1]}"
         
-        return self.db.query(f"select id, title, availableTime, userId, duration from oralEnglishExamPaper where 1=1 {filterSqlCond}")
+        result = self.db.query(f"select id, title, availableTime, expireTime, userId from oralEnglishExamPaper where 1=1 {filterSqlCond}")
+        for i in result:
+            isAvailable = int(time.time()) > i['availableTime'] and int(time.time()) < i['expireTime']
+            i['isAvailable'] = isAvailable
+        return result
     
     
     def deleteReadingExam(self, examId: int) -> dict[str | typing.Any]:
@@ -964,7 +970,7 @@ class _DataProvider:
             dict[str | typing.Any]: The result object.
         """
         
-        self.db.query("insert into oralEnglishExamPaper (userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic) values (?,?,?,?,?,?)", (userId, int(time.time()), availableTime, expireTime, title, json.dumps(warmUpTopics), mainTopic))
+        self.db.query("insert into oralEnglishExamPaper (userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic) values (?,?,?,?,?,?,?)", (userId, int(time.time()), availableTime, expireTime, title, json.dumps(warmUpTopics), mainTopic))
         # get id (the latest inserted sorted by time)
         exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic from oralEnglishExamPaper order by createTime desc limit 1", one=True)
         return self.makeResult(True, data=exam)
@@ -1417,6 +1423,35 @@ class _DataProvider:
         if res % 4 == 0:
             self.triggerOverallAssessment(userId)
             
+        return self.makeResult(True)
+    
+
+    def getConfig(self) -> dict[str | typing.Any]:
+        """
+        Get the config of the server.
+
+        Returns:
+            dict[str | typing.Any]: The config of the server.
+        """
+        
+        res = self.db.query("select * from config limit 1", one=True)
+        return self.makeResult(True, data=res)
+    
+    
+    def updateConfig(self, chatbotName: str, chatbotPersona: str, AIDubEndpoint: str, AIDubModel: str, enableRegister: bool, googleApiKey: str):
+        """
+        Update the config of the server.
+
+        Args:
+            chatbotName (str): Chatbot name. Will be used when taking oral english examinations.
+            chatbotPersona (str): Chatbot persona. Will be used when taking oral english examinations.
+            AIDubEndpoint (str): Endpoint for AI TTS service.
+            AIDubModel (str): Model for AI TTS service.
+            enableRegister (bool): Whether to enable user registration.
+            googleApiKey (str): Google API key for invoking Google Gemini API.
+        """
+        
+        self.db.query("update config set chatbotName = ?, chatbotPersona = ?, AIDubEndpoint = ?, AIDubModel = ?, enableRegister = ?, googleApiKey = ?", (chatbotName, chatbotPersona, AIDubEndpoint, AIDubModel, enableRegister, googleApiKey))
         return self.makeResult(True)
 
 

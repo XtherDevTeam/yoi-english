@@ -1,3 +1,4 @@
+
 import React from "react";
 import Api from "../Api";
 import { useNavigate } from "react-router-dom";
@@ -86,7 +87,7 @@ function Home() {
             <Mui.Icons.Menu />
           </Mui.IconButton>
           <Mui.Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Yoi English Server Management
+            优易英语服务器平台  
           </Mui.Typography>
           <Mui.IconButton sx={{ float: 'right' }} onClick={() => {
             theme.rotateThemeMode()
@@ -120,7 +121,7 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.AccountBox />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="Profile" />
+                <Mui.ListItemText primary="个人主页" />
               </Mui.ListItemButton>
             </Mui.ListItem>
 
@@ -129,7 +130,7 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.FilePresent />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="User Management" />
+                <Mui.ListItemText primary="用户管理" />
               </Mui.ListItemButton>
             </Mui.ListItem>
 
@@ -138,7 +139,7 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.Quiz />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="Examinations" />
+                <Mui.ListItemText primary="测试列表" />
               </Mui.ListItemButton>
             </Mui.ListItem>
 
@@ -147,7 +148,7 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.CloudUpload />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="Artifacts" />
+                <Mui.ListItemText primary="工件列表" />
               </Mui.ListItemButton>
             </Mui.ListItem>
 
@@ -156,7 +157,7 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.Assessment />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="Examination Results" />
+                <Mui.ListItemText primary="学生测试结果" />
               </Mui.ListItemButton>
             </Mui.ListItem>
 
@@ -165,7 +166,16 @@ function Home() {
                 <Mui.ListItemIcon>
                   <Mui.Icons.AccessTime />
                 </Mui.ListItemIcon>
-                <Mui.ListItemText primary="Ongoing Sessions" />
+                <Mui.ListItemText primary="正在进行的测试" />
+              </Mui.ListItemButton>
+            </Mui.ListItem>
+
+            <Mui.ListItem key="Server Configuration" disablePadding>
+              <Mui.ListItemButton onClick={() => { setCurrentTab(6) }}>
+                <Mui.ListItemIcon>
+                  <Mui.Icons.Settings />
+                </Mui.ListItemIcon>
+                <Mui.ListItemText primary="服务器配置" />
               </Mui.ListItemButton>
             </Mui.ListItem>
           </Mui.List>
@@ -195,6 +205,9 @@ function Home() {
             </Mui.Fade>}
             {currentTab === 5 && <Mui.Fade in={true}>
               {currentTab === 5 && <Mui.Fade key={5} exit={false}><div style={{ width: "100%" }}><Mui.OngoingSession /></div></Mui.Fade>}
+            </Mui.Fade>}
+            {currentTab === 6 && <Mui.Fade in={true}>
+              {currentTab === 6 && <Mui.Fade key={6} exit={false}><div style={{ width: "100%" }}><Mui.ServerConfiguration /></div></Mui.Fade>}
             </Mui.Fade>}
           </Mui.TransitionGroup>
         </Mui.Paper>

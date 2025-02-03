@@ -2,6 +2,9 @@ import os
 import json
 import queue
 import time
+
+import av.container
+import livekit.api
 import data.config
 import google.genai.live
 import websockets_proxy
@@ -21,10 +24,18 @@ import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 import av
+from AIDubMiddleware import AIDubMiddlewareAPI
+import io
+
+asyncio.set_event_loop(asyncio.new_event_loop())
+
+async def getLiveKitAPI():
+    return livekit.api.LiveKitAPI(f"wss://{data.config.LIVEKIT_API_EXTERNAL_URL}", data.config.LIVEKIT_API_KEY, data.config.LIVEKIT_API_SECRET)
 
 
 class SpeakingExaminationLLMState():
-    DISCONNECTED = -2
+    DISCONNECTED = -3
+    AWAITING_CONNECTION = -2
     PARTI_INITIATION = -1
     PARTI_CONVERSATION = 0
     PartII_AWAIT_TASK_CARD = 1
@@ -41,6 +52,51 @@ class SpeakingExaminationLLMState():
         ]
 
 
+class BroadcastMissionManager():
+    def __init__(self):
+        self.APIInstance = AIDubMiddlewareAPI(dataProvider.DataProvider.getConfig()['data']['AIDubEndpoint'])
+        self.broadcastMissions: queue.Queue[str] = queue.Queue()
+        self.readyMissions: queue.Queue[av.container.InputContainer | av.container.OutputContainer] = queue.Queue()
+        self.processThread: threading.Thread = threading.Thread(target=self.processMissions, daemon=True)
+        self.finished = False
+        self.processThread.start()
+        
+    
+    def finalize(self):
+        self.finished = True
+        self.processThread.join()
+        
+        
+    def put(self, mission: str) -> None:
+        mission = mission\
+                        .replace('\n', '')\
+                        .replace('. ', '|sep|')\
+                        .replace('? ', '|sep|')\
+                        .replace('! ', '|sep|')\
+                        .replace('  ','')
+                            
+        missions = mission.split('|sep|')
+        for m in missions:
+            self.broadcastMissions.put(m)
+        
+        
+    def processMissions(self):
+        while not self.finished:
+            if not self.broadcastMissions.empty():
+                mission = self.broadcastMissions.get()
+                resp = self.APIInstance.dub(mission, dataProvider.DataProvider.getConfig()['data']['AIDubModel'])
+                bytesIO = io.BytesIO(resp.content)
+                self.readyMissions.put(av.open(bytesIO))
+                logger.Logger.log(f"Mission {mission} is ready for broadcasting")
+            else:
+                time.sleep(0.1)
+        
+    
+    async def getMission(self) -> av.container.InputContainer | av.container.OutputContainer:
+        while self.readyMissions.empty():
+            await asyncio.sleep(0.1)
+        return self.readyMissions.get()
+
 class SpeakingExaminationSessionBackend():
     def __init__(self, userId: int, warmUpTopics: list[str], specificTopic: str):
         self.userId = userId
@@ -51,20 +107,112 @@ class SpeakingExaminationSessionBackend():
         self.chatRoom: livekit.rtc.Room = None
         self.llmSession: google.genai.live.AsyncSession = None
         self.llmState: int = SpeakingExaminationLLMState.DISCONNECTED
+        self.ttsManager: BroadcastMissionManager = BroadcastMissionManager()
         self.llmStateInfo: dict[str, typing.Any] = {
-            'PartI_Conversation_Round_Counter': 0
+            'PartI_Conversation_Round_Counter': 0,
+            'PartI_Conversation_Questions': [],
+            'PartI_Conversation_Answers': [],
+            'PartII_Student_Statement': b'',
+            'PartII_Follow_Up_Questioning_Round_Counter': 0,
+            'PartII_Follow_Up_Questioning_Questions': [],
+            'PartII_Follow_Up_Questioning_Answers': [],
+            'PartIII_Discussion_Round_Counter': 0,
+            'PartIII_Discussion_Questions': [],
+            'PartIII_Discussion_Answers': [],
+            'PartIII_Discussion_Round_Counter': 0,
+            'PartIII_Discussion_Questions': [],
+            'PartIII_Discussion_Answers': [],
         }
+        config = dataProvider.DataProvider.getConfig()['data']
         self.warmUpTopics = warmUpTopics
         self.specificTopic = specificTopic
         self.broadcastVideoTrack: livekit.rtc.LocalVideoTrack = None
         self.videoBroadcastingThread: threading.Thread = None
         self.loggerCallbackId: int = None
         self.exitCallback: typing.Callable = None
-        self.llmSession: chatModel.ChatGoogleGenerativeAI = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.7, system_prompt=chatModel.PromptForOralEnglishExamInitiation(), tools=[])
+        self.llmSession: chatModel.ChatGoogleGenerativeAI = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.7, system_prompt=chatModel.PromptForOralEnglishExamInitiation(
+            chatbotName=config['chatbotName'], chatbotPersona=config['chatbotPersona']), tools=[])
         self.userManualInterruption = False
         self.userAnswers: queue.Queue[bytes] = queue.Queue()
         self.data_buffer_for_conv = b''
+        self.registeredEvents: dict[str, typing.Callable] = {}
         
+        
+    async def emitEvent(self, event: str, data: typing.Any) -> None:
+        await self.chatRoom.local_participant.publish_data(json.dumps(data, default=lambda x: None), reliable=True, topic=event)
+        
+        
+    def registerEvent(self, event: str, callback: typing.Optional[typing.Callable] = None) -> typing.Callable:
+        # self.registeredEvents[event] = callback
+        def wrapper(callback: typing.Callable) -> typing.Callable:
+            self.registeredEvents[event] = callback
+            return callback
+            
+        return wrapper(callback) if callback is not None else wrapper
+        
+
+    def generateEmptyAudioFrame(self) -> livekit.rtc.AudioFrame:
+        """
+        Generate an empty audio frame.
+
+        Returns:
+            livekit.rtc.AudioFrame: empty audio frame
+        """
+        amplitude = 32767  # for 16-bit audio
+        samples_per_channel = 480  # 10ms at 48kHz
+        time = numpy.arange(samples_per_channel) / \
+            48000
+        total_samples = 0
+        audio_frame = livekit.rtc.AudioFrame.create(
+            48000, 1, samples_per_channel)
+        audio_data = numpy.frombuffer(audio_frame.data, dtype=numpy.int16)
+        time = (total_samples + numpy.arange(samples_per_channel)) / \
+            48000
+        wave = numpy.int16(0)
+        numpy.copyto(audio_data, wave)
+        # logger.Logger.log('done1')
+        return audio_frame
+
+
+    async def broadcastAudioLoop(self, source: livekit.rtc.AudioSource, frequency: int = 1000):
+        logger.Logger.log('broadcasting audio...')
+        while self.connected:
+            if self.ttsManager.readyMissions.empty():
+                frame = self.generateEmptyAudioFrame()
+                await source.capture_frame(frame)
+            else:
+                mission = self.ttsManager.readyMissions.get()
+                for frame in mission.decode(audio=0):
+                    try:
+                        # logger.Logger.log out attrs of livekitFrame when initializing it.
+                        # logger.Logger.log(frame.samples * 2, len(frame.to_ndarray().astype(numpy.int16).tobytes()))
+                        resampledFrame = av.AudioResampler(
+                            format='s16', layout='mono', rate=48000).resample(frame)[0]
+                        # logger.Logger.log(resampledFrame.samples * 2, len(resampledFrame.to_ndarray().astype(numpy.int16).tobytes()))
+                        livekitFrame = livekit.rtc.AudioFrame(
+                            data=resampledFrame.to_ndarray().astype(numpy.int16).tobytes(),
+                            sample_rate=resampledFrame.sample_rate,
+                            num_channels=len(resampledFrame.layout.channels),
+                            samples_per_channel=resampledFrame.samples // len(resampledFrame.layout.channels),)
+                        await source.capture_frame(livekitFrame)
+                    except Exception as e:
+                        # if there's problem with the frame, skip it and continue to the next one.
+                        logger.Logger.log(
+                            'Error processing frame, skipping it.')
+                        continue
+        
+        logger.Logger.log('audio broadcasting loop terminated')
+
+    def runBroadcastingLoop(self, source: livekit.rtc.AudioSource) -> None:
+        """
+        Start the loop for broadcasting audio.
+
+        Returns:
+            None
+        """
+        logger.Logger.log('starting audio broadcasting loop')
+        new_loop = asyncio.new_event_loop()
+        new_loop.run_until_complete(self.broadcastAudioLoop(source))
 
         
     async def start(self, botToken: str, loop: asyncio.AbstractEventLoop): 
@@ -80,6 +228,7 @@ class SpeakingExaminationSessionBackend():
             logger.Logger.log(f"track subscribed: {publication.sid}")
             if track.kind == livekit.rtc.TrackKind.KIND_AUDIO:
                 logger.Logger.log('running user input loop...')
+                self.llmState = SpeakingExaminationLLMState.PARTI_INITIATION
                 asyncio.ensure_future(
                     self.processUserInput(livekit.rtc.AudioStream(track), publication.mime_type))
 
@@ -104,8 +253,21 @@ class SpeakingExaminationSessionBackend():
         def on_connected() -> None:
             logger.Logger.log("connected")
 
-        @self.chatRoom.on("userManualInterruption")
-        def on_user_manual_interruption():
+
+        @self.chatRoom.on("data_received")
+        def on_data_received(data: livekit.rtc.DataPacket):
+            data.data.decode('utf-8')
+            if data.participant.identity != self.chatRoom.local_participant.identity:
+                if data.topic in self.registeredEvents:
+                    self.registeredEvents[data.topic](data.data)
+                else:
+                    logger.Logger.log('unhandled event: ', data.topic)
+            else:
+                logger.Logger.log('ignoring own data packet')
+        
+
+        @self.registerEvent("userManualInterruption")
+        def on_user_manual_interruption(data: dict = None):
             logger.Logger.log("user manual interruption")
             self.userManualInterruption = True
 
@@ -113,25 +275,36 @@ class SpeakingExaminationSessionBackend():
         await self.chatRoom.connect(
             f"wss://{data.config.LIVEKIT_API_EXTERNAL_URL}", botToken)
 
-        videoSource = livekit.rtc.VideoSource(
-            data.config.LIVEKIT_VIDEO_WIDTH, data.config.LIVEKIT_VIDEO_HEIGHT)
-        self.broadcastVideoTrack = livekit.rtc.LocalVideoTrack.create_video_track(
-            "video_track", videoSource)
+        audioSource = livekit.rtc.AudioSource(
+            48000, 1)
+        self.broadcastAudioTrack = livekit.rtc.LocalAudioTrack.create_audio_track(
+            "stream_track", audioSource)
 
-        publication_video = await self.chatRoom.local_participant.publish_track(
-            self.broadcastVideoTrack, livekit.rtc.TrackPublishOptions(source=livekit.rtc.TrackSource.SOURCE_CAMERA, red=False))
-        logger.Logger.log(f"broadcast video track published: {
-            publication_video.track.name}")
 
-        self.videoBroadcastingThread = threading.Thread(
-            target=self.runVideoBroadcastingLoop, args=(videoSource,))
-        self.videoBroadcastingThread.start()
+        # videoSource = livekit.rtc.VideoSource(
+        #     data.config.LIVEKIT_VIDEO_WIDTH, data.config.LIVEKIT_VIDEO_HEIGHT)
+        # self.broadcastVideoTrack = livekit.rtc.LocalVideoTrack.create_video_track(
+        #     "video_track", videoSource)
+
+        publication_audio = await self.chatRoom.local_participant.publish_track(
+            self.broadcastAudioTrack, livekit.rtc.TrackPublishOptions(source=livekit.rtc.TrackSource.SOURCE_MICROPHONE, red=False))
+
+        # options = livekit.rtc.TrackPublishOptions(source=livekit.rtc.TrackSource.SOURCE_CAMERA, red=False, simulcast=True)
+        # publication_video = await self.chatRoom.local_participant.publish_track(
+        #     self.broadcastVideoTrack, options)
+        # # logger.Logger.log(f"broadcast video track published: {
+        # #     publication_video.track.name}")
+
+        asyncio.ensure_future(self.broadcastAudioLoop(audioSource))
+
+        # self.videoBroadcastingThread = threading.Thread(
+        #     target=self.runVideoBroadcastingLoop, args=(None,))
+        # self.videoBroadcastingThread.start()
 
         logger.Logger.log('chat session started')
         logger.Logger.log('Sending the first system prompt...')
-        
+        self.llmState = SpeakingExaminationLLMState.AWAITING_CONNECTION
         asyncio.ensure_future(self.chat())
-        self.llmState = SpeakingExaminationLLMState.PARTI_INITIATION
         
     
     def terminateSession(self) -> None:
@@ -156,20 +329,20 @@ class SpeakingExaminationSessionBackend():
 
     def drawLogs(self) -> numpy.ndarray:
         img = PIL.Image.new('RGBA', (data.config.LIVEKIT_VIDEO_WIDTH, data.config.LIVEKIT_VIDEO_HEIGHT), color='black')
-        draw = PIL.ImageDraw.Draw(img)
-        try:
-            font = PIL.ImageFont.truetype(
-                'consolas.ttf', size=20)
-        except IOError:
-            font = PIL.ImageFont.load_default(size=20)
-        for i, log in enumerate(self.connectionLogs[-48:]):
-            draw.text((10, 10 + i * 20), log, font=font, fill=(255, 255, 255))
+        # draw = PIL.ImageDraw.Draw(img)
+        # try:
+        #     font = PIL.ImageFont.truetype(
+        #         'consolas.ttf', size=20)
+        # except IOError:
+        #     font = PIL.ImageFont.load_default(size=20)
+        # for i, log in enumerate(self.connectionLogs[-48:]):
+        #     draw.text((10, 10 + i * 20), log, font=font, fill=(255, 255, 255))
             
-        if len(self.connectionLogs) > 48:
-           del self.connectionLogs[:48]
+        # if len(self.connectionLogs) > 48:
+        #    del self.connectionLogs[:48]
         # export ndarray for image
         img_np = numpy.array(img)
-        # logger.Logger.log(img_np.shape)
+        # logger.Logger.log(img_numpy.shape)
         return img_np
 
 
@@ -190,19 +363,19 @@ class SpeakingExaminationSessionBackend():
         while self.connected:
             # logger.Logger.log(self.broadcastMissions.qsize(), 'missions in queue')
             # build video frame for 64 lines of logs 
-            img_np = self.drawLogs()
-            # logger.Logger.log(img_np.shape, len(img_np.tobytes()))
-            livekitFrame = livekit.rtc.VideoFrame(
-                data=img_np.astype(numpy.uint8),
-                width=data.config.LIVEKIT_VIDEO_WIDTH,
-                height=data.config.LIVEKIT_VIDEO_HEIGHT,
-                type=livekit.rtc.VideoBufferType.BGRA
-            )
-            source.capture_frame(livekitFrame)
+            # img_np = self.drawLogs()
+            # # print(img_numpy.shape)
+            # logger.Logger.log(img_numpy.shape, len(img_numpy.tobytes()))
+            # livekitFrame = livekit.rtc.VideoFrame(
+            #     data=img_numpy.astype(numpy.uint8),
+            #     width=data.config.LIVEKIT_VIDEO_WIDTH,
+            #     height=data.config.LIVEKIT_VIDEO_HEIGHT,
+            #     type=livekit.rtc.VideoBufferType.RGB24
+            # )
+            # source.capture_frame(livekitFrame)
             await asyncio.sleep(1/30)
         
         logger.Logger.log('broadcasting video stopped')
-
 
 
     async def chat(self):
@@ -211,15 +384,22 @@ class SpeakingExaminationSessionBackend():
                 case SpeakingExaminationLLMState.DISCONNECTED:
                     logger.Logger.log('LLM state: DISCONNECTED')
                     break
+                case SpeakingExaminationLLMState.AWAITING_CONNECTION:
+                    logger.Logger.log('LLM state: AWAITING_CONNECTION')
+                    await asyncio.sleep(0.5)
+                    continue
                 case SpeakingExaminationLLMState.PARTI_INITIATION:
+                    logger.Logger.log('LLM state: PARTI_INITIATION')
+                    # send system prompt
                     resp = self.llmSession.initiate([chatModel.Prompt(data.config.PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM, {
                         'specific_topics': self.warmUpTopics
                     })])
+                    logger.Logger.log(resp)
                     self.llmStateInfo['PartI_Conversation_Questions'].append(
                         resp
                     )
-                    self.chatRoom.emit('tts', resp)
-                    self.chatRoom.emit('control', {
+                    self.ttsManager.put(resp)
+                    await self.emitEvent('control', {
                         'event': 'next_state',
                         'data': 'PartI_Conversation'
                     })
@@ -239,9 +419,9 @@ class SpeakingExaminationSessionBackend():
                         'mime_type': 'audio/pcm',
                         'data': user_answer
                     }])
-                    self.chatRoom.emit('tts', resp)
+                    self.ttsManager.put(resp)
                     if self.llmStateInfo['PartI_Conversation_Round_Counter'] == 2:
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'next_state',
                             'data': 'PartII_Await_Task_Card'
                         })
@@ -257,15 +437,15 @@ class SpeakingExaminationSessionBackend():
                         begin_word = resp[resp.rfind('[begin_word]')+13:resp.rfind('[/begin_word]')]
                         self.llmStateInfo['PartII_Begin_Word'] = begin_word
                         # emit tts
-                        self.chatRoom.emit('tts', begin_word)
+                        self.ttsManager.put(begin_word)
                         # emit task card
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'next_state',
                             'data': 'PartII_Preparation',
                             'task_card': task_card
                         })
                     else:
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'resume_recording',
                             'data': 'PartI_Conversation'
                         })
@@ -280,7 +460,7 @@ class SpeakingExaminationSessionBackend():
                         self.userAnswers.get()
                         
                     # start student statement
-                    self.chatRoom.emit('control', {
+                    await self.emitEvent('control', {
                         'event': 'next_state',
                         'data': 'PartII_Student_Statement'
                     })
@@ -304,8 +484,8 @@ class SpeakingExaminationSessionBackend():
                     self.llmStateInfo['PartII_Follow_Up_Questions'].append(
                         resp
                     )
-                    self.chatRoom.emit('tts', resp)
-                    self.chatRoom.emit('control', {
+                    self.ttsManager.put(resp)
+                    await self.emitEvent('control', {
                         'event': 'next_state',
                         'data': 'PartII_Follow_Up_Questioning'
                     })
@@ -327,7 +507,7 @@ class SpeakingExaminationSessionBackend():
                     )
                     # if all rounds are done, start discussing
                     if self.llmStateInfo['PartII_Follow_Up_Round_Counter'] == 3:
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'next_state',
                             'data': 'PartIII_Discussion'
                         })
@@ -341,11 +521,11 @@ class SpeakingExaminationSessionBackend():
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
                             resp
                         )
-                        self.chatRoom.emit('tts', resp)
+                        self.ttsManager.put(resp)
                         self.llmState = SpeakingExaminationLLMState.PARTIII_DISCUSSING
                         self.llmStateInfo['PartIII_Discussion_Round_Counter'] = 0
                     else:
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'resume_recording',
                             'data': 'PartII_Follow_Up_Questioning'
                         })
@@ -354,7 +534,7 @@ class SpeakingExaminationSessionBackend():
                             'data': answer
                         }])
                         # send to AI
-                        self.chatRoom.emit('tts', resp)
+                        self.ttsManager.put(resp)
                         self.llmStateInfo['PartII_Follow_Up_Questions'].append(
                             resp
                         )
@@ -374,7 +554,7 @@ class SpeakingExaminationSessionBackend():
                     )
                     if self.llmStateInfo['PartIII_Discussion_Round_Counter'] == 3:
                         # end of discussion
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'await_for_analyze_result',
                         })
                         resp = self.llmSession.chat([{
@@ -384,16 +564,15 @@ class SpeakingExaminationSessionBackend():
                         # parse feedback
                         feedback = resp[resp.rfind('[feedback]')+10:resp.rfind('[/feedback]')]
                         self.llmStateInfo['Feedback'] = feedback
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'feedback',
                             'data': feedback
                         })
-                        # emit tts
                         self.terminateSession()
                         self.llmState = SpeakingExaminationLLMState.DISCONNECTED
                     else:
                         # start next round
-                        self.chatRoom.emit('control', {
+                        await self.emitEvent('control', {
                             'event': 'next_state',
                             'data': 'PartIII_Discussion'
                         })
@@ -404,10 +583,25 @@ class SpeakingExaminationSessionBackend():
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
                             resp
                         )
-                        self.chatRoom.emit('tts', resp)
+                        self.ttsManager.put(resp)
         
             
+    def calculateDecibel(self, audio_frame: av.AudioFrame) -> float:
+        """计算音频帧的分贝值"""
+        # 将音频帧转换为 numpy 数组（假设为 16-bit 有符号整数格式）
+        samples = numpy.frombuffer(audio_frame.to_ndarray().tobytes(), dtype=numpy.int16)
+        
+        # 转换为浮点数（范围：-1.0 ~ 1.0）
+        samples_float = samples.astype(numpy.float32) / 32768.0
+        
+        # 计算 RMS（均方根）
+        rms = numpy.sqrt(numpy.mean(numpy.square(samples_float)))
+        
+        # 转换为分贝（避免除以零）
+        db = 20 * numpy.log10(max(1e-5, rms))
+        return db
             
+                        
     async def processUserInput(self, stream: livekit.rtc.AudioStream, mimeType: str) -> None:
         frames = 0
         last_sec = time.time()
@@ -423,6 +617,9 @@ class SpeakingExaminationSessionBackend():
             frames += 1
             avFrame = av.AudioFrame.from_ndarray(numpy.frombuffer(frame.frame.remix_and_resample(16000, 1).data, dtype=numpy.int16).reshape(frame.frame.num_channels, -1), layout='mono', format='s16')
             data_chunk += avFrame.to_ndarray().tobytes()
+            if frames % 25 == 0:
+                # emit audio level per 0.25 seconds
+                await self.emitEvent('audio_level', self.calculateDecibel(avFrame))
             if frames % limit_to_send == 0:
                 if SpeakingExaminationLLMState.isConversationState(self.llmState) or self.llmState == SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT:
                     self.data_buffer_for_conv += data_chunk
@@ -452,8 +649,6 @@ class SpeakingExaminationSessionBackend():
                 - `PartI_Conversation_Round_Counter`: The number of rounds of conversation for the first part of the exam.
                 - `PartII_Task_Card`: The task card for the second part of the exam.
                 - `PartII_Begin_Word`: The begin word for the second part of the exam.
-                - `PartII_Preparation_Questions`: A list of preparation questions for the second part of the exam.
-                - `PartII_Preparation_Answers`: A list of preparation answers for the second part of the exam.
                 - `PartII_Student_Statement_Answer`: The student statement answer for the second part of the exam.
                 - `PartII_Follow_Up_Questions`: A list of follow-up questions for the second part of the exam.
                 - `PartII_Follow_Up_Answers`: A list of follow-up answers for the second part of the exam.
@@ -464,8 +659,7 @@ class SpeakingExaminationSessionBackend():
                 - `Feedback`: The feedback for the exam.
         """
         self.exitCallback = func
-        
-    
+
 
 
 class _ExamSessionManager:
@@ -513,7 +707,7 @@ class _ExamSessionManager:
         while True:
             # check for expired sessions
             for examSessionId, examSession in self.session_pool.items():
-                if examSession['endTime'] < int(time.time()):
+                if examSession.get('endTime') is not None and examSession['endTime'] < int(time.time()):
                     logger.Logger.log(f'ExamSession {examSessionId} expired, finalizing')
                     if examSession['type'] == 'writing':
                         self.finalizeWritingExamSession(examSessionId)
@@ -575,7 +769,74 @@ class _ExamSessionManager:
     
     
     def createOralExamSession(self, examId: int, userId: int) -> str:
-        ...
+        # create a new exam session
+        sessionId: str = tools.RandomHashProvider()
+        # get exam information
+        exam = dataProvider.DataProvider.getOralExamById(examId)
+        if exam['status']:
+            exam = exam['data']
+        else:
+            return None
+        
+        examSession = {
+            'type': 'oral',
+            'examId': examId,
+            'userId': userId,
+            'startTime': int(time.time()),
+            'answerDetails': {
+                'PartI_Conversation_Questions': [],
+                'PartI_Conversation_Answers': [],
+                'PartI_Conversation_Round_Counter': 0,
+                'PartII_Task_Card': '',
+                'PartII_Begin_Word': '',
+                'PartII_Student_Statement_Answer': b'',
+                'PartII_Follow_Up_Questions': [],
+                'PartII_Follow_Up_Answers': [],
+                'PartII_Follow_Up_Round_Counter': 0,
+                'PartIII_Discussion_Questions': [],
+                'PartIII_Discussion_Answers': [],
+                'PartIII_Discussion_Round_Counter': 0,
+                'Feedback': ''
+            },
+            'examPaper': exam,
+            'livekitSession': None,
+            'userToken': livekit.api.AccessToken(
+                data.config.LIVEKIT_API_KEY, data.config.LIVEKIT_API_SECRET).with_identity(
+                'user').with_name('yoi-english-user').with_grants(livekit.api.VideoGrants(room_join=True, room=sessionId)).to_jwt(),
+            'botToken': livekit.api.AccessToken(
+                data.config.LIVEKIT_API_KEY, data.config.LIVEKIT_API_SECRET).with_identity(
+                'model').with_name('yoi-english-examiner').with_grants(livekit.api.VideoGrants(room_join=True, room=sessionId)).to_jwt(),
+            'sessionBackend': SpeakingExaminationSessionBackend(userId, exam['warmUpTopics'], exam['mainTopic'])
+        }
+
+
+        # generate livekit session
+        async def create_room():
+            await (await getLiveKitAPI()).room.create_room(
+                create=livekit.api.CreateRoomRequest(
+                    name=sessionId,
+                    empty_timeout=10*60,
+                    max_participants=2
+                )
+            )
+            
+        asyncio.new_event_loop().run_until_complete(create_room())
+        
+        # create a new event loop and run for the backend
+        def th():
+            newloop = asyncio.new_event_loop()
+            asyncio.set_event_loop(newloop)
+            session: SpeakingExaminationSessionBackend = examSession['sessionBackend']
+            asyncio.ensure_future(session.start(botToken=examSession['botToken'], loop=newloop))
+            try:
+                newloop.run_forever()
+            finally:
+                logger.Logger.log('Oral examination session backend loop closed')
+                newloop.close()
+        
+        threading.Thread(target=th).start()
+        self.session_pool[sessionId] = examSession
+        return sessionId
     
     
     def updateWritingExamSessionAnswer(self, exameSessionId: str, answer: str) -> bool:
@@ -596,7 +857,8 @@ class _ExamSessionManager:
                 examSession['examPaper'] = dataProvider.DataProvider.getWritingExamById(examSession['examId'])['data']
                 examSession['sessionId'] = sessionId
                 if hideAnswer:
-                    del examSession['examPaper']['onePossibleVersion']
+                    if 'onePossibleVersion' in examSession['examPaper']:
+                        del examSession['examPaper']['onePossibleVersion']
                 examSession['username'] = dataProvider.DataProvider.getUserInfoByID(examSession['userId'])['username']
                 return examSession
             elif examSession['type'] =='reading':
@@ -604,9 +866,32 @@ class _ExamSessionManager:
                 examSession['sessionId'] = sessionId
                 if hideAnswer:
                     for i in examSession['examPaper']['answerSheetFormat']:
-                        del i['answer']
+                        if 'answer' in i:
+                            del i['answer']
                 examSession['username'] = dataProvider.DataProvider.getUserInfoByID(examSession['userId'])['username']
                 return examSession
+            elif examSession['type'] == 'oral':
+                # delete all bytes data
+                print(examSession)
+                examSession['answerDetails'] = json.loads(json.dumps(examSession['answerDetails'], default=lambda x: None))
+                # do not use delete
+                # del examSession['livekitSession']
+                # del examSession['sessionBackend']
+                examSession['sessionId'] = sessionId
+                examSession['username'] = dataProvider.DataProvider.getUserInfoByID(examSession['userId'])['username']
+                return {
+                    'examId': examSession['examId'],
+                    'userId': examSession['userId'],
+                    'username': examSession['username'],
+                    'type': examSession['type'],
+                    'startTime': examSession['startTime'],
+                    'answerDetails': examSession['answerDetails'],
+                    'livekitEndpoint': data.config.LIVEKIT_API_EXTERNAL_URL,
+                    'userToken': examSession['userToken'],
+                    'botToken': examSession['botToken'],
+                    'sessionId': examSession['sessionId'],
+                    'examPaper': examSession['examPaper'],
+                }
             else:
                 return None # yet to be implemented
         return None
@@ -615,7 +900,8 @@ class _ExamSessionManager:
     def getOngoingSessionOfUser(self, userId: int) -> dict[str | typing.Any]:
         # get the details of the ongoing exam session of the user
         for examSessionId, examSession in self.session_pool.items():
-            if examSession['userId'] == userId and examSession['endTime'] > int(time.time()):
+            
+            if examSession['userId'] == userId and (examSession['type'] == 'oral' or examSession['endTime'] > int(time.time())):
                 return self.getSessionDetails(examSessionId)
         return None
     

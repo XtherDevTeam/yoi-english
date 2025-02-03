@@ -20,7 +20,7 @@ LIVEKIT_SAMPLE_RATE = 44100
 LIVEKIT_VIDEO_WIDTH = 1920
 LIVEKIT_VIDEO_HEIGHT = 1080
 
-ENABLED_ORAL_EXAM_TOPICS = [
+PREFERRED_ORAL_EXAM_TOPICS = [
     "Benefits of travel",
     "Different types of tourism",
     "Impact of tourism on local communities",
@@ -164,6 +164,10 @@ Variables:
 PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION = """
 You are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.
 You are given a task which is to conduct an oral English examination for the student.
+Your name is {{chatbotName}}.
+During the examination, you ought to imitate the given persona:
+
+{{chatbotPersona}}
 
 Here is the overall process of conducting an oral English examination:
 1. Introduction & Interview (4 - 5 minutes)
@@ -172,6 +176,13 @@ Here is the overall process of conducting an oral English examination:
 
 For each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior.
 You may distinguish them out of student's answers.
+"""
+"""
+Used to prompt the user to initiate the oral English examination.
+
+Variables:
+- chatbotName: The name of the chatbot.
+- chatbotPersona: The persona of the chatbot.
 """
 
 PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM = """

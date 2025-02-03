@@ -40,12 +40,12 @@ const Profile = () => {
       if (r.status) {
         setUserInfo(r.data);
       } else {
-        setAlertDetail({ type: "error", title: "Error", message: r.data });
+        setAlertDetail({ type: "error", title: "错误", message: r.data }); 
         setAlertOpen(true);
       }
     }).catch(e => {
       console.error(e);
-      setAlertDetail({ type: "error", title: "Error", message: "Failed to fetch user information" });
+      setAlertDetail({ type: "error", title: "错误", message: "获取用户信息失败" }); 
       setAlertOpen(true);
     })
   }, [])
@@ -78,7 +78,7 @@ const Profile = () => {
             {userInfo.username}
           </Mui.Typography>
           <Mui.Typography variant="body2" color="text.secondary">
-            {userInfo.capabilities.administrator ? "Administrator" : "User"}
+            {userInfo.capabilities.administrator ? "管理员" : "用户"} 
           </Mui.Typography>
         </Mui.Grid>
       </Mui.Grid>
@@ -87,23 +87,23 @@ const Profile = () => {
           <Mui.ListItemButton onClick={() => {
             setInputDialogProps({
               open: true,
-              title: "Change Username",
-              description: "Enter a new username",
-              hint: "Username",
+              title: "更改用户名", 
+              description: "输入新的用户名", 
+              hint: "用户名", 
               defaultValue: userInfo.username,
               onSave: (value) => {
                 Api.updateUsername(value).then(r => {
                   if (r.status) {
                     setUserInfo({ ...userInfo, username: value });
-                    setAlertDetail({ type: "success", title: "Success", message: "Username updated successfully" });
+                    setAlertDetail({ type: "success", title: "成功", message: "用户名更新成功" }); 
                     setAlertOpen(true);
                   } else {
-                    setAlertDetail({ type: "error", title: "Error", message: r.message });
+                    setAlertDetail({ type: "error", title: "错误", message: r.message }); 
                     setAlertOpen(true);
                   }
                 }).catch(e => {
                   console.error(e);
-                  setAlertDetail({ type: "error", title: "Error", message: "Failed to update username" });
+                  setAlertDetail({ type: "error", title: "错误", message: "用户名更新失败" }); 
                   setAlertOpen(true);
                 })
               },
@@ -111,28 +111,28 @@ const Profile = () => {
             })
           }}>
             <Mui.ListItemIcon><Mui.Icons.Person /></Mui.ListItemIcon>
-            <Mui.ListItemText primary="Username" secondary={userInfo.username} />
+            <Mui.ListItemText primary="用户名" secondary={userInfo.username} /> 
           </Mui.ListItemButton>
           <Mui.ListItemButton onClick={() => {
             setInputDialogProps({
               open: true,
-              title: "Change Email",
-              description: "Enter a new email",
-              hint: "Email",
+              title: "更改邮箱", 
+              description: "输入新的邮箱", 
+              hint: "邮箱", 
               defaultValue: userInfo.email,
               onSave: (value) => {
                 Api.updateEmail(value).then(r => {
                   if (r.status) {
                     setUserInfo({ ...userInfo, email: value });
-                    setAlertDetail({ type: "success", title: "Success", message: "Email updated successfully" });
+                    setAlertDetail({ type: "success", title: "成功", message: "邮箱更新成功" }); 
                     setAlertOpen(true);
                   } else {
-                    setAlertDetail({ type: "error", title: "Error", message: r.message });
+                    setAlertDetail({ type: "error", title: "错误", message: r.message }); 
                     setAlertOpen(true);
                   }
                 }).catch(e => {
                   console.error(e);
-                  setAlertDetail({ type: "error", title: "Error", message: "Failed to update email" });
+                  setAlertDetail({ type: "error", title: "错误", message: "邮箱更新失败" }); 
                   setAlertOpen(true);
                 })
               },
@@ -140,7 +140,7 @@ const Profile = () => {
             })
           }}>
             <Mui.ListItemIcon><Mui.Icons.Email /></Mui.ListItemIcon>
-            <Mui.ListItemText primary="Email" secondary={userInfo.email} />
+            <Mui.ListItemText primary="邮箱" secondary={userInfo.email} /> 
           </Mui.ListItemButton>
           <Mui.ListItemButton onClick={() => {
             setPasswordConfirmationDialogProps({
@@ -149,26 +149,26 @@ const Profile = () => {
               onSave: (password, newPassword) => {
                 Api.updatePassword(password, newPassword).then(r => {
                   if (r.status) {
-                    setAlertDetail({ type: "success", title: "Success", message: "Password updated successfully" });
+                    setAlertDetail({ type: "success", title: "成功", message: "密码更新成功" }); 
                     setAlertOpen(true);
                   } else {
-                    setAlertDetail({ type: "error", title: "Error", message: r.message });
+                    setAlertDetail({ type: "error", title: "错误", message: r.message }); 
                     setAlertOpen(true);
                   }
                 }).catch(e => {
                   console.error(e);
-                  setAlertDetail({ type: "error", title: "Error", message: `Failed to update password: ${e}` });
+                  setAlertDetail({ type: "error", title: "错误", message: `密码更新失败: ${e}` }); 
                   setAlertOpen(true);
                 })
               },
               onErr: (message) => {
-                setAlertDetail({ type: "error", title: "Error", message: message });
+                setAlertDetail({ type: "error", title: "错误", message: message }); 
                 setAlertOpen(true);
               }
             })
           }}>
             <Mui.ListItemIcon><Mui.Icons.Lock /></Mui.ListItemIcon>
-            <Mui.ListItemText primary="Password" secondary="Change password" />
+            <Mui.ListItemText primary="密码" secondary="更改密码" /> 
           </Mui.ListItemButton>
         </Mui.List>
       </Mui.Box>

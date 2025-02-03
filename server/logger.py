@@ -36,4 +36,4 @@ class _Logger():
         if index < len(self.callbacks):
             del self.callbacks[index]
         
-Logger = _Logger('CyberWaifu V2 backend', 'stdout')
+Logger = _Logger('Yoi English backend', 'stdout')

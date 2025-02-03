@@ -51,9 +51,9 @@ function ask_ai_only_user_prompt(user_prompt) {
   })
 }
 
-function initialize(username, password, email, google_api_key, chatbot_name, chatbot_persona) {
+function initialize(username, password, email, google_api_key, chatbot_name, chatbot_persona, AIDubEndpoint, AIDubModel) {
   return axios.post(`${serverUrl}/api/v1/admin/initialize`, {
-    username, password, email, google_api_key, chatbot_name, chatbot_persona
+    username, password, email, google_api_key, chatbot_name, chatbot_persona, AIDubEndpoint, AIDubModel
   }).then(r => {
     return r.data
   }).catch(r => {
@@ -276,8 +276,75 @@ function getWritingExamResult(id) {
   })
 }
 
+function getOralExaminationList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/oral/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
+function createOralExamination(title, availableTime, warmUpTopics, mainTopic) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/oral/create`, {
+    "title": title,
+    "availableTime": availableTime,
+    "warmUpTopics": warmUpTopics,
+    "mainTopic": mainTopic
+  }).then(r => {
+    return r.data
+  })
+}
+
+function updateOralExamination(id, title, availableTime, warmUpTopics, mainTopic) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/oral/update`, {
+    "examId": id,
+    "title": title,
+    "availableTime": availableTime,
+    "warmUpTopics": warmUpTopics,
+    "mainTopic": mainTopic
+  }).then(r => {
+    return r.data
+  })
+}
+
+function deleteOralExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/oral/delete`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
+function getOralExamination(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/examination/oral/get`, { "examId": id }).then(r => {
+    return r.data
+  })
+}
+
 function signOut() {
   return axios.post(`${serverUrl}/api/v1/user/logout`).then(r => {
+    return r.data
+  })
+}
+
+function getPreferredExamTopics() {
+  return axios.get(`${serverUrl}/api/v1/admin/examination/oral/create/get_preferred_topics`).then(r => {
+    return r.data
+  })
+}
+
+
+function updateConfig(chatbotName, chatbotPersona, AIDubEndpoint, AIDubModel, enableRegister, googleApiKey) {
+  return axios.post(`${serverUrl}/api/v1/admin/config/update`, {
+    "chatbotName": chatbotName,
+    "chatbotPersona": chatbotPersona,
+    "AIDubEndpoint": AIDubEndpoint,
+    "AIDubModel": AIDubModel,
+    "enableRegister": enableRegister,
+    "googleApiKey": googleApiKey
+  }).then(r => {
+    return r.data
+  })
+}
+
+function getConfig() {
+  return axios.post(`${serverUrl}/api/v1/admin/config/get`).then(r => {
     return r.data
   })
 }
@@ -290,5 +357,6 @@ export default {
   getWritingExaminationList, createWritingExamination, getWritingExamination, ask_ai_only_user_prompt,
   updateWritingExamination, deleteWritingExamination, updateReadingExamination, createUser, deleteUser,
   updateUsername, updatePassword, updateEmail, getReadingExamResultList, getReadingExamResult,
-  getWritingExamResultList, getWritingExamResult, signOut, getExamSessionList
+  getWritingExamResultList, getWritingExamResult, signOut, getExamSessionList, getOralExaminationList, createOralExamination,
+  updateOralExamination, deleteOralExamination, getOralExamination, getPreferredExamTopics, updateConfig, getConfig
 }

@@ -1,3 +1,4 @@
+
 import React from "react";
 import Api from "../Api";
 import * as Mui from "../Components";
@@ -20,12 +21,12 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
   }, [examId]);
 
   return <>{examinationResult && <Mui.Dialog open={examinationResult !== null} onClose={() => onClose()}>
-    <Mui.DialogTitle>Examination Result</Mui.DialogTitle>
+    <Mui.DialogTitle>考试结果</Mui.DialogTitle>
     <Mui.DialogContent>
       <Mui.Grid container spacing={1}>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Examination:
+            考试：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {examinationResult.examPaper.title}
@@ -33,7 +34,7 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Completed Time:
+            完成时间：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {dayjs.unix(examinationResult.completeTime).format("YYYY-MM-DD HH:mm:ss")}
@@ -41,7 +42,7 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Band:
+            分数段：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {examinationResult.band}
@@ -49,7 +50,7 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Correct ans count:
+            正确答案数量：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {examinationResult.correctAnsCount} / {examinationResult.examPaper.answerSheetFormat.length}
@@ -57,7 +58,7 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Accuracy:
+            准确率：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {Math.round(examinationResult.correctAnsCount / examinationResult.examPaper.answerSheetFormat.length * 100)}%
@@ -65,7 +66,7 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Feedback:
+            反馈：
           </Mui.Typography>
           <Markdown>
             {examinationResult.feedback}
@@ -73,18 +74,18 @@ function ReadingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Answer details:
+            答案详情：
           </Mui.Typography>
           <Mui.List>
             {examinationResult.answerSheet.map((answer, index) => <Mui.ListItem key={index}>
-              <Mui.ListItemText primary={`Quest #${index + 1}`} secondary={((answer == examinationResult.examPaper.answerSheetFormat[index].answer) ? 'Correct: ' : 'Incorrect: ') + `${answer} (Correct answer: ${examinationResult.examPaper.answerSheetFormat[index].answer})`} />
+              <Mui.ListItemText primary={`第${index + 1}题`} secondary={((answer == examinationResult.examPaper.answerSheetFormat[index].answer) ? '正确：' : '错误：') + `${answer} (正确答案：${examinationResult.examPaper.answerSheetFormat[index].answer})`} />
             </Mui.ListItem>)}
           </Mui.List>
         </Mui.Grid>
       </Mui.Grid>
     </Mui.DialogContent>
     <Mui.DialogActions>
-      <Mui.Button onClick={() => onClose()}>Close</Mui.Button>
+      <Mui.Button onClick={() => onClose()}>关闭</Mui.Button>
     </Mui.DialogActions>
   </Mui.Dialog>}</>
 }
@@ -103,12 +104,12 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
   }, [examId]);
 
   return <>{examinationResult && <Mui.Dialog open={examinationResult !== null} onClose={() => onClose()}>
-    <Mui.DialogTitle>Examination Result</Mui.DialogTitle>
+    <Mui.DialogTitle>考试结果</Mui.DialogTitle>
     <Mui.DialogContent>
       <Mui.Grid container spacing={1}>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Examination:
+            考试：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {examinationResult.examPaper.title}
@@ -116,7 +117,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Completed Time:
+            完成时间：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {dayjs.unix(examinationResult.completeTime).format("YYYY-MM-DD HH:mm:ss")}
@@ -124,7 +125,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12} sm={6}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Band:
+            分数段：
           </Mui.Typography>
           <Mui.Typography variant="body2">
             {examinationResult.band}
@@ -132,7 +133,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Feedback:
+            反馈：
           </Mui.Typography>
           <Markdown>
             {examinationResult.feedback}
@@ -140,7 +141,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Answer:
+            答案：
           </Mui.Typography>
           <Markdown>
             {examinationResult.answer}
@@ -148,7 +149,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
-            One possible version:
+            参考答案：
           </Mui.Typography>
           <Markdown>
             {examinationResult.examPaper.onePossibleVersion}
@@ -157,7 +158,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
       </Mui.Grid>
     </Mui.DialogContent>
     <Mui.DialogActions>
-      <Mui.Button onClick={() => onClose()}>Close</Mui.Button>
+      <Mui.Button onClick={() => onClose()}>关闭</Mui.Button>
     </Mui.DialogActions>
   </Mui.Dialog>}</>
 }
@@ -216,9 +217,9 @@ export default function ExaminationResult({ }) {
         console.log(e, value)
         setCurrentExamType(value);
       }}>
-        <Mui.Tab label="Reading" value={'reading'} />
-        <Mui.Tab label="Writing" value={'writing'} />
-        <Mui.Tab label="Listening & Speaking" value={'listening'} />
+        <Mui.Tab label="阅读" value={'reading'} />
+        <Mui.Tab label="写作" value={'writing'} />
+        <Mui.Tab label="听力与口语" value={'listening'} />
       </Mui.Tabs>
       <Mui.Grid container spacing={1}>
         <Mui.Grid item xs={12}>
@@ -227,11 +228,11 @@ export default function ExaminationResult({ }) {
               <Mui.TableHead>
                 <Mui.TableRow>
                   <Mui.TableCell>#</Mui.TableCell>
-                  <Mui.TableCell>Username</Mui.TableCell>
-                  <Mui.TableCell>Exam Title</Mui.TableCell>
-                  <Mui.TableCell>Band</Mui.TableCell>
-                  <Mui.TableCell>Completed Time</Mui.TableCell>
-                  <Mui.TableCell>Actions</Mui.TableCell>
+                  <Mui.TableCell>用户名</Mui.TableCell>
+                  <Mui.TableCell>考试标题</Mui.TableCell>
+                  <Mui.TableCell>分数段</Mui.TableCell>
+                  <Mui.TableCell>完成时间</Mui.TableCell>
+                  <Mui.TableCell>操作</Mui.TableCell>
                 </Mui.TableRow>
               </Mui.TableHead>
               <Mui.TableBody>

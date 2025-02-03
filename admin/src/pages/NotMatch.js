@@ -1,3 +1,4 @@
+
 import * as React from 'react'
 import * as Mui from '../Components'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -27,15 +28,15 @@ export default function NotMatch() {
         />
         <Mui.CardContent>
           <Mui.Typography gutterBottom variant="h5" component="div">
-            {"Oops, something went wrong :("}
+            {"哎呀，出错了 :("}
           </Mui.Typography>
           <Mui.Typography variant="body2" color="text.secondary">
-            {"The page you're looking for is lost, maybe you made something wrong? XD"}
+            {"您要查找的页面丢失了，可能是您操作有误？XD"}
           </Mui.Typography>
         </Mui.CardContent>
         <Mui.CardActions>
-          <Mui.Button size="small" onClick={() => { navigate(-1) }}>Go Back</Mui.Button>
-          <Mui.Button size="small" onClick={() => { navigate("/") }}>Homepage</Mui.Button>
+          <Mui.Button size="small" onClick={() => { navigate(-1) }}>返回</Mui.Button>
+          <Mui.Button size="small" onClick={() => { navigate("/") }}>主页</Mui.Button>
         </Mui.CardActions>
       </Mui.Card>
     </>

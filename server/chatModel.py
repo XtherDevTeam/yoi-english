@@ -163,5 +163,8 @@ def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tu
     return band, final
 
 
-def PromptForOralEnglishExamInitiation() -> str:
-    return data.config.PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION
+def PromptForOralEnglishExamInitiation(chatbotName: str, chatbotPersona: str) -> str:
+    return Prompt(data.config.PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION, {
+        "chatbotName": chatbotName,
+        "chatbotPersona": chatbotPersona,
+    })

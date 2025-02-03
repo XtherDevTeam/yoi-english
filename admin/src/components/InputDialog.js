@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import fs from "../fs";
 import Api from "../Api";
@@ -25,11 +26,11 @@ const InputDialog = ({ open, title, description, hint, defaultValue, onClose, on
         </Mui.Grid>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={onClose}>Cancel</Mui.Button>
+        <Mui.Button onClick={onClose}>取消</Mui.Button>
         <Mui.Button onClick={() => {
           onSave(value);
           onClose();
-        }}>Save</Mui.Button>
+        }}>保存</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   </>
@@ -42,16 +43,16 @@ const PasswordConfirmationDialog = ({ open, onClose, onSave, onErr }) => {
 
   return <>
     <Mui.Dialog open={open} onClose={onClose}>
-      <Mui.DialogTitle>Change Password</Mui.DialogTitle>
+      <Mui.DialogTitle>更改密码</Mui.DialogTitle>
       <Mui.DialogContent>
         <Mui.Grid container spacing={1}>
           <Mui.Grid item xs={12}>
-            <Mui.Typography variant="body1">Please enter your old password to confirm the change.</Mui.Typography>
+            <Mui.Typography variant="body1">请输入旧密码以确认更改。</Mui.Typography>
           </Mui.Grid>
           <Mui.Grid item xs={12}>
             <Mui.TextField
               fullWidth
-              label="Old Password"
+              label="旧密码"
               type="password"
               value={oldPasswordInput}
               onChange={(e) => setOldPasswordInput(e.target.value)}
@@ -60,7 +61,7 @@ const PasswordConfirmationDialog = ({ open, onClose, onSave, onErr }) => {
           <Mui.Grid item xs={12}>
             <Mui.TextField
               fullWidth
-              label="New Password"
+              label="新密码"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -69,7 +70,7 @@ const PasswordConfirmationDialog = ({ open, onClose, onSave, onErr }) => {
           <Mui.Grid item xs={12}>
             <Mui.TextField
               fullWidth
-              label="Confirm Password"
+              label="确认密码"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -78,15 +79,15 @@ const PasswordConfirmationDialog = ({ open, onClose, onSave, onErr }) => {
         </Mui.Grid>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={onClose}>Cancel</Mui.Button>
+        <Mui.Button onClick={onClose}>取消</Mui.Button>
         <Mui.Button onClick={() => {
           if (password !== confirmPassword) {
-            onErr("Passwords do not match");
+            onErr("密码不匹配");
           } else {
             onSave(oldPasswordInput, password);
             onClose();
           }
-        }}>Save</Mui.Button>
+        }}>保存</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   </>

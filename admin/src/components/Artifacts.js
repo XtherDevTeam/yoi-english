@@ -20,14 +20,14 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
       setArtifacts(artifacts.filter((a) => a.id !== artifact.id));
       setAlertDetail({
         type: "success",
-        title: "Success",
-        message: "Artifact deleted successfully"
+        title: "成功",
+        message: "工件删除成功"
       });
       setAlertOpen(true);
     }).catch((error) => {
       setAlertDetail({
         type: "error",
-        title: "Error",
+        title: "错误",
         message: error.response.data.message
       });
       setAlertOpen(true);
@@ -68,7 +68,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
             <Mui.Grid container spacing={1}>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Artifact ID: '}
+                  {'工件 ID: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {artifact.id}
@@ -76,7 +76,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Creator ID: '}
+                  {'创建者 ID: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {artifact.userId}
@@ -84,7 +84,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Create Time: '}
+                  {'创建时间: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {createTime}
@@ -92,7 +92,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Expire Time: '}
+                  {'过期时间: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {expireTime}
@@ -100,7 +100,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={12}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Mime Type: '}
+                  {'MIME 类型: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {artifact.mimetype}
@@ -153,7 +153,7 @@ const Artifacts = () => {
       } else {
         setAlertDetail({
           type: "error",
-          title: "Error",
+          title: "错误",
           message: response.message
         });
         setAlertOpen(true);
@@ -161,7 +161,7 @@ const Artifacts = () => {
     }).catch((error) => {
       setAlertDetail({
         type: "error",
-        title: "Error",
+        title: "错误",
         message: error.response.data.message
       });
       setAlertOpen(true);
@@ -192,7 +192,7 @@ const Artifacts = () => {
                 <Mui.Grid container spacing={1}>
                   <Mui.Grid item xs={6}>
                     <Mui.TextField
-                      label="User ID"
+                      label="用户 ID"
                       variant="outlined"
                       value={filterUserId}
                       fullWidth
@@ -207,8 +207,8 @@ const Artifacts = () => {
                           setFilterUserId("");
                           setAlertDetail({
                             type: "error",
-                            title: "Error",
-                            message: "Invalid user ID"
+                            title: "错误",
+                            message: "无效的用户 ID"
                           });
                           setAlertOpen(true);
                         }
@@ -217,7 +217,7 @@ const Artifacts = () => {
                   </Mui.Grid>
                   <Mui.Grid item xs={6}>
                     <Mui.TextField
-                      label="Mime Type"
+                      label="Mime 类型"
                       variant="outlined"
                       value={filterMimetype}
                       fullWidth
@@ -228,7 +228,7 @@ const Artifacts = () => {
                   </Mui.Grid>
                   <Mui.Grid item xs={6} sm={3}>
                     <Mui.DateTimePicker
-                      label="Create Time Range: Begin"
+                      label="创建时间范围：开始"
                       sx={{ width: "100%" }}
                       value={filterCreateTime[0]}
                       onChange={(newValue) => setFilterCreateTime([newValue, filterCreateTime[1] >= filterCreateTime[0] ? filterCreateTime[1] : filterCreateTime[0]])}
@@ -236,7 +236,7 @@ const Artifacts = () => {
                   </Mui.Grid>
                   <Mui.Grid item xs={6} sm={3}>
                     <Mui.DateTimePicker
-                      label="Create Time Range: End"
+                      label="创建时间范围：结束"
                       sx={{ width: "100%" }}
                       value={filterCreateTime[1]}
                       onChange={(newValue) => setFilterCreateTime([filterCreateTime[0] <= filterCreateTime[1] ? filterCreateTime[0] : filterCreateTime[1], newValue])}
@@ -244,7 +244,7 @@ const Artifacts = () => {
                   </Mui.Grid>
                   <Mui.Grid item xs={6} sm={3}>
                     <Mui.DateTimePicker
-                      label="Expire Time Range: Begin"
+                      label="过期时间范围：开始"
                       sx={{ width: "100%" }}
                       value={filterExpireTime[0]}
                       onChange={(newValue) => setFilterExpireTime([newValue, filterExpireTime[1] >= filterExpireTime[0] ? filterExpireTime[1] : filterExpireTime[0]])}
@@ -252,7 +252,7 @@ const Artifacts = () => {
                   </Mui.Grid>
                   <Mui.Grid item xs={6} sm={3}>
                     <Mui.DateTimePicker
-                      label="Expire Time Range: End"
+                      label="过期时间范围：结束"
                       sx={{ width: "100%" }}
                       value={filterExpireTime[1]}
                       onChange={(newValue) => setFilterExpireTime([filterExpireTime[0] <= filterExpireTime[1] ? filterExpireTime[0] : filterExpireTime[1], newValue])}
@@ -263,7 +263,7 @@ const Artifacts = () => {
               <Mui.Grid item xs={2}>
                 <Mui.Box sx={{ display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
                   <Mui.Button variant="contained" color="primary" onClick={() => {
-                  }}>Search</Mui.Button>
+                  }}>搜索</Mui.Button>
                 </Mui.Box>
               </Mui.Grid>
             </Mui.Grid>
@@ -274,9 +274,9 @@ const Artifacts = () => {
               <Mui.TableHead>
                 <Mui.TableRow>
                   <Mui.TableCell>#</Mui.TableCell>
-                  <Mui.TableCell>Creator ID</Mui.TableCell>
-                  <Mui.TableCell>Create Time</Mui.TableCell>
-                  <Mui.TableCell>Expire Time</Mui.TableCell>
+                  <Mui.TableCell>创建者 ID</Mui.TableCell>
+                  <Mui.TableCell>创建时间</Mui.TableCell>
+                  <Mui.TableCell>过期时间</Mui.TableCell>
                   <Mui.TableCell></Mui.TableCell>
                 </Mui.TableRow>
               </Mui.TableHead>

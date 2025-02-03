@@ -26,8 +26,11 @@ create table config (
     chatbotAvatar       blob not null,
     chatbotAvatarMime   string not null default 'image/png',
     enableRegister      integer not null default 1,
-    googleApiKey        string not null
+    googleApiKey        string not null,
+    AIDubEndpoint       string not null,
+    AIDubModel          string not null,
 );
+
 
 create table oralEnglishExamPaper (
     id                  integer primary key autoincrement,

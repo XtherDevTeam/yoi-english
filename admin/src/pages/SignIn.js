@@ -1,3 +1,4 @@
+
 import * as React from 'react'
 import * as Mui from '../Components'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -12,7 +13,7 @@ export default function NotMatch() {
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [alertOpen, setAlertOpen] = React.useState(false)
-  const [alertDetail, setAlertDetail] = React.useState({ type: "error", title: "Error", message: "" })
+  const [alertDetail, setAlertDetail] = React.useState({ type: "error", title: "错误", message: "" })
 
   theme.listenToThemeModeChange((v) => {
     setCurrentTheme(theme.theme())
@@ -47,14 +48,14 @@ export default function NotMatch() {
       <Mui.Card sx={{ maxWidth: 500, top: "50%", left: "50%", transform: "translate(-50%, -50%)", position: "absolute" }}>
         <Mui.CardContent>
           <Mui.Typography gutterBottom variant="h5" component="div">
-            {"Sign In"}
+            {"登录"}
           </Mui.Typography>
           <Mui.Typography variant="body2" color="text.secondary">
-            {"Manage your Yoi English server, create and manage your exams, and more."}
+            {"管理您的 Yoi 英语服务器，创建和管理您的考试等等。"}
           </Mui.Typography>
           <Mui.TextField
             fullWidth
-            label="E-mail"
+            label="电子邮件"
             variant="outlined"
             margin="normal"
             required
@@ -63,7 +64,7 @@ export default function NotMatch() {
           />
           <Mui.TextField
             fullWidth
-            label="Password"
+            label="密码"
             variant="outlined"
             margin="normal"
             required
@@ -79,30 +80,30 @@ export default function NotMatch() {
                 navigate("/")
               } else {
                 console.log(res)
-                setAlertDetail({ type: "error", title: "Error", message: res.message })
+                setAlertDetail({ type: "error", title: "错误", message: res.message })
                 setAlertOpen(true)
               }
             }).catch((err) => {
               console.log(err)
-              setAlertDetail({ type: "error", title: "Error", message: "" + err })
+              setAlertDetail({ type: "error", title: "错误", message: "" + err })
               setAlertOpen(true)
             })
-          }}>Go</Mui.Button>
+          }}>前往</Mui.Button>
           <Mui.Button size="small" onClick={() => {
             Api.signin("test_acc@mail.xiaokang00010.top", "evaluation").then((res) => {
               if (res.status) {
                 navigate("/")
               } else {
                 console.log(res)
-                setAlertDetail({ type: "error", title: "Error", message: res.message })
+                setAlertDetail({ type: "error", title: "错误", message: res.message })
                 setAlertOpen(true)
               }
             }).catch((err) => {
               console.log(err)
-              setAlertDetail({ type: "error", title: "Error", message: "" + err })
+              setAlertDetail({ type: "error", title: "错误", message: "" + err })
               setAlertOpen(true)
             })
-          }}>Sign in with test account</Mui.Button>
+          }}>使用测试账户登录</Mui.Button>
         </Mui.CardActions>
       </Mui.Card>
       <Mui.Container style={{ height: '100vh', overflowY: 'hidden' }}>

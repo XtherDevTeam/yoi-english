@@ -1,3 +1,4 @@
+import json
 import typing
 from dataProvider import DataProvider
 from examSessionManager import ExamSessionManager
@@ -89,10 +90,12 @@ def initialize():
     google_api_key = form.get('google_api_key')
     chatbot_persona = form.get('chatbot_persona')
     chatbot_name = form.get('chatbot_name')
-    if not username or not password or not email or not google_api_key:
-        return DataProvider.makeResult(False, 'Username, password, email and Google API key are required to initialize the server.')
+    AIDubEndpoint = form.get('AIDubEndpoint')
+    AIDubModel = form.get('AIDubModel')
+    if not username or not password or not email or not google_api_key or not chatbot_persona or not chatbot_name or not AIDubEndpoint or not AIDubModel:
+        return DataProvider.makeResult(False, 'Username, password, email, Google API key, chatbot persona, chatbot name, AIDubEndpoint, AIDubModel are required to initialize the server.')
     print(email, password, username)
-    return DataProvider.initialize(username, password, email, chatbot_name, chatbot_persona, google_api_key)
+    return DataProvider.initialize(username, password, email, chatbot_name, chatbot_persona, google_api_key, AIDubEndpoint, AIDubModel)
     
 
 @app.route('/v1/user/info', methods=['POST'])
@@ -230,6 +233,45 @@ def delete_reading_exam():
         return DataProvider.makeResult(False, 'Exam ID is required.')
     else:
         return DataProvider.deleteReadingExam(examId)
+
+
+@app.route('/v1/admin/config/get', methods=['POST'])
+def get_config():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    return json.loads(json.dumps(DataProvider.getConfig(), default=lambda x: None))
+
+
+@app.route('/v1/admin/config/update', methods=['POST'])
+def update_config():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    formerConfig = DataProvider.getConfig()['data']
+    
+    form: dict[str, typing.Any] = flask.request.json
+    chatbotPersona = form.get('chatbotPersona', formerConfig['chatbotPersona'])
+    chatbotName = form.get('chatbotName', formerConfig['chatbotName'])
+    AIDubEndpoint = form.get('AIDubEndpoint', formerConfig['AIDubEndpoint'])
+    AIDubModel = form.get('AIDubModel', formerConfig['AIDubModel'])
+    enableRegister = form.get('enableRegister', formerConfig['enableRegister'])
+    googleApiKey = form.get('googleApiKey', DataProvider.getGoogleApiKey())
+    
+    if not chatbotPersona or not chatbotName or not AIDubEndpoint or not AIDubModel or not googleApiKey:
+        return DataProvider.makeResult(False, 'Chatbot persona, chatbot name, AIDubEndpoint, AIDubModel and Google API key are required.')
+    else:
+        return DataProvider.updateConfig(chatbotName, chatbotPersona, AIDubEndpoint, AIDubModel, enableRegister, googleApiKey)
 
 
 @app.route('/v1/admin/ask_ai', methods=['POST'])
@@ -813,6 +855,18 @@ def delete_oral_exam_admin():
     else:
         return DataProvider.deleteOralExam(examId)
 
+@app.route('/v1/admin/examination/oral/create/get_preferred_topics')
+def get_preferred_topics_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    return DataProvider.makeResult(True, data.config.PREFERRED_ORAL_EXAM_TOPICS)
+
 @app.route('/v1/admin/examination/oral/create', methods=['POST'])
 def create_oral_exam_admin():
     if 'userAuth' not in flask.session:
@@ -830,7 +884,7 @@ def create_oral_exam_admin():
     mainTopic = form.get('mainTopic')
     
     if not title or not availableTime or not warmUpTopics or not mainTopic:
-        return DataProvider.makeResult(False, 'Title, available time, duration, warm up topics and main topic are required.')
+        return DataProvider.makeResult(False, 'Title, available time, warm up topics and main topic are required.')
     else:
         return DataProvider.createOralExam(
             userId=userId,
@@ -926,11 +980,7 @@ def get_oral_exam_list():
     if not perm_result['status']:
         return perm_result
     
-    filters = {
-        'availableTime': [int(time.time()), 0]
-    }
-    
-    return DataProvider.makeResult(True, DataProvider.getAllOralExams(filters))
+    return DataProvider.makeResult(True, DataProvider.getAllOralExams())
 
 
 @app.route('/v1/exam/session/reading/establish', methods=['POST'])
@@ -981,6 +1031,51 @@ def establish_writing_exam_session():
         return DataProvider.makeResult(True, {
            'sessionId': ExamSessionManager.createWritingExamSession(examId, userId)
         })
+    
+    
+@app.route('/v1/exam/session/oral/establish', methods=['POST'])
+def establish_oral_exam_session():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:
+        return DataProvider.makeResult(False, 'You have an ongoing session.')
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examId = form.get('examId')
+    if examId is None:
+        return DataProvider.makeResult(False, 'Exam ID is required.')
+    else:
+        return DataProvider.makeResult(True, {
+           'sessionId': ExamSessionManager.createOralExamSession(examId, userId)
+        })
+        
+        
+@app.route('/v1/exam/session/oral/get_details', methods=['POST'])
+def get_oral_exam_session_details():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    sessionId = form.get('sessionId')
+    if sessionId is None:
+        return DataProvider.makeResult(False, 'Session ID is required.')
+    else:
+        details = ExamSessionManager.getSessionDetails(sessionId)
+        if details is None:
+            return DataProvider.makeResult(False, 'Session not found.')
+        else:
+            return DataProvider.makeResult(True, details)
     
     
 @app.route('/v1/exam/session/reading/get_details', methods=['POST'])

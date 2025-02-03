@@ -1,3 +1,4 @@
+
 import React from "react";
 import Api from "../Api";
 import * as Mui from "../Components";
@@ -49,12 +50,12 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
     "administrator": "unset"
   });
   const [filterPermList, setFilterPermList] = React.useState({
-    "new_exam_paper_creat": "New exam paper creation",
-    "artifact_creat": "Artifact creation",
-    "all_exam_result_view": "Able to view all exam results",
-    "self_exam_result_view": "Able to View exam result of oneself",
-    "artifact_rw": "Able to read and write artifact",
-    "administrator": "Administrator"
+    "new_exam_paper_creat": "新建试卷",
+    "artifact_creat": "创建工件",
+    "all_exam_result_view": "查看所有考试结果",
+    "self_exam_result_view": "查看个人考试结果",
+    "artifact_rw": "读取和写入工件",
+    "administrator": "管理员"
   });
 
   const buildPermissions = () => {
@@ -71,18 +72,18 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
 
   return <>
     <Mui.Dialog open={open} onClose={onClose}>
-      <Mui.DialogTitle>Create User</Mui.DialogTitle>
+      <Mui.DialogTitle>创建用户</Mui.DialogTitle>
       <Mui.DialogContent>
         <Mui.Grid container spacing={1} style={{ padding: 10 }}>
           <Mui.Grid item xs={12}>
             <Mui.Typography variant="body1">
-              You can create users for students with the necessary permissions.
-              If you are to create an administrator account, please keep in mind that it will have the same permissions as yours.
+              您可以为学生创建具有必要权限的用户。
+              如果您要创建管理员帐户，请记住它将与您具有相同的权限。
             </Mui.Typography>
           </Mui.Grid>
           <Mui.Grid item xs={12}>
             <Mui.TextField
-              label="Username"
+              label="用户名"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               fullWidth
@@ -90,7 +91,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
           </Mui.Grid>
           <Mui.Grid item xs={12}>
             <Mui.TextField
-              label="Email"
+              label="邮箱"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               fullWidth
@@ -98,7 +99,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
           </Mui.Grid>
           <Mui.Grid item xs={12}>
             <Mui.TextField
-              label="Password"
+              label="密码"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -107,7 +108,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
           </Mui.Grid>
           <Mui.Grid item xs={6}>
             <Mui.TextField
-              label="Oral examination quota"
+              label="口试配额"
               type="number"
               value={oralExamQuota}
               onChange={(e) => setOralExamQuota(e.target.value)}
@@ -116,7 +117,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
           </Mui.Grid>
           <Mui.Grid item xs={6}>
             <Mui.TextField
-              label="Oral examination view quota"
+              label="口试查看配额"
               type="number"
               value={oralExamViewQuota}
               onChange={(e) => setOralExamViewQuota(e.target.value)}
@@ -124,7 +125,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
             />
           </Mui.Grid>
           <Mui.Grid item xs={12}>
-            <Mui.Typography variant="h6">Permissions</Mui.Typography>
+            <Mui.Typography variant="h6">权限</Mui.Typography>
 
           </Mui.Grid>
           <Mui.Grid item xs={12}>
@@ -135,7 +136,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
         </Mui.Grid>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={onClose}>Cancel</Mui.Button>
+        <Mui.Button onClick={onClose}>取消</Mui.Button>
         <Mui.Button onClick={() => {
           Api.createUser(
             username,
@@ -153,7 +154,7 @@ const CreateUserDialog = ({ open, onClose, onCreate, onErr }) => {
               onErr(error.toString());
             });
           onClose();
-        }}>Create</Mui.Button>
+        }}>创建</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   </>
@@ -174,14 +175,14 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
       setUsers(users.filter((u) => u.id !== user.id));
       setAlertDetail({
         type: "success",
-        title: "Success",
-        message: "User deleted successfully"
+        title: "成功",
+        message: "用户已成功删除"
       });
       setAlertOpen(true);
     }).catch((error) => {
       setAlertDetail({
         type: "error",
-        title: "Error",
+        title: "错误",
         message: error.response.data.message
       });
       setAlertOpen(true);
@@ -204,7 +205,7 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
         {user.email}
       </Mui.TableCell>
       <Mui.TableCell>
-        {user.capabilities.administrator ? "Yes" : "No"}
+        {user.capabilities.administrator ? "是" : "否"}
       </Mui.TableCell>
       <Mui.TableCell>
         <Mui.IconButton aria-label="toggle details" color="secondary" onClick={handleToggleDetails}>
@@ -222,7 +223,7 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
             <Mui.Grid container spacing={1}>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'User ID: '}
+                  {'用户ID： '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {user.id}
@@ -230,7 +231,7 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Email: '}
+                  {'邮箱： '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {user.email}
@@ -238,7 +239,7 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Oral examination quota: '}
+                  {'口试配额： '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {user.oralExamQuota}
@@ -246,7 +247,7 @@ const UserTableRow = ({ user, setUsers, users, filterPermList }) => {
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={12}>
                 <Mui.Typography variant='subtitle2' component={'span'}>
-                  {'Permission: '}
+                  {'权限： '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
                   {Object.keys(filterPermList).map((perm) => (<PermissionChip key={perm} perm={perm} permName={filterPermList[perm]} permValue={user.capabilities[perm]} />))}
@@ -266,12 +267,12 @@ const UserManagement = () => {
   const [filterUsername, setFilterUsername] = React.useState("");
   const [filterEmail, setFilterEmail] = React.useState("");
   const [filterPermList, setFilterPermList] = React.useState({
-    "new_exam_paper_creat": "New exam paper creation",
-    "artifact_creat": "Artifact creation",
-    "all_exam_result_view": "Able to view all exam results",
-    "self_exam_result_view": "Able to View exam result of oneself",
-    "artifact_rw": "Able to read and write artifact",
-    "administrator": "Administrator"
+    "new_exam_paper_creat": "新建试卷",
+    "artifact_creat": "创建工件",
+    "all_exam_result_view": "查看所有考试结果",
+    "self_exam_result_view": "查看个人考试结果",
+    "artifact_rw": "读取和写入工件",
+    "administrator": "管理员"
   });
   const [filterPerms, setFilterPerms] = React.useState({
     "new_exam_paper_creat": "unset",
@@ -320,7 +321,7 @@ const UserManagement = () => {
       } else {
         setAlertDetail({
           type: "error",
-          title: "Error",
+          title: "错误",
           message: response.message,
         });
         setAlertOpen(true);
@@ -329,8 +330,8 @@ const UserManagement = () => {
     }).catch((error) => {
       setAlertDetail({
         type: "error",
-        title: "Error",
-        message: `Unable to fetch users: Network error`
+        title: "错误",
+        message: `无法获取用户：网络错误`
       });
       setAlertOpen(true);
     });
@@ -358,7 +359,7 @@ const UserManagement = () => {
       }} onErr={(message) => {
         setAlertDetail({
           type: "error",
-          title: "Error",
+          title: "错误",
           message: message
         });
         setAlertOpen(true);
@@ -370,7 +371,7 @@ const UserManagement = () => {
               <Mui.Grid container spacing={1}>
                 <Mui.Grid item xs={6}>
                   <Mui.TextField
-                    label="Username"
+                    label="用户名"
                     variant="outlined"
                     value={filterUsername}
                     fullWidth
@@ -379,7 +380,7 @@ const UserManagement = () => {
                 </Mui.Grid>
                 <Mui.Grid item xs={6}>
                   <Mui.TextField
-                    label="Email"
+                    label="邮箱"
                     variant="outlined"
                     value={filterEmail}
                     fullWidth
@@ -391,7 +392,7 @@ const UserManagement = () => {
             <Mui.Grid item xs={2}>
               <Mui.Box sx={{ display: "flex", height: "100%", justifyContent: "center", alignItems: "center" }}>
                 <Mui.Button variant="contained" color="primary" onClick={() => {
-                }}>Search</Mui.Button>
+                }}>搜索</Mui.Button>
               </Mui.Box>
             </Mui.Grid>
             <Mui.Grid item xs={12}>
@@ -407,9 +408,9 @@ const UserManagement = () => {
             <Mui.TableHead>
               <Mui.TableRow>
                 <Mui.TableCell>#</Mui.TableCell>
-                <Mui.TableCell>Username</Mui.TableCell>
-                <Mui.TableCell>Email</Mui.TableCell>
-                <Mui.TableCell>Administrator</Mui.TableCell>
+                <Mui.TableCell>用户名</Mui.TableCell>
+                <Mui.TableCell>邮箱</Mui.TableCell>
+                <Mui.TableCell>管理员</Mui.TableCell>
                 <Mui.TableCell></Mui.TableCell>
               </Mui.TableRow>
             </Mui.TableHead>
