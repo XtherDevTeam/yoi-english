@@ -163,6 +163,68 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
   </Mui.Dialog>}</>
 }
 
+function OralExaminationPreviewDialog({ examId, onClose }) {
+  const [examinationResult, setExaminationResult] = React.useState(null)
+
+  React.useEffect(() => {
+    if (examId) {
+      Api.getOralExamination(examId).then(res => {
+        setExaminationResult(res.data);
+      });
+    } else {
+      setExaminationResult(null);
+    }
+  }, [examId]);
+
+  return <>{examinationResult && <Mui.Dialog open={examinationResult !== null} onClose={() => onClose()}>
+    <Mui.DialogTitle>考试结果</Mui.DialogTitle>
+    <Mui.DialogContent>
+      <Mui.Grid container spacing={1}>
+        <Mui.Grid item xs={12}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            考试：
+          </Mui.Typography>
+          <Mui.Typography variant="body2">
+            {examinationResult.examPaper.title}
+          </Mui.Typography>
+        </Mui.Grid>
+        <Mui.Grid item xs={12} sm={6}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            完成时间：
+          </Mui.Typography>
+          <Mui.Typography variant="body2">
+            {dayjs.unix(examinationResult.completeTime).format("YYYY-MM-DD HH:mm:ss")}
+          </Mui.Typography>
+        </Mui.Grid>
+        <Mui.Grid item xs={12} sm={6}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            得分：
+          </Mui.Typography>
+          <Mui.Typography variant="body2">
+            {examinationResult.score}
+          </Mui.Typography>
+        </Mui.Grid>
+        <Mui.Grid item xs={12}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            反馈：
+          </Mui.Typography>
+          <Markdown>
+            {examinationResult.overallFeedback}
+          </Markdown>
+        </Mui.Grid>
+        <Mui.Grid item xs={12}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            Part I 部分学生答案
+          </Mui.Typography>
+        </Mui.Grid>
+      </Mui.Grid>
+    </Mui.DialogContent>
+    <Mui.DialogActions>
+      <Mui.Button onClick={() => onClose()}>关闭</Mui.Button>
+    </Mui.DialogActions>
+  </Mui.Dialog>}</>
+}
+
 function ExaminationResultRow({ examinationResult, examType }) {
   const [readingExamPreviewDialogState, setReadingExamPreviewDialogState] = React.useState(null);
   const [writingExamPreviewDialogState, setWritingExamPreviewDialogState] = React.useState(null);

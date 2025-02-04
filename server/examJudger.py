@@ -120,9 +120,9 @@ class _Judger:
                 'score': assess['ler_score']
             })
             
-        logger.Logger.log(f'Evaluating Part II Student Statement: Artifact ID {llmStateInfo["PartII_Student_Statement"]}')
+        logger.Logger.log(f'Evaluating Part II Student Statement: Artifact ID {llmStateInfo["PartII_Student_Statement_Answer"]}')
         PartII_Student_Statement_Pronunciation_Assessment = {}
-        wav = dataProvider.DataProvider.getArtifactContentById(llmStateInfo['PartII_Student_Statement'])
+        wav = dataProvider.DataProvider.getArtifactContentById(llmStateInfo['PartII_Student_Statement_Answer'])
         assess = self.Assessment.assess_pronunciation(wav)
         PartII_Student_Statement_Pronunciation_Assessment = {
             'reference_text': assess['reference_text'],

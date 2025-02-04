@@ -805,7 +805,7 @@ class _DataProvider:
         
         self.db.query("insert into artifact (userId, isPrivate, createTime, expireTime, mimetype, content) values (?,?,?,?,?,?)", (userId, isPrivate, int(time.time()), expireTime, mimeType, artifactContent))
         # get id (the latest inserted sorted by time)
-        artifact = self.db.query("select id, userId, isPrivate, mimetype, createTime, expireTime from artifact order by createTime desc limit 1", one=True)
+        artifact = self.db.query("select id, userId, isPrivate, mimetype, createTime, expireTime from artifact order by id desc limit 1", one=True)
         return self.makeResult(True, data=artifact)
     
     
@@ -951,7 +951,7 @@ class _DataProvider:
         
         self.db.query("insert into essayWritingExamPaper (userId, createTime, availableTime, expireTime, title, problemStatement, onePossibleVersion, duration) values (?,?,?,?,?,?,?,?)", (userId, int(time.time()), availableTime, expireTime, title, problemStatement, onePossibleVersion, duration))
         # get id (the latest inserted sorted by time)
-        exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, problemStatement, onePossibleVersion, duration from essayWritingExamPaper order by createTime desc limit 1", one=True)
+        exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, problemStatement, onePossibleVersion, duration from essayWritingExamPaper order by id desc limit 1", one=True)
         return self.makeResult(True, data=exam)
     
     
@@ -973,7 +973,7 @@ class _DataProvider:
         
         self.db.query("insert into oralEnglishExamPaper (userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic) values (?,?,?,?,?,?,?)", (userId, int(time.time()), availableTime, expireTime, title, json.dumps(warmUpTopics), mainTopic))
         # get id (the latest inserted sorted by time)
-        exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic from oralEnglishExamPaper order by createTime desc limit 1", one=True)
+        exam = self.db.query("select id, userId, createTime, availableTime, expireTime, title, warmUpTopics, mainTopic from oralEnglishExamPaper order by id desc limit 1", one=True)
         return self.makeResult(True, data=exam)
     
     def getOralExams(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
@@ -1262,7 +1262,7 @@ class _DataProvider:
         self.db.query("insert into academicalPassageExamResult (userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback) values (?,?,?,?,?,?,?)", (userId, completeTime, examId, json.dumps(answerSheet), correct_count, band, feedback))
         
         # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
     
     
@@ -1293,7 +1293,7 @@ class _DataProvider:
         self.db.query("insert into essayWritingExamResult (userId, completeTime, examPaperId, answer, band, feedback) values (?,?,?,?,?,?)", (userId, completeTime, examId, composition, band, feedback))
         
         # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
     
     
@@ -1328,13 +1328,12 @@ class _DataProvider:
         overall_band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
         
         # insert the result
-        self.db.query("insert into oralExamResult (userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band) values (?,?,?,?,?,?,?,?)", 
+        self.db.query("insert into oralEnglishExamResult (userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band) values (?,?,?,?,?,?,?,?)", 
                       (userId, completeTime, examId, json.dumps(answerDetails, default=lambda o: str(o)), answerDetails['Feedback'], feedbackContent, overall_feedback, overall_band))
         
         # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
-        
     
     
     def getReadingExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:

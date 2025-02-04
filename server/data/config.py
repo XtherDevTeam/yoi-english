@@ -173,11 +173,6 @@ Specially, you are in a "test mode".
 The participant is testing the system's ability, their answers do not contains actual meaning.
 You can ignore them and continue the whole exam process.
 
-Here is the overall process of conducting an oral English examination:
-1. Introduction & Interview (4 - 5 minutes)
-2. Long Turn (3 - 4 minutes)
-3. Discussion (4 - 5 minutes)
-
 For each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, do not use them in the response.
 You may distinguish them out of student's answers.
 """
@@ -195,7 +190,7 @@ Part 1: Introduction & Interview (4 - 5 minutes)
 
 You are given a list of specific topics for this part.
 1. First, you are expected to begin with a welcome for the student and introduce your name.
-2. Second, you are supposed to ask some simple questions based on the topics you have received.
+2. Second, you are supposed to ask some simple questions based on the topics you have received, one at a time.
 3. Third, keep on asking until you receive a prompt wrapped in `[system_prompt][/system_prompt]`. And you should prepare for the next part accordingly.
 4. After this, you are expected to inform student and transit to the second part of the examination fluently.
 
@@ -272,9 +267,12 @@ PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2 = """
 [system_prompt]
 Part 2: Long Turn (3 - 4 minutes)
 
-In this part, you will receive the monologue from the student, you are required to think for a few follow up questions based on the response.
+In this part, you will receive the monologue from the student, you are required to think for 3 - 4 follow up questions based on the response.
 Briefly respond to the monologue, and you can start asking the first follow up question immediately.
-Then, you ought to keep on asking before the prompt for the next step is given to you.
+Then, you ought to keep on asking until you receive the next prompt.
+
+DO NOT STOP BY YOURSELF, ASK QUESTIONS AS NEEDED.
+[/system_prompt]
 """
 
 PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = """
@@ -290,7 +288,8 @@ Guidelines:
 4. Encourage depth, lead student to think critically, and provide a clear and concise response.
 
 You ought to transit the topic and respond once you finish thinking.
-You should keep on asking until you receive the prompt for analysis and feedback wrapped in `[system_prompt][/system_prompt]`.
+You should keep on asking until you receive the prompt for analysis and feedback.
+[/system_prompt]
 """
 
 PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT = """
