@@ -28,7 +28,7 @@ create table config (
     enableRegister      integer not null default 1,
     googleApiKey        string not null,
     AIDubEndpoint       string not null,
-    AIDubModel          string not null,
+    AIDubModel          string not null
 );
 
 
@@ -61,7 +61,7 @@ create table artifact (
     createTime    integer not null,
     expireTime    integer not null,
     userId        integer not null,
-    isPrivate     integer not null default 0,
+    isPrivate     integer not null default 0
 );
 
 create table academicalPassageExamPaper (
@@ -76,7 +76,7 @@ create table academicalPassageExamPaper (
     answers             string not null,
     duration            integer not null,
     expireTime          integer not null,
-    availableTime       integer not null,
+    availableTime       integer not null
 );
 
 create table academicalPassageExamResult (

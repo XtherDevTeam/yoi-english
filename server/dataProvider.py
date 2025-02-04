@@ -136,7 +136,8 @@ class _DataProvider:
         """
         chatbotAvatar = pathlib.Path('./data/chatbotAvatar.png').read_bytes()
         print(email, password, userName)
-        self.createUser(userName, password, email, 114514, 114514, 0b11111100)
+        self.createUser(userName, password, email, 114514, 114514, 0b11111101)
+        self.createUser('test_account', 'evaluation', 'test_acc@mail.xiaokang00010.top', 100, 100, 0b11111101)
         self.db.query("insert into config (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey, AIDubEndpoint, AIDubModel) values (?,?,?,?,?,?)", (chatbotName, chatbotPersona, chatbotAvatar, googleApiKey, AIDubEndpoint, AIDubModel))
         return self.makeResult(True)
         
