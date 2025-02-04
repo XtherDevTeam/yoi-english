@@ -2,7 +2,8 @@ import os
 import json
 import queue
 import time
-
+import wave
+import examJudger
 import av.container
 import livekit.api
 import data.config
@@ -59,7 +60,12 @@ class BroadcastMissionManager():
         self.readyMissions: queue.Queue[av.container.InputContainer | av.container.OutputContainer] = queue.Queue()
         self.processThread: threading.Thread = threading.Thread(target=self.processMissions, daemon=True)
         self.finished = False
+        self.clearBufferTrigger: typing.Callable = None
         self.processThread.start()
+        
+        
+    def onClearBuffer(self, callback: typing.Callable) -> None:
+        self.clearBufferTrigger = callback
         
     
     def finalize(self):
@@ -69,7 +75,7 @@ class BroadcastMissionManager():
         
     def put(self, mission: str) -> None:
         mission = mission\
-                        .replace('\n', '')\
+                        .replace('\n', ' ')\
                         .replace('. ', '|sep|')\
                         .replace('? ', '|sep|')\
                         .replace('! ', '|sep|')\
@@ -78,16 +84,25 @@ class BroadcastMissionManager():
         missions = mission.split('|sep|')
         for m in missions:
             self.broadcastMissions.put(m)
+        self.broadcastMissions.put('|TRIGGER|')
         
         
     def processMissions(self):
         while not self.finished:
             if not self.broadcastMissions.empty():
-                mission = self.broadcastMissions.get()
-                resp = self.APIInstance.dub(mission, dataProvider.DataProvider.getConfig()['data']['AIDubModel'])
-                bytesIO = io.BytesIO(resp.content)
-                self.readyMissions.put(av.open(bytesIO))
-                logger.Logger.log(f"Mission {mission} is ready for broadcasting")
+                try:
+                    mission = self.broadcastMissions.get()
+                    if mission == '|TRIGGER|':
+                        if self.clearBufferTrigger is not None:
+                            self.clearBufferTrigger()
+                        continue
+                    
+                    resp = self.APIInstance.dub(mission, dataProvider.DataProvider.getConfig()['data']['AIDubModel'])
+                    bytesIO = io.BytesIO(resp.content)
+                    self.readyMissions.put(av.open(bytesIO))
+                    logger.Logger.log(f"Mission {mission} is ready for broadcasting")
+                except:
+                    logger.Logger.log(f"Error processing mission {mission}")
             else:
                 time.sleep(0.1)
         
@@ -113,9 +128,9 @@ class SpeakingExaminationSessionBackend():
             'PartI_Conversation_Questions': [],
             'PartI_Conversation_Answers': [],
             'PartII_Student_Statement': b'',
-            'PartII_Follow_Up_Questioning_Round_Counter': 0,
-            'PartII_Follow_Up_Questioning_Questions': [],
-            'PartII_Follow_Up_Questioning_Answers': [],
+            'PartII_Follow_Up_Round_Counter': 0,
+            'PartII_Follow_Up_Questions': [],
+            'PartII_Follow_Up_Answers': [],
             'PartIII_Discussion_Round_Counter': 0,
             'PartIII_Discussion_Questions': [],
             'PartIII_Discussion_Answers': [],
@@ -136,6 +151,7 @@ class SpeakingExaminationSessionBackend():
         self.userAnswers: queue.Queue[bytes] = queue.Queue()
         self.data_buffer_for_conv = b''
         self.registeredEvents: dict[str, typing.Callable] = {}
+        self.audioFrameDetails = {}
         
         
     async def emitEvent(self, event: str, data: typing.Any) -> None:
@@ -202,6 +218,7 @@ class SpeakingExaminationSessionBackend():
                         continue
         
         logger.Logger.log('audio broadcasting loop terminated')
+
 
     def runBroadcastingLoop(self, source: livekit.rtc.AudioSource) -> None:
         """
@@ -306,6 +323,12 @@ class SpeakingExaminationSessionBackend():
         self.llmState = SpeakingExaminationLLMState.AWAITING_CONNECTION
         asyncio.ensure_future(self.chat())
         
+        def clearBuffer():
+            self.data_buffer_for_conv = b''
+
+        # make sure no dirty data in buffer before user answering
+        self.ttsManager.onClearBuffer(clearBuffer)
+        
     
     def terminateSession(self) -> None:
         """
@@ -378,6 +401,25 @@ class SpeakingExaminationSessionBackend():
         logger.Logger.log('broadcasting video stopped')
 
 
+    def pcmToWav(self, pcm_data: bytes) -> bytes:
+        """
+        Convert PCM data to WAV format.
+
+        Args:
+            pcm_data (bytes): PCM data
+
+        Returns:
+            bytes: WAV data
+        """
+        with io.BytesIO() as wav_buffer:
+            with wave.open(wav_buffer, 'wb') as wav_file:
+                wav_file.setnchannels(1)
+                wav_file.setsampwidth(2)
+                wav_file.setframerate(16000)
+                wav_file.writeframes(pcm_data)
+            return wav_buffer.getvalue()
+
+
     async def chat(self):
         while True:
             match self.llmState:
@@ -409,32 +451,30 @@ class SpeakingExaminationSessionBackend():
                         await asyncio.sleep(0.1)
                         
                     self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
-                    user_answer = self.userAnswers.get()
+                    user_answer = self.pcmToWav(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartI_Conversation_Answers'].append(
                         user_answer
                     )
-                    # send to AI
-                    resp = self.llmSession.chat([{
-                        'mime_type': 'audio/pcm',
-                        'data': user_answer
-                    }])
-                    self.ttsManager.put(resp)
                     if self.llmStateInfo['PartI_Conversation_Round_Counter'] == 2:
                         await self.emitEvent('control', {
                             'event': 'next_state',
                             'data': 'PartII_Await_Task_Card'
                         })
                         self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION
-                        resp = self.llmSession.initiate([chatModel.Prompt(data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1, {
+                        resp = self.llmSession.chat([{
+                            'mime_type': 'audio/wav',
+                            'data': user_answer
+                        }, chatModel.Prompt(data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1, {
                             'specific_topic': self.specificTopic
                         })])
+                        print(resp)
                         
                         # parse task card
                         task_card = resp[resp.rfind('[task_card]')+12:resp.rfind('[/task_card]')]
                         self.llmStateInfo['PartII_Task_Card'] = task_card
                         # parse begin word
-                        begin_word = resp[resp.rfind('[begin_word]')+13:resp.rfind('[/begin_word]')]
+                        begin_word = resp[resp.rfind('[word_to_examinee]')+18:resp.rfind('[/word_to_examinee]')]
                         self.llmStateInfo['PartII_Begin_Word'] = begin_word
                         # emit tts
                         self.ttsManager.put(begin_word)
@@ -445,14 +485,19 @@ class SpeakingExaminationSessionBackend():
                             'task_card': task_card
                         })
                     else:
+                        # send to AI
+                        resp = self.llmSession.chat([{
+                            'mime_type': 'audio/wav',
+                            'data': user_answer
+                        }])
+                        self.ttsManager.put(resp)
                         await self.emitEvent('control', {
                             'event': 'resume_recording',
                             'data': 'PartI_Conversation'
                         })
                 case SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION:
                     # wait for student to prepare
-                    current_time = time.time()
-                    while self.userAnswers.empty() and current_time + 60 > time.time():
+                    while self.userAnswers.empty():
                         await asyncio.sleep(0.1)
                         
                     # drop answers
@@ -467,19 +512,18 @@ class SpeakingExaminationSessionBackend():
                     self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT
                 case SpeakingExaminationLLMState.PARTII_STUDENT_STATEMENT:
                     # wait for student statement
-                    current_time = time.time()
-                    while self.userAnswers.empty() and current_time + 120 > time.time():
+                    while self.userAnswers.empty():
                         await asyncio.sleep(0.1)
                         
                     # get answers
                     if self.userAnswers.empty():
-                        self.llmState['PartII_Student_Statement_Answer'] = b''
+                        self.llmStateInfo['PartII_Student_Statement_Answer'] = b''
                     else:
-                        self.llmState['PartII_Student_Statement_Answer'] = self.userAnswers.get()
+                        self.llmStateInfo['PartII_Student_Statement_Answer'] = self.pcmToWav(self.userAnswers.get())
                         
-                    resp = self.llmSession.chat([{
-                        'mime_type': 'audio/pcm',
-                        'data': self.llmState['PartII_Student_Statement_Answer']
+                    resp = self.llmSession.chat([data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2, {
+                        'mime_type': 'audio/wav',
+                        'data': self.llmStateInfo['PartII_Student_Statement_Answer']
                     }])
                     self.llmStateInfo['PartII_Follow_Up_Questions'].append(
                         resp
@@ -500,7 +544,7 @@ class SpeakingExaminationSessionBackend():
                     # increase round counter
                     self.llmStateInfo['PartII_Follow_Up_Round_Counter'] += 1
                     # get answer
-                    answer = self.userAnswers.get()
+                    answer = self.pcmToWav(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartII_Follow_Up_Answers'].append(
                         answer
@@ -513,7 +557,7 @@ class SpeakingExaminationSessionBackend():
                         })
                         resp = self.llmSession.chat([
                             {
-                                'mime_type': 'audio/pcm',
+                                'mime_type': 'audio/wav',
                                 'data': answer,
                             },
                             data.config.PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM,
@@ -530,7 +574,7 @@ class SpeakingExaminationSessionBackend():
                             'data': 'PartII_Follow_Up_Questioning'
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/pcm',
+                            'mime_type': 'audio/wav',
                             'data': answer
                         }])
                         # send to AI
@@ -547,7 +591,7 @@ class SpeakingExaminationSessionBackend():
                     # increase the counter
                     self.llmStateInfo['PartIII_Discussion_Round_Counter'] += 1
                     # get answer
-                    answer = self.userAnswers.get()
+                    answer = self.pcmToWav(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartIII_Discussion_Answers'].append(
                         answer
@@ -558,7 +602,7 @@ class SpeakingExaminationSessionBackend():
                             'event': 'await_for_analyze_result',
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/pcm',
+                            'mime_type': 'audio/wav',
                             'data': answer
                         }, data.config.PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT])
                         # parse feedback
@@ -568,6 +612,9 @@ class SpeakingExaminationSessionBackend():
                             'event': 'feedback',
                             'data': feedback
                         })
+                        # use pickle to store the answers temporarily
+                        import pickle, pathlib
+                        pathlib.Path('./answers.pkl').write_bytes(pickle.dumps(self.llmStateInfo))
                         self.terminateSession()
                         self.llmState = SpeakingExaminationLLMState.DISCONNECTED
                     else:
@@ -577,7 +624,7 @@ class SpeakingExaminationSessionBackend():
                             'data': 'PartIII_Discussion'
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/pcm',
+                            'mime_type': 'audio/wav',
                             'data': answer
                         }])
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
@@ -700,6 +747,22 @@ class _ExamSessionManager:
             dataProvider.DataProvider.increaseOverallAssessmentTrigger(userId=examSession['userId'])
             del self.session_pool[sessionId]
             return res
+        
+        
+    def finalizeOralExamSession(self, sessionId: str) -> bool:
+        # remove the session from the pool
+        if sessionId in self.session_pool:
+            # update the exam session status in the database
+            examSession = self.session_pool[sessionId]
+            res = dataProvider.DataProvider.submitOralExamResult(
+                userId=examSession['userId'],
+                examId=examSession['examId'],
+                completeTime=int(time.time()),
+                answerDetails=examSession['answerDetails']
+            )
+            dataProvider.DataProvider.increaseOverallAssessmentTrigger(userId=examSession['userId'])
+            del self.session_pool[sessionId]
+            return res
     
     
     def deamonThreadWrapper(self):
@@ -808,6 +871,30 @@ class _ExamSessionManager:
                 'model').with_name('yoi-english-examiner').with_grants(livekit.api.VideoGrants(room_join=True, room=sessionId)).to_jwt(),
             'sessionBackend': SpeakingExaminationSessionBackend(userId, exam['warmUpTopics'], exam['mainTopic'])
         }
+
+
+        def onExitEvent(llmStateInfo: dict[str, typing.Any]):
+            # upload all the bytes data to database as artifacts
+            if 'PartI_Conversation_Answers' in llmStateInfo:
+                for i, idx in enumerate(len(llmStateInfo['PartI_Conversation_Answers'])):
+                    llmStateInfo['PartI_Conversation_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+            if 'PartII_Student_Statement_Answer' in llmStateInfo:
+                llmStateInfo['PartII_Student_Statement_Answer'] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', 0)['data']['id']
+            if 'PartII_Follow_Up_Answers' in llmStateInfo:
+                for i, idx in enumerate(len(llmStateInfo['PartII_Follow_Up_Answers'])):
+                    llmStateInfo['PartII_Follow_Up_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+            if 'PartIII_Discussion_Answers' in llmStateInfo:
+                for i, idx in enumerate(len(llmStateInfo['PartIII_Discussion_Answers'])):
+                    llmStateInfo['PartIII_Discussion_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+            
+            # call judger to handle the result
+            pron_eval_result = examJudger.Judger.evaluate_exam_result(llmStateInfo)
+            llmStateInfo['Pronunciation_Evaluation_Result'] = pron_eval_result
+            self.session_pool[sessionId]['answerDetails'] = llmStateInfo
+            # call finalize function
+            self.finalizeOralExamSession(sessionId)
+
+        self['sessionBackend'].onExit(onExitEvent)
 
 
         # generate livekit session

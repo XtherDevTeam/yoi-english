@@ -1,3 +1,4 @@
+import data.config
 from datetime import timedelta
 import json
 import sqlite3
@@ -1264,6 +1265,7 @@ class _DataProvider:
         res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
     
+    
     def submitWritingExamResult(self, userId: int, completeTime: int, examId: int, composition: str) -> dict[str | typing.Any]:
         """
         Submit the writing exam result.
@@ -1293,6 +1295,46 @@ class _DataProvider:
         # fetch the result back from the database
         res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
+    
+    
+    def submitOralExamResult(self, userId: int, completeTime: int, examId: int, answerDetails: dict[str | typing.Any]) -> dict[str | typing.Any]:
+        """
+        Submit the oral exam result.
+
+        Args:
+            userId (int): The ID of the user.
+            completeTime (int): The time when the exam is completed.
+            examId (int): The ID of the exam.
+            answerDetails (dict[str | typing.Any]): The answer details of the exam, in JSON format.
+
+        Returns:
+            dict[str | typing.Any]: The result object.
+        """
+        
+        prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT, {
+            'student_result': json.dumps(answerDetails['Pronunciation_Evaluation_Result'], indent=4, ensure_ascii=False, default=lambda o: str(o)),
+        })
+        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.8)
+        resp = model.initiate([prompt])
+        feedbackContent = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
+        
+        
+        prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAMINATION_OVERALL_FEEDBACK, {
+            'oral_exam_result': answerDetails['Feedback'],
+            'pronunciation_assessment_result': feedbackContent,
+        })
+        resp = model.initiate([prompt])
+        overall_feedback = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
+        overall_band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
+        
+        # insert the result
+        self.db.query("insert into oralExamResult (userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band) values (?,?,?,?,?,?,?,?)", 
+                      (userId, completeTime, examId, json.dumps(answerDetails, default=lambda o: str(o)), answerDetails['Feedback'], feedbackContent, overall_feedback, overall_band))
+        
+        # fetch the result back from the database
+        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralExamResult where userId = ? and examPaperId = ? order by completeTime desc limit 1", (userId, examId), one=True)
+        return self.makeResult(True, data=res)
+        
     
     
     def getReadingExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:

@@ -341,7 +341,7 @@ export default function Initialize() {
         }}/>}
 
         <div style={{ height: 20 }}></div>
-        <Mui.LinearProgress style={{ padding: 0, margin: 0, width: "100%" }} variant="determinate" value={(currentStage / 5) * 100} />
+        <Mui.LinearProgress style={{ padding: 0, margin: 0, width: "100%" }} variant="determinate" value={(currentStage / 6) * 100} />
         <div style={{ height: 20 }}></div>
       </Mui.Card>
       <Mui.Container style={{ height: '100vh', overflowY: 'hidden' }}>

@@ -51,7 +51,6 @@ create table oralEnglishExamResult (
     contentFeedback           string not null,
     pronounciationFeedback    string not null,
     answerDetails             string not null default '[]',
-    chats                     string not null default '[]',
     userId                    integer not null
 );
 
