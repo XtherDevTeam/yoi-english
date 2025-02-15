@@ -976,6 +976,15 @@
         "documentation": {}
     },
     {
+        "label": "PROMPT_FOR_ANSWER_SHEET_GENERATION",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ANSWER_SHEET_GENERATION = \"\"\"\nYou are given an examination paper, in markdown format.\nYou job is to convert the examination paper into the answer sheet in json format.\nFor reference, this is the original examination paper:\n```markdown\n{{examPaper}}\nHere is the guideline of converting examination paper to answer sheet:\n1. Identify each questions and their question numbers in the examination paper.\n2. For each question, classify them into two categories: `choice` and `text`.\n   For `choice` questions, extract their available option numbers like `A`, `B`, `C` from the examination paper.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
         "label": "EXAM_CHATBOT_PROMPT",
         "kind": 5,
         "importPath": "server.data.prompts",
@@ -1197,6 +1206,15 @@
         "importPath": "server.app",
         "description": "server.app",
         "peekOfCode": "def ask_ai():\n    form: dict[str, typing.Any] = flask.request.json\n    model = form.get('model', 'gemini-1.5-flash-002')\n    temperature = form.get('temperature', 0.9)\n    system_prompt = form.get('system_prompt', None)\n    user_prompt = form.get('user_prompt', None)\n    token = form.get('token', DataProvider.getGoogleApiKey())\n    print(form)\n    if system_prompt is None or user_prompt is None or not token:\n        return DataProvider.makeResult(ok=False, data='System prompt, user prompt and Google API key is required.')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "generate_answer_sheet",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def generate_answer_sheet():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'new_exam_paper_creat')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examPaper = form.get('examPaper')\n    if not examPaper:",
         "detail": "server.app",
         "documentation": {}
     },
