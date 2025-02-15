@@ -8,11 +8,11 @@ import {
 import { Dirs } from 'react-native-file-access';
 
 import { CacheManager } from '@georstat/react-native-image-cache';
-// import { registerGlobals } from '@livekit/react-native';
+import { registerGlobals } from '@livekit/react-native';
 
 import App from './App';
 
-// registerGlobals();
+registerGlobals();
 
 CacheManager.config = {
   baseDir: `${Dirs.CacheDir}/images_cache/`,

@@ -31,7 +31,9 @@
             "usesCleartextTraffic": true
           }
         }
-      ]
+      ],
+      "@livekit/react-native-expo-plugin",
+      "@config-plugins/react-native-webrtc"
     ],
     "ios": {
       "supportsTablet": true,

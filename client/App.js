@@ -29,6 +29,7 @@ import ReadingExamParticipation from './pages/ReadingExamParticipation';
 import WritingExamResultView from './pages/WritingExamResultView';
 import ReadingExamResultView from './pages/ReadingExamResultView';
 import ExaminationResult from './pages/ExaminationResult';
+import OralExamParticipation from './pages/OralExamParticipation';
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -90,6 +91,9 @@ export default function App() {
             />
             <Stack.Screen name="ReadingExamParticipation" options={{ headerShown: false }} component={
               ReadingExamParticipation
+            }></Stack.Screen>
+            <Stack.Screen name="OralExamParticipation" options={{ headerShown: false }} component={
+              OralExamParticipation
             }></Stack.Screen>
             <Stack.Screen name="WritingExamResultView" options={{ headerShown: false }} component={
               WritingExamResultView

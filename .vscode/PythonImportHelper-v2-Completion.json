@@ -1,0 +1,1968 @@
+[
+    {
+        "label": "print_function",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "errno",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "errno",
+        "description": "errno",
+        "detail": "errno",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "typing",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "typing",
+        "description": "typing",
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "TextIO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "urllib.parse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "detail": "urllib.parse",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logger",
+        "description": "logger",
+        "detail": "logger",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "dataProvider",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "dataProvider",
+        "description": "dataProvider",
+        "detail": "dataProvider",
+        "documentation": {}
+    },
+    {
+        "label": "DataProvider",
+        "importPath": "dataProvider",
+        "description": "dataProvider",
+        "isExtraImport": true,
+        "detail": "dataProvider",
+        "documentation": {}
+    },
+    {
+        "label": "ExamSessionManager",
+        "importPath": "examSessionManager",
+        "description": "examSessionManager",
+        "isExtraImport": true,
+        "detail": "examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "flask_cors",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "flask_cors",
+        "description": "flask_cors",
+        "detail": "flask_cors",
+        "documentation": {}
+    },
+    {
+        "label": "flask",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "flask",
+        "description": "flask",
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "data.config",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "data.config",
+        "description": "data.config",
+        "detail": "data.config",
+        "documentation": {}
+    },
+    {
+        "label": "chatModel",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "chatModel",
+        "description": "chatModel",
+        "detail": "chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "mimetypes",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "mimetypes",
+        "description": "mimetypes",
+        "detail": "mimetypes",
+        "documentation": {}
+    },
+    {
+        "label": "google.generativeai",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "google.generativeai",
+        "description": "google.generativeai",
+        "detail": "google.generativeai",
+        "documentation": {}
+    },
+    {
+        "label": "google.generativeai.types.content_types",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "google.generativeai.types.content_types",
+        "description": "google.generativeai.types.content_types",
+        "detail": "google.generativeai.types.content_types",
+        "documentation": {}
+    },
+    {
+        "label": "HarmBlockThreshold",
+        "importPath": "google.generativeai.types.safety_types",
+        "description": "google.generativeai.types.safety_types",
+        "isExtraImport": true,
+        "detail": "google.generativeai.types.safety_types",
+        "documentation": {}
+    },
+    {
+        "label": "HarmCategory",
+        "importPath": "google.generativeai.types.safety_types",
+        "description": "google.generativeai.types.safety_types",
+        "isExtraImport": true,
+        "detail": "google.generativeai.types.safety_types",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "pathlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "tools",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tools",
+        "description": "tools",
+        "detail": "tools",
+        "documentation": {}
+    },
+    {
+        "label": "torch",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "torch",
+        "description": "torch",
+        "detail": "torch",
+        "documentation": {}
+    },
+    {
+        "label": "whisper",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "whisper",
+        "description": "whisper",
+        "detail": "whisper",
+        "documentation": {}
+    },
+    {
+        "label": "librosa",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "librosa",
+        "description": "librosa",
+        "detail": "librosa",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "Wav2Vec2Processor",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "Wav2Vec2ForCTC",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "pipeline",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "phonemize",
+        "importPath": "phonemizer",
+        "description": "phonemizer",
+        "isExtraImport": true,
+        "detail": "phonemizer",
+        "documentation": {}
+    },
+    {
+        "label": "wer",
+        "importPath": "jiwer",
+        "description": "jiwer",
+        "isExtraImport": true,
+        "detail": "jiwer",
+        "documentation": {}
+    },
+    {
+        "label": "Levenshtein",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "Levenshtein",
+        "description": "Levenshtein",
+        "detail": "Levenshtein",
+        "documentation": {}
+    },
+    {
+        "label": "wave",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "wave",
+        "description": "wave",
+        "detail": "wave",
+        "documentation": {}
+    },
+    {
+        "label": "av",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "av",
+        "description": "av",
+        "detail": "av",
+        "documentation": {}
+    },
+    {
+        "label": "scipy.io.wavfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "scipy.io.wavfile",
+        "description": "scipy.io.wavfile",
+        "detail": "scipy.io.wavfile",
+        "documentation": {}
+    },
+    {
+        "label": "queue",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "queue",
+        "description": "queue",
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "examJudger",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "examJudger",
+        "description": "examJudger",
+        "detail": "examJudger",
+        "documentation": {}
+    },
+    {
+        "label": "av.container",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "av.container",
+        "description": "av.container",
+        "detail": "av.container",
+        "documentation": {}
+    },
+    {
+        "label": "livekit.api",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "livekit.api",
+        "description": "livekit.api",
+        "detail": "livekit.api",
+        "documentation": {}
+    },
+    {
+        "label": "google.genai.live",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "google.genai.live",
+        "description": "google.genai.live",
+        "detail": "google.genai.live",
+        "documentation": {}
+    },
+    {
+        "label": "websockets_proxy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "websockets_proxy",
+        "description": "websockets_proxy",
+        "detail": "websockets_proxy",
+        "documentation": {}
+    },
+    {
+        "label": "asyncio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "asyncio",
+        "description": "asyncio",
+        "detail": "asyncio",
+        "documentation": {}
+    },
+    {
+        "label": "livekit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "livekit",
+        "description": "livekit",
+        "detail": "livekit",
+        "documentation": {}
+    },
+    {
+        "label": "livekit.rtc",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "livekit.rtc",
+        "description": "livekit.rtc",
+        "detail": "livekit.rtc",
+        "documentation": {}
+    },
+    {
+        "label": "google.genai",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "google.genai",
+        "description": "google.genai",
+        "detail": "google.genai",
+        "documentation": {}
+    },
+    {
+        "label": "cv2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "PIL.Image",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "PIL.Image",
+        "description": "PIL.Image",
+        "detail": "PIL.Image",
+        "documentation": {}
+    },
+    {
+        "label": "PIL.ImageDraw",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "PIL.ImageDraw",
+        "description": "PIL.ImageDraw",
+        "detail": "PIL.ImageDraw",
+        "documentation": {}
+    },
+    {
+        "label": "PIL.ImageFont",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "PIL.ImageFont",
+        "description": "PIL.ImageFont",
+        "detail": "PIL.ImageFont",
+        "documentation": {}
+    },
+    {
+        "label": "AIDubMiddlewareAPI",
+        "importPath": "AIDubMiddleware",
+        "description": "AIDubMiddleware",
+        "isExtraImport": true,
+        "detail": "AIDubMiddleware",
+        "documentation": {}
+    },
+    {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "build_gn_args",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def build_gn_args(platform_args):\n    return \"--args='\" + ' '.join(GN_COMMON_ARGS + platform_args) + \"'\"\nGN_COMMON_ARGS = [\n    'rtc_libvpx_build_vp9=true',\n    'rtc_enable_protobuf=false',\n    'rtc_include_tests=false',\n    'is_debug=%s',\n    'target_cpu=\"%s\"'\n]\n_GN_APPLE_COMMON = [",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "sh",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def sh(cmd, env=None, cwd=None):\n    print('Running cmd: %s' % cmd)\n    try:\n        subprocess.check_call(cmd, env=env, cwd=cwd, shell=True, stdin=sys.stdin, stdout=sys.stdout, stderr=subprocess.STDOUT)\n    except subprocess.CalledProcessError as e:\n        sys.exit(e.returncode)\n    except KeyboardInterrupt:\n        pass\ndef mkdirp(path):\n    try:",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "mkdirp",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def mkdirp(path):\n    try:\n        os.makedirs(path)\n    except OSError as e:\n        if e.errno != errno.EEXIST:\n            raise\ndef rmr(path):\n    try:\n        shutil.rmtree(path)\n    except OSError as e:",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "rmr",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def rmr(path):\n    try:\n        shutil.rmtree(path)\n    except OSError as e:\n        if e.errno != errno.ENOENT:\n            raise\n# The Real Deal\ndef setup(target_dir, platform):\n    mkdirp(target_dir)\n    os.chdir(target_dir)",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "setup",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def setup(target_dir, platform):\n    mkdirp(target_dir)\n    os.chdir(target_dir)\n    # Maybe fetch depot_tools\n    depot_tools_dir = os.path.join(target_dir, 'depot_tools')\n    if not os.path.isdir(depot_tools_dir):\n        print('Fetching Chromium depot_tools...')\n        sh('git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git')\n    # Prepare environment\n    env = os.environ.copy()",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "sync",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def sync(target_dir, platform):\n    build_dir = os.path.join(target_dir, 'build', platform)\n    depot_tools_dir = os.path.join(target_dir, 'depot_tools')\n    webrtc_dir = os.path.join(target_dir, 'webrtc', platform, 'src')\n    if not os.path.isdir(webrtc_dir):\n        print('WebRTC source not found, did you forget to run --setup?')\n        sys.exit(1)\n    # Prepare environment\n    env = os.environ.copy()\n    path_parts = [env['PATH'], depot_tools_dir]",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "build",
+        "kind": 2,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "def build(target_dir, platform, debug):\n    build_dir = os.path.join(target_dir, 'build', platform)\n    build_type = 'Debug' if debug else 'Release'\n    depot_tools_dir = os.path.join(target_dir, 'depot_tools')\n    webrtc_dir = os.path.join(target_dir, 'webrtc', platform, 'src')\n    if not os.path.isdir(webrtc_dir):\n        print('WebRTC source not found, did you forget to run --setup?')\n        sys.exit(1)\n    # Prepare environment\n    env = os.environ.copy()",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "APPLE_FRAMEWORK_NAME",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "APPLE_FRAMEWORK_NAME = 'WebRTC.framework'\nAPPLE_DSYM_NAME = 'WebRTC.dSYM'\nANDROID_CPU_ABI_MAP = {\n    'arm'   : 'armeabi-v7a',\n    'arm64' : 'arm64-v8a',\n    'x86'   : 'x86',\n    'x64'   : 'x86_64'\n}\nANDROID_BUILD_CPUS = [\n    'arm',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "APPLE_DSYM_NAME",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "APPLE_DSYM_NAME = 'WebRTC.dSYM'\nANDROID_CPU_ABI_MAP = {\n    'arm'   : 'armeabi-v7a',\n    'arm64' : 'arm64-v8a',\n    'x86'   : 'x86',\n    'x64'   : 'x86_64'\n}\nANDROID_BUILD_CPUS = [\n    'arm',\n    'arm64',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "ANDROID_CPU_ABI_MAP",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "ANDROID_CPU_ABI_MAP = {\n    'arm'   : 'armeabi-v7a',\n    'arm64' : 'arm64-v8a',\n    'x86'   : 'x86',\n    'x64'   : 'x86_64'\n}\nANDROID_BUILD_CPUS = [\n    'arm',\n    'arm64',\n    'x86',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "ANDROID_BUILD_CPUS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "ANDROID_BUILD_CPUS = [\n    'arm',\n    'arm64',\n    'x86',\n    'x64'\n]\nIOS_BUILD_ARCHS = [\n    'device:arm64',\n    'simulator:arm64',\n    'simulator:x64'",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "IOS_BUILD_ARCHS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "IOS_BUILD_ARCHS = [\n    'device:arm64',\n    'simulator:arm64',\n    'simulator:x64'\n]\nMACOS_BUILD_ARCHS = [\n    'x64'\n]\ndef build_gn_args(platform_args):\n    return \"--args='\" + ' '.join(GN_COMMON_ARGS + platform_args) + \"'\"",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "MACOS_BUILD_ARCHS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "MACOS_BUILD_ARCHS = [\n    'x64'\n]\ndef build_gn_args(platform_args):\n    return \"--args='\" + ' '.join(GN_COMMON_ARGS + platform_args) + \"'\"\nGN_COMMON_ARGS = [\n    'rtc_libvpx_build_vp9=true',\n    'rtc_enable_protobuf=false',\n    'rtc_include_tests=false',\n    'is_debug=%s',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "GN_COMMON_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "GN_COMMON_ARGS = [\n    'rtc_libvpx_build_vp9=true',\n    'rtc_enable_protobuf=false',\n    'rtc_include_tests=false',\n    'is_debug=%s',\n    'target_cpu=\"%s\"'\n]\n_GN_APPLE_COMMON = [\n    'enable_dsyms=true',\n    'enable_stripping=true',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "_GN_APPLE_COMMON",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "_GN_APPLE_COMMON = [\n    'enable_dsyms=true',\n    'enable_stripping=true',\n    'rtc_enable_symbol_export=false',\n    'rtc_enable_objc_symbol_export=true'\n]\n_GN_IOS_ARGS = [\n    'ios_deployment_target=\"12.0\"',\n    'ios_enable_code_signing=false',\n    'target_os=\"ios\"',",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "_GN_IOS_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "_GN_IOS_ARGS = [\n    'ios_deployment_target=\"12.0\"',\n    'ios_enable_code_signing=false',\n    'target_os=\"ios\"',\n    'target_environment=\"%s\"'\n]\nGN_IOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_IOS_ARGS)\n_GN_MACOS_ARGS = [\n    'target_os=\"mac\"'\n]",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "GN_IOS_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "GN_IOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_IOS_ARGS)\n_GN_MACOS_ARGS = [\n    'target_os=\"mac\"'\n]\nGN_MACOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_MACOS_ARGS)\n_GN_ANDROID_ARGS = [\n    'target_os=\"android\"'\n]\nGN_ANDROID_ARGS = build_gn_args(_GN_ANDROID_ARGS)\n# Utilities",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "_GN_MACOS_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "_GN_MACOS_ARGS = [\n    'target_os=\"mac\"'\n]\nGN_MACOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_MACOS_ARGS)\n_GN_ANDROID_ARGS = [\n    'target_os=\"android\"'\n]\nGN_ANDROID_ARGS = build_gn_args(_GN_ANDROID_ARGS)\n# Utilities\ndef sh(cmd, env=None, cwd=None):",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "GN_MACOS_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "GN_MACOS_ARGS = build_gn_args(_GN_APPLE_COMMON + _GN_MACOS_ARGS)\n_GN_ANDROID_ARGS = [\n    'target_os=\"android\"'\n]\nGN_ANDROID_ARGS = build_gn_args(_GN_ANDROID_ARGS)\n# Utilities\ndef sh(cmd, env=None, cwd=None):\n    print('Running cmd: %s' % cmd)\n    try:\n        subprocess.check_call(cmd, env=env, cwd=cwd, shell=True, stdin=sys.stdin, stdout=sys.stdout, stderr=subprocess.STDOUT)",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "_GN_ANDROID_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "_GN_ANDROID_ARGS = [\n    'target_os=\"android\"'\n]\nGN_ANDROID_ARGS = build_gn_args(_GN_ANDROID_ARGS)\n# Utilities\ndef sh(cmd, env=None, cwd=None):\n    print('Running cmd: %s' % cmd)\n    try:\n        subprocess.check_call(cmd, env=env, cwd=cwd, shell=True, stdin=sys.stdin, stdout=sys.stdout, stderr=subprocess.STDOUT)\n    except subprocess.CalledProcessError as e:",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "GN_ANDROID_ARGS",
+        "kind": 5,
+        "importPath": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "description": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "peekOfCode": "GN_ANDROID_ARGS = build_gn_args(_GN_ANDROID_ARGS)\n# Utilities\ndef sh(cmd, env=None, cwd=None):\n    print('Running cmd: %s' % cmd)\n    try:\n        subprocess.check_call(cmd, env=env, cwd=cwd, shell=True, stdin=sys.stdin, stdout=sys.stdout, stderr=subprocess.STDOUT)\n    except subprocess.CalledProcessError as e:\n        sys.exit(e.returncode)\n    except KeyboardInterrupt:\n        pass",
+        "detail": "client.node_modules.@livekit.react-native-webrtc.tools.build-webrtc",
+        "documentation": {}
+    },
+    {
+        "label": "BUILD_NUMBER",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "BUILD_NUMBER = 1\nVERSION = f'1.0.0'\nAUTHORIZED_ORGANIZATION = f'长野原烟花店'\n# Flask settings\nDEBUG = False\nHOST = '0.0.0.0'\nPORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "VERSION = f'1.0.0'\nAUTHORIZED_ORGANIZATION = f'长野原烟花店'\n# Flask settings\nDEBUG = False\nHOST = '0.0.0.0'\nPORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "AUTHORIZED_ORGANIZATION",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "AUTHORIZED_ORGANIZATION = f'长野原烟花店'\n# Flask settings\nDEBUG = False\nHOST = '0.0.0.0'\nPORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "DEBUG",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "DEBUG = False\nHOST = '0.0.0.0'\nPORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "HOST",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "HOST = '0.0.0.0'\nPORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PORT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PORT = 62100\nSECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "SECRET_KEY",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "SECRET_KEY = \"YoimiyaIsMyWaifu\"\n# Livekit settings\nLIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_API_KEY",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_API_KEY = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_API_SECRET",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_API_SECRET = 'YoimiyaGaTaisukiDesu06210621062106210621'\nLIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_API_EXTERNAL_URL",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_API_EXTERNAL_URL = 'www.xiaokang00010.top:6212'\nLIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",\n    \"Your dream vacation\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_SAMPLE_RATE",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_SAMPLE_RATE = 44100\nLIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",\n    \"Your dream vacation\",\n    \"Climate change and its impact\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_VIDEO_WIDTH",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_VIDEO_WIDTH = 1920\nLIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",\n    \"Your dream vacation\",\n    \"Climate change and its impact\",\n    \"Pollution and its effects\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "LIVEKIT_VIDEO_HEIGHT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "LIVEKIT_VIDEO_HEIGHT = 1080\nPREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",\n    \"Your dream vacation\",\n    \"Climate change and its impact\",\n    \"Pollution and its effects\",\n    \"Importance of protecting the environment\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PREFERRED_ORAL_EXAM_TOPICS",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PREFERRED_ORAL_EXAM_TOPICS = [\n    \"Benefits of travel\",\n    \"Different types of tourism\",\n    \"Impact of tourism on local communities\",\n    \"Traveling alone vs. with others\",\n    \"Your dream vacation\",\n    \"Climate change and its impact\",\n    \"Pollution and its effects\",\n    \"Importance of protecting the environment\",\n    \"Sustainable living and renewable energy\",",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ANALYZE_READING_EXAM_RESULT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ANALYZE_READING_EXAM_RESULT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given one of your students reading examination result. Here you should analyze the result and provide feedback to the student.\nIn overall, the student receive the band {{band}}, with {{correct_ans_count}} correct answers out of {{total_ans_count}} questions.\nHowever, there are some trouble problems found in the examination. The trouble problems are: {{trouble_problems}}\nFor reference, the correct answer sheet is provided in the following: {{answer_sheet_format}}\nHere is the exam paper:\n```markdown\n{{exam_paper}}\n```",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ANALYZE_WRITING_EXAM_RESULT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ANALYZE_WRITING_EXAM_RESULT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of students.\nYou are given one of your students writing examination result. Here you should analyze the result and provide feedback to the student.\nHere is the problem statement:\n```markdown\n{{problem_statement}}\n```\nThe student's result is as follows:\n```markdown\n{{composition}}",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given a task which is to conduct an oral English examination for the student.\nYour name is {{chatbotName}}.\nDuring the examination, you ought to imitate the given persona:\n{{chatbotPersona}}\nSpecially, you are in a \"test mode\".\nThe participant is testing the system's ability, their answers do not contains actual meaning.\nYou can ignore them and continue the whole exam process.\nFor each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, do not use them in the response.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"\n[system_prompt]\nPart 1: Introduction & Interview (4 - 5 minutes)\nYou are given a list of specific topics for this part.\n1. First, you are expected to begin with a welcome for the student and introduce your name.\n2. Second, you are supposed to ask some simple questions based on the topics you have received, one at a time.\n3. Third, keep on asking until you receive a prompt wrapped in `[system_prompt][/system_prompt]`. And you should prepare for the next part accordingly.\n4. After this, you are expected to inform student and transit to the second part of the examination fluently.\nPlease read the topics carefully and prepare for the questions.\nTopics:",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1 = \"\"\"\n[system_prompt]\nPart 2: Long Turn (3 - 4 minutes)\nIn this part, you are expected to introduce a specific topic for the student to discuss.\nThe student will have one minute to prepare and 1 - 2 minutes to speak.\nYou are required to provide a task card for the student with the following format, and fill the Topic and Key Prompts accordingly:\n```\n[task_card]\nTopic: the specific topic provided for you\nInstructions:",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2 = \"\"\"\n[system_prompt]\nPart 2: Long Turn (3 - 4 minutes)\nIn this part, you will receive the monologue from the student, you are required to think for 3 - 4 follow up questions based on the response.\nBriefly respond to the monologue, and you can start asking the first follow up question immediately.\nThen, you ought to keep on asking until you receive the next prompt.\nDO NOT STOP BY YOURSELF, ASK QUESTIONS AS NEEDED.\n[/system_prompt]\n\"\"\"\nPROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"\n[system_prompt]\nPart 3: Discussion (4 - 5 minutes)\nIn this part, you are expected to discuss an abstract topic based on the student's responses in the previous part.\nGuidelines:\n1. Think and analyze student's response to the previous part of the examination and grasp the main idea of the topic.\n2. Smoothly transit from the previous topic to Part 3. Transit the topic to a more abstract level, and throw a question on a broder issue related to the topic through words.\n3. Once the student respond, you are required to ask a few open-ended questions to probe the student's understanding of the topic, which requires analysis, comparsions, and opinions.\n4. Encourage depth, lead student to think critically, and provide a clear and concise response.\nYou ought to transit the topic and respond once you finish thinking.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT = \"\"\"\n[system_prompt]\nPart 4: Conclusion\nIn this part, you are required to analyze the summary of the student's performance and provide feedback to the student.\nGuidelines:\n1. Rethink, and analyze the student's fluency, relevance in accordance with the provided topics and context.\n2. Conclude the student's performance comprehensively based on the mentioned meausurements with your memory of the conversation.\n3. Respond with an overall band and a clear and concise feedback on the student's performance, and suggest areas for improvement.\nResponse format:\nThe feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance. The feedback should be wrapped in the format of `[feedback][/feedback]`.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given a task to assess the pronunciation of the student's answers.\nThe student's assessment result is as follows:\n```json\n{{student_result}}\n```\nGuidelines:\n- Check the student's assessment result and analyze the pronunciation of the student's answers.\n- Find out the frequently mispronounced words and provide feedback to the student on the following points:",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ORAL_EXAMINATION_OVERALL_FEEDBACK",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ORAL_EXAMINATION_OVERALL_FEEDBACK = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given both the oral examination result and the pronunciation assessment result. Here you should analyze the result and provide feedback to the student.\nGuidelines:\n- Check both the oral examination result and the pronunciation assessment result, and analyze the overall performance of the student.\n- Assess student's performance on the following points:\n    - Overall performance of the student.\n    - The strengths and weaknesses of the student.\n    - The areas where the student can improve.\n    - Any suggestions for improvement.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT",
+        "kind": 5,
+        "importPath": "server.data.config",
+        "description": "server.data.config",
+        "peekOfCode": "PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given the recent reading and writing feedback of the student which ordered from old to new, from the oldest to the newest. Here you should analyze the result and provide feedback to the student.\nGuidelines:\n- Check all the recent feedbacks, reading them carefully, and analyze the improvements of students in accordance with the timeline of feedbacks.\n- Assess student's performance on the following points:\n    - Overall performance of the student.\n    - The strengths and weaknesses of the student.\n    - Improvements in reading and writing skills.\n    - Any suggestions for improvement.",
+        "detail": "server.data.config",
+        "documentation": {}
+    },
+    {
+        "label": "EXAM_CHATBOT_PROMPT",
+        "kind": 5,
+        "importPath": "server.data.prompts",
+        "description": "server.data.prompts",
+        "peekOfCode": "EXAM_CHATBOT_PROMPT = \\\n\"\"\"\nYou are an skillful and experienced IELTS Examiner. Your task is to help {{userName}} finish simulated IELTS examinations, carefully review their answers, and provide personalized, accurate and helpful feedback.\nHere is your persona during the examination:\n{{examinerPersona}}\nSystem interactions:\nYou may send and receive system messages with the examination system. They are helpful for you to set a timer, remind you to start a certain part of examinations.\nAll system messages will begin with `SYSMSG`.\nWays to being silent:\nIf the {{userName}} hasn't finished a setence or speech, you can respond with `OPT_SILENT` not to interrupt the {{userName}}.",
+        "detail": "server.data.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "AIDubAPIError",
+        "kind": 6,
+        "importPath": "server.AIDubMiddleware",
+        "description": "server.AIDubMiddleware",
+        "peekOfCode": "class AIDubAPIError(Exception):\n    pass\nclass AIDubMiddlewareAPI():\n    def __init__(self, url):\n        # get url hostname for proxy setting\n        url_hostname = urllib.parse.urlparse(url).hostname\n        # set proxy for requests\n        os.environ[\"NO_PROXY\"] = url_hostname + \",www.xiaokang00010.top,localhost,127.0.0.1\"\n        self.url = url\n    def data_if_ok_else_raise_error(self, resp_json) -> dict[typing.Any, typing.Any]:",
+        "detail": "server.AIDubMiddleware",
+        "documentation": {}
+    },
+    {
+        "label": "AIDubMiddlewareAPI",
+        "kind": 6,
+        "importPath": "server.AIDubMiddleware",
+        "description": "server.AIDubMiddleware",
+        "peekOfCode": "class AIDubMiddlewareAPI():\n    def __init__(self, url):\n        # get url hostname for proxy setting\n        url_hostname = urllib.parse.urlparse(url).hostname\n        # set proxy for requests\n        os.environ[\"NO_PROXY\"] = url_hostname + \",www.xiaokang00010.top,localhost,127.0.0.1\"\n        self.url = url\n    def data_if_ok_else_raise_error(self, resp_json) -> dict[typing.Any, typing.Any]:\n        if resp_json[\"status\"]:\n            return resp_json[\"data\"]",
+        "detail": "server.AIDubMiddleware",
+        "documentation": {}
+    },
+    {
+        "label": "GPTSoVitsAPI",
+        "kind": 6,
+        "importPath": "server.GPTSoVits",
+        "description": "server.GPTSoVits",
+        "peekOfCode": "class GPTSoVitsAPI():\n    \"\"\"\n    GPTSoVits API class.\n    Attributes:\n        api_url (str): Url of the GPTSoVits API.\n        usingV3 (bool): whether using APIv3.py from the fast_inference_ branch.\n        ttsInferYamlPath (str): TTS inference YAML path. Necessary for v3 API.\n    Methods:\n        tts_v1(ref_audio: str, ref_text: str, text: str, ref_language: str = 'auto', text_language: str = 'auto') -> requests.Response: Run TTS inference using the classic v1 API.\n        tts_v3(ref_audio: str, ref_text: str, text: str, ref_language: str = 'auto', text_language: str = 'auto') -> requests.Response: Run TTS inference using the v3 API from the fast_inference_ branch.",
+        "detail": "server.GPTSoVits",
+        "documentation": {}
+    },
+    {
+        "label": "parseRequestRange",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def parseRequestRange(s, flen):\n    s = s[s.find('=')+1:]\n    c = s.split('-')\n    if len(c) != 2:\n        return None\n    else:\n        if c[0] == '' and c[1] == '':\n            return [0, flen - 1]\n        elif c[1] == '':\n            return [int(c[0]), flen - 1]",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "makeFileResponse",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def makeFileResponse(file: bytes, mime: str):\n    isPreview = not mime.startswith('application')\n    if flask.request.headers.get('Range') != None:\n        fileLength = len(file)\n        reqRange = parseRequestRange(\n            flask.request.headers.get('Range'), fileLength)\n        response_file = bytes()\n        response_file = file[reqRange[0]:reqRange[1]\n                             if reqRange[0] != reqRange[1] else reqRange[1] + 1]\n        response = flask.make_response(response_file)",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "before_request",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def before_request():\n    if DataProvider.getGoogleApiKey() is not None:\n        chatModel.genai.configure(api_key=DataProvider.getGoogleApiKey())\n@app.after_request\ndef after_request(response):\n    DataProvider.db.db.commit()\n    return response\n@app.route('/v1/service/info', methods=['GET'])\ndef service_status():\n    return {",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "after_request",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def after_request(response):\n    DataProvider.db.db.commit()\n    return response\n@app.route('/v1/service/info', methods=['GET'])\ndef service_status():\n    return {\n        'status': 'running',\n        'version': data.config.VERSION,\n        'buildNumber': data.config.BUILD_NUMBER,\n        'authenticated_session': flask.session.get('userAuth') if 'userAuth' in flask.session else -1,",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "service_status",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def service_status():\n    return {\n        'status': 'running',\n        'version': data.config.VERSION,\n        'buildNumber': data.config.BUILD_NUMBER,\n        'authenticated_session': flask.session.get('userAuth') if 'userAuth' in flask.session else -1,\n        'initialized': DataProvider.checkIfInitialized(),\n        \"authorized_organization\": data.config.AUTHORIZED_ORGANIZATION,\n    }\n@app.route(\"/v1/admin/initialize\", methods=['POST'])",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "initialize",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def initialize():\n    form: dict[str, typing.Any] = flask.request.json\n    username = form.get('username')\n    password = form.get('password')\n    email = form.get('email')\n    google_api_key = form.get('google_api_key')\n    chatbot_persona = form.get('chatbot_persona')\n    chatbot_name = form.get('chatbot_name')\n    AIDubEndpoint = form.get('AIDubEndpoint')\n    AIDubModel = form.get('AIDubModel')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_user_info",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_current_user_info():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId))\n@app.route('/v1/user/register')\ndef register_user():\n    form: dict[str, typing.Any] = flask.request.json\n    username = form.get('username')\n    password = form.get('password')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "register_user",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def register_user():\n    form: dict[str, typing.Any] = flask.request.json\n    username = form.get('username')\n    password = form.get('password')\n    email = form.get('email')\n    if not username or not password or not email:\n        return DataProvider.makeResult(False, 'Username, password and email are required.')\n    else:\n        return DataProvider.createUser(username, password, email)\n@app.route(\"/v1/user/login\", methods=['POST'])",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "login",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def login():\n    form: dict[str, typing.Any] = flask.request.json\n    email = form.get('email')\n    password = form.get('password')\n    if not email or not password:\n        return DataProvider.makeResult(False, 'Email and password are required.')\n    else:\n        result = DataProvider.checkUserIdentityByEmail(email, password)\n        if result['status']:\n            flask.session['userAuth'] = result['data']['id']",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "logout",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def logout():\n    if 'userAuth' in flask.session:\n        del flask.session['userAuth']\n    return DataProvider.makeResult(True, 'Logout successfully.')\n@app.route('/v1/user/info', methods=['POST'])\ndef get_user_info():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId))",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_info",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_user_info():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId))\n@app.route('/v1/user/avatar', methods=['GET'])\ndef get_user_avatar_by_id():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_avatar_by_id",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_user_avatar_by_id():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    data, mime =  DataProvider.getUserAvatarByID(userId)\n    if data:\n        return makeFileResponse(data, mime)\n    else:\n        return DataProvider.makeResult(False, 'User avatar not found.')\n@app.route('/v1/user/<int:userId>/avatar', methods=['GET'])",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_avatar_by_id_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_user_avatar_by_id_admin(userId):\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    data, mime =  DataProvider.getUserAvatarByID(userId)\n    if data:\n        return makeFileResponse(data, mime)\n    else:\n        return DataProvider.makeResult(False, 'User avatar not found.')\n@app.route('/v1/user/<int:userId>/info', methods=['POST'])\ndef get_user_info_id(userId):",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_info_id",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_user_info_id(userId):\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    return DataProvider.makeResult(True, DataProvider.getUserInfoByID(userId, True))\n@app.route('/v1/user/recent_results', methods=['POST'])\ndef get_recent_results():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    return DataProvider.getRecentExamResults(userId)",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_recent_results",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_recent_results():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    return DataProvider.getRecentExamResults(userId)\n@app.route('/v1/user/exam_results', methods=['POST'])\ndef get_exam_results():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_exam_results",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_exam_results():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    filters = flask.request.json\n    examType = filters.get('examType')\n@app.route('/v1/admin/exams/reading/list', methods=['POST'])\ndef get_reading_exams():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exams",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exams():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'new_exam_paper_creat')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if not filters:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_reading_exam",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_reading_exam():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'new_exam_paper_creat')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if not examId:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_config():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    return json.loads(json.dumps(DataProvider.getConfig(), default=lambda x: None))\n@app.route('/v1/admin/config/update', methods=['POST'])\ndef update_config():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_config",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_config():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    formerConfig = DataProvider.getConfig()['data']\n    form: dict[str, typing.Any] = flask.request.json\n    chatbotPersona = form.get('chatbotPersona', formerConfig['chatbotPersona'])",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "ask_ai",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def ask_ai():\n    form: dict[str, typing.Any] = flask.request.json\n    model = form.get('model', 'gemini-1.5-flash-002')\n    temperature = form.get('temperature', 0.9)\n    system_prompt = form.get('system_prompt', None)\n    user_prompt = form.get('user_prompt', None)\n    token = form.get('token', DataProvider.getGoogleApiKey())\n    print(form)\n    if system_prompt is None or user_prompt is None or not token:\n        return DataProvider.makeResult(ok=False, data='System prompt, user prompt and Google API key is required.')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "create_user_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def create_user_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    username = form.get('username')\n    password = form.get('password')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_user_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_user_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    userId = form.get('userId')\n    if userId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_user_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_user_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    username = form.get('username')\n    password = form.get('password')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "edit_password",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def edit_password():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    form: dict[str, typing.Any] = flask.request.json\n    oldPassword = form.get('oldPassword')\n    newPassword = form.get('newPassword')\n    if not oldPassword or not newPassword:\n        return DataProvider.makeResult(False, 'Old password and new password are required.')\n    else:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "edit_email",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def edit_email():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']    \n    form: dict[str, typing.Any] = flask.request.json\n    newEmail = form.get('newEmail')\n    if not newEmail:\n        return DataProvider.makeResult(False, 'New email is required.')\n    else:\n        return DataProvider.updateEmail(userId, newEmail)",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "edit_username",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def edit_username():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    form: dict[str, typing.Any] = flask.request.json\n    newUsername = form.get('newUsername')\n    if not newUsername:\n        return DataProvider.makeResult(False, 'New username is required.')\n    else:\n        return DataProvider.updateUsername(userId, newUsername)",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_users",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_users():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "upload_artifact",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def upload_artifact():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'artifact_rw')\n    if not perm_result['status']:\n        return perm_result\n    args = flask.request.args\n    isPrivate = args.get('isPrivate')\n    if isPrivate is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "download_artifact",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def download_artifact():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'artifact_rw')\n    if not perm_result['status']:\n        return perm_result\n    artifactId = flask.request.args.get('id')\n    if artifactId is None:\n        return DataProvider.makeResult(False, 'Artifact ID is required.')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_artifacts",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_artifacts():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'artifact_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_artifact",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_artifact():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'artifact_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    artifactId = form.get('artifactId')\n    if artifactId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_artifacts_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_artifacts_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_artifacts_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_artifacts_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    artifactId = form.get('artifactId')\n    if artifactId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "download_artifacts_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def download_artifacts_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')    \n    if not perm_result['status']:\n        return perm_result\n    artifactId = flask.request.args.get('id')\n    if artifactId is None:\n        return DataProvider.makeResult(False, 'Artifact ID is required.')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_outdated_artifacts",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_outdated_artifacts():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.deleteAllOutdatedArtifacts()\n@app.route('/v1/admin/examination/reading/list', methods=['POST'])\ndef get_examination_list_admin():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_examination_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_examination_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_examination_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_examination_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "create_examination_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def create_examination_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    passages = form.get('passages')\n    answerSheetFormat = form.get('answerSheetFormat')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_examination_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_examination_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    examId = form.get('examId')\n    passages = form.get('articles')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_examination_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_examination_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_writing_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_writing_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "create_writing_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def create_writing_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    title = form.get('title')\n    availableTime = form.get('availableTime')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_writing_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_writing_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    examId = form.get('examId')\n    title = form.get('title')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_oral_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def delete_oral_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_preferred_topics_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_preferred_topics_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.makeResult(True, data.config.PREFERRED_ORAL_EXAM_TOPICS)\n@app.route('/v1/admin/examination/oral/create', methods=['POST'])\ndef create_oral_exam_admin():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "create_oral_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def create_oral_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    title = form.get('title')\n    availableTime = form.get('availableTime')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    examId = form.get('examId')\n    if examId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_oral_exam_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_oral_exam_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    examId = form.get('examId')\n    title = form.get('title')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.makeResult(True, DataProvider.getAllReadingExams())\n@app.route('/v1/exam/writing/list', methods=['POST'])\ndef get_writing_exam_list():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.makeResult(True, DataProvider.getAllWritingExams())\n@app.route('/v1/exam/oral/list', methods=['POST'])\ndef get_oral_exam_list():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.makeResult(True, DataProvider.getAllOralExams())\n@app.route('/v1/exam/session/reading/establish', methods=['POST'])\ndef establish_reading_exam_session():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "establish_reading_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def establish_reading_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:\n        return DataProvider.makeResult(False, 'You have an ongoing session.')\n    form: dict[str, typing.Any] = flask.request.json",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "establish_writing_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def establish_writing_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:\n        return DataProvider.makeResult(False, 'You have an ongoing session.')\n    form: dict[str, typing.Any] = flask.request.json",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "establish_oral_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def establish_oral_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    if ExamSessionManager.getOngoingSessionOfUser(userId) is not None:\n        return DataProvider.makeResult(False, 'You have an ongoing session.')\n    form: dict[str, typing.Any] = flask.request.json",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_session_details",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_session_details():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    if sessionId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_session_details",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_session_details():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    if sessionId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_reading_exam_session_answer",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_reading_exam_session_answer():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    answer = form.get('answer')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "finalize_reading_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def finalize_reading_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    answer = form.get('answer')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_session_details",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_session_details():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    if sessionId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "update_writing_exam_session_answer",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def update_writing_exam_session_answer():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    answer = form.get('answer')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "finalize_writing_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def finalize_writing_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    sessionId = form.get('sessionId')\n    answer = form.get('answer')",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_ongoing_exam_session",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_ongoing_exam_session():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    result = ExamSessionManager.getOngoingSessionOfUser(userId)\n    return DataProvider.makeResult(True, result) if result else DataProvider.makeResult(False, 'No ongoing session.')\n@app.route('/v1/exam_result/reading/list', methods=['POST'])",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_result_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_result_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    filters = {\n        'userId': userId\n    }",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_result_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_result_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    filters = {\n        'userId': userId\n    }",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_result_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_result_list():\n    ...\n@app.route('/v1/exam_result/reading/get', methods=['POST'])\ndef get_reading_exam_result():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_result",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_result():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_result",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_result():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_result",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_result():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    form: dict[str, typing.Any] = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_exam_session_list",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_exam_session_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    return DataProvider.makeResult(True, ExamSessionManager.getExaminationSessionList())\n@app.route('/v1/admin/exam_result/reading/list', methods=['POST'])\ndef get_reading_exam_result_list_admin():",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_result_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_result_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_result_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_result_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_result_list_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_result_list_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    filters = form.get('filters')\n    if filters is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_reading_exam_result_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_reading_exam_result_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_writing_exam_result_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_writing_exam_result_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "app = flask.Flask(__name__)\nflask_cors.CORS(app)\n# set secret\napp.secret_key = data.config.SECRET_KEY\ndef parseRequestRange(s, flen):\n    s = s[s.find('=')+1:]\n    c = s.split('-')\n    if len(c) != 2:\n        return None\n    else:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.secret_key",
+        "kind": 5,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "app.secret_key = data.config.SECRET_KEY\ndef parseRequestRange(s, flen):\n    s = s[s.find('=')+1:]\n    c = s.split('-')\n    if len(c) != 2:\n        return None\n    else:\n        if c[0] == '' and c[1] == '':\n            return [0, flen - 1]\n        elif c[1] == '':",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "ChatGoogleGenerativeAI",
+        "kind": 6,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "class ChatGoogleGenerativeAI():\n    \"\"\"\n    A class for chatting with Google's Generative AI models.\n    Attributes:\n        model (genai.GenerativeModel): The Generative AI model to use for chatting.\n        temperature (float): The temperature to use for generating responses.\n        safety_settings (Any): Safety settings for the model.\n        system_prompt (str): The system prompt to use for the chat.\n        tools (list[typing.Any]): Tools to use for the chat.\n    Methods:",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "Message",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def Message(role: str, content: str, content_type: str) -> dict[str, str]:\n    return {\n        'role': role,\n        'content': content,\n        'content_type': content_type\n    }\ndef AIMessage(content: str) -> dict[str, str]:\n    return Message('model', content, 'text')\ndef HumanMessage(content: str, content_type: str = 'text') -> dict[str, str]:\n    return Message('user', content, content_type)",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def AIMessage(content: str) -> dict[str, str]:\n    return Message('model', content, 'text')\ndef HumanMessage(content: str, content_type: str = 'text') -> dict[str, str]:\n    return Message('user', content, content_type)\nclass ChatGoogleGenerativeAI():\n    \"\"\"\n    A class for chatting with Google's Generative AI models.\n    Attributes:\n        model (genai.GenerativeModel): The Generative AI model to use for chatting.\n        temperature (float): The temperature to use for generating responses.",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def HumanMessage(content: str, content_type: str = 'text') -> dict[str, str]:\n    return Message('user', content, content_type)\nclass ChatGoogleGenerativeAI():\n    \"\"\"\n    A class for chatting with Google's Generative AI models.\n    Attributes:\n        model (genai.GenerativeModel): The Generative AI model to use for chatting.\n        temperature (float): The temperature to use for generating responses.\n        safety_settings (Any): Safety settings for the model.\n        system_prompt (str): The system prompt to use for the chat.",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "Prompt",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def Prompt(prompt: str, args: dict[str, typing.Any]):\n    for i in args:\n        prompt = prompt.replace('{{' + f'{i}' + '}}', str(args[i]))\n    return prompt\ndef AnalyzeReadingExamResult(exam_paper: str, correct_ans_count: int, total_ans_count: int, band: int, trouble_problems: list[int], answer_sheet_format: list[dict[str, typing.Any]]) -> str:\n    \"\"\"\n    Analyze the reading exam result and generate a report.\n    Args:\n        exam_paper (str): The exam paper.\n        correct_ans_count (int): The number of correct answers.",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "AnalyzeReadingExamResult",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def AnalyzeReadingExamResult(exam_paper: str, correct_ans_count: int, total_ans_count: int, band: int, trouble_problems: list[int], answer_sheet_format: list[dict[str, typing.Any]]) -> str:\n    \"\"\"\n    Analyze the reading exam result and generate a report.\n    Args:\n        exam_paper (str): The exam paper.\n        correct_ans_count (int): The number of correct answers.\n        total_ans_count (int): The total number of answers.\n        band (int): The band score.\n        trouble_problems (list[int]): The trouble problems.\n        answer_sheet_format (list[dict[str, typing.Any]]): The answer sheet format.",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "AnalyzeWritingExamResult",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def AnalyzeWritingExamResult(problem_statement: str, one_possible_version: str, compositon: str) -> tuple[str, str]:\n    \"\"\"\n    Analyze the writing exam result and generate a report.\n    Args:\n        problem_statement (str): The problem statement.\n        one_possible_version (str): The one possible version.\n        composition (str): The composition.\n    Returns:\n        tuple[str, str]: The band and the report.\n    \"\"\"",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "AnalyzeOverallAssessment",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tuple[str, str]:\n    \"\"\"\n    Analyze the overall assessment and generate a report.\n    Args:\n        reading_feedback (str): The reading feedback.\n        writing_feedback (str): The writing feedback.\n    Returns:\n        tuple[str, str]: The band and the report.\n    \"\"\"\n    overall = f\"\"\"",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "PromptForOralEnglishExamInitiation",
+        "kind": 2,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "def PromptForOralEnglishExamInitiation(chatbotName: str, chatbotPersona: str) -> str:\n    return Prompt(data.config.PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION, {\n        \"chatbotName\": chatbotName,\n        \"chatbotPersona\": chatbotPersona,\n    })",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_MODEL_SAFETY_SETTING",
+        "kind": 5,
+        "importPath": "server.chatModel",
+        "description": "server.chatModel",
+        "peekOfCode": "DEFAULT_MODEL_SAFETY_SETTING = {\n    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,\n    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,\n    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,\n    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,\n}\ndef Message(role: str, content: str, content_type: str) -> dict[str, str]:\n    return {\n        'role': role,\n        'content': content,",
+        "detail": "server.chatModel",
+        "documentation": {}
+    },
+    {
+        "label": "DatabaseObject",
+        "kind": 6,
+        "importPath": "server.dataProvider",
+        "description": "server.dataProvider",
+        "peekOfCode": "class DatabaseObject:\n    \"\"\"\n    Class representing a database connection object.\n    Args:\n        dbPath (str): Path to the SQLite database file.\n    Methods:\n        query(query, args=(), one=False):\n            Execute an SQL query on the database.\n        runScript(query):\n            Execute an SQL script on the database.",
+        "detail": "server.dataProvider",
+        "documentation": {}
+    },
+    {
+        "label": "_DataProvider",
+        "kind": 6,
+        "importPath": "server.dataProvider",
+        "description": "server.dataProvider",
+        "peekOfCode": "class _DataProvider:\n    def __init__(self, db_path: str = './blob/database.db'):\n        self.db = DatabaseObject(db_path)\n        if not self.checkIfInitialized():\n            logger.Logger.log('Database not initialized')\n        pass\n    def checkIfInitialized(self):\n        \"\"\"\n        Check if the database is initialized.\n        Returns:",
+        "detail": "server.dataProvider",
+        "documentation": {}
+    },
+    {
+        "label": "DataProvider",
+        "kind": 5,
+        "importPath": "server.dataProvider",
+        "description": "server.dataProvider",
+        "peekOfCode": "DataProvider = _DataProvider()",
+        "detail": "server.dataProvider",
+        "documentation": {}
+    },
+    {
+        "label": "PronunciationAssessment",
+        "kind": 6,
+        "importPath": "server.examJudger",
+        "description": "server.examJudger",
+        "peekOfCode": "class PronunciationAssessment:\n    def __init__(self, whisper_model_name=\"small\", wav2vec_model_name=\"facebook/wav2vec2-base-960h\"):\n        self.whisper_model = pipeline(\"automatic-speech-recognition\", model=\"openai/whisper-\" + whisper_model_name)\n        self.wav2vec_processor = Wav2Vec2Processor.from_pretrained(wav2vec_model_name)\n        self.wav2vec_model = Wav2Vec2ForCTC.from_pretrained(wav2vec_model_name)\n    def transcribe_audio(self, audio_file):\n        \"\"\"Transcribes audio using Whisper.\"\"\"\n        result = self.whisper_model(audio_file)\n        return result[\"text\"].strip().lower()\n    def get_phonemes(self, text):",
+        "detail": "server.examJudger",
+        "documentation": {}
+    },
+    {
+        "label": "_Judger",
+        "kind": 6,
+        "importPath": "server.examJudger",
+        "description": "server.examJudger",
+        "peekOfCode": "class _Judger:\n    def __init__(self):\n        self.Assessment = PronunciationAssessment()\n    def evaluate_exam_result(self, llmStateInfo: dict[str, typing.Any]):\n        \"\"\"\n        Evaluates the exam result based on the the data generated during exam process.\n        Args:\n            llmStateInfo (dict[str, typing.Any]): Exam data generated during exam process. All artifacts has been processed and stored in the database.\n        \"\"\"\n        logger.Logger.log('Evaluation started')",
+        "detail": "server.examJudger",
+        "documentation": {}
+    },
+    {
+        "label": "Judger",
+        "kind": 5,
+        "importPath": "server.examJudger",
+        "description": "server.examJudger",
+        "peekOfCode": "Judger = _Judger()",
+        "detail": "server.examJudger",
+        "documentation": {}
+    },
+    {
+        "label": "SpeakingExaminationLLMState",
+        "kind": 6,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "class SpeakingExaminationLLMState():\n    DISCONNECTED = -3\n    AWAITING_CONNECTION = -2\n    PARTI_INITIATION = -1\n    PARTI_CONVERSATION = 0\n    PartII_AWAIT_TASK_CARD = 1\n    PARTII_STUDENT_PREPARATION = 2\n    PARTII_STUDENT_STATEMENT = 3\n    PARTII_FOLLOW_UP_QUESTIONING = 4\n    PARTIII_DISCUSSING = 5",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "BroadcastMissionManager",
+        "kind": 6,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "class BroadcastMissionManager():\n    def __init__(self):\n        self.APIInstance = AIDubMiddlewareAPI(dataProvider.DataProvider.getConfig()['data']['AIDubEndpoint'])\n        self.broadcastMissions: queue.Queue[str] = queue.Queue()\n        self.readyMissions: queue.Queue[av.container.InputContainer | av.container.OutputContainer] = queue.Queue()\n        self.processThread: threading.Thread = threading.Thread(target=self.processMissions, daemon=True)\n        self.finished = False\n        self.clearBufferTrigger: typing.Callable = None\n        self.processThread.start()\n    def onClearBuffer(self, callback: typing.Callable) -> None:",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "SpeakingExaminationSessionBackend",
+        "kind": 6,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "class SpeakingExaminationSessionBackend():\n    def __init__(self, userId: int, warmUpTopics: list[str], specificTopic: str):\n        self.userId = userId\n        self.bot = ''\n        self.loop: asyncio.AbstractEventLoop = None\n        self.connected: bool = False\n        self.connectionLogs: list[str] = []\n        self.chatRoom: livekit.rtc.Room = None\n        self.llmSession: google.genai.live.AsyncSession = None\n        self.llmState: int = SpeakingExaminationLLMState.DISCONNECTED",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "_ExamSessionManager",
+        "kind": 6,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "class _ExamSessionManager:\n    def __init__(self):\n        self.session_pool = {}\n        self.deamon: threading.Thread = threading.Thread(target=self.deamonThreadWrapper)\n        self.deamon.start()\n        pass\n    def finalizeReadingExamSession(self, sessionId: str) -> bool:\n        # remove the session from the pool\n        if sessionId in self.session_pool:\n            # update the exam session status in the database",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "ExamSessionManager",
+        "kind": 5,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "ExamSessionManager = _ExamSessionManager()",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "_Logger",
+        "kind": 6,
+        "importPath": "server.logger",
+        "description": "server.logger",
+        "peekOfCode": "class _Logger():\n    def __init__(self, name: str, file: str):\n        self.name: str = name\n        self.filename: str = file\n        self.io: TextIO = self.file()\n        self.callbacks = []\n        print(self.io)\n    def file(self) -> TextIO:\n        if self.filename == 'stdout':\n            print('Logger: using stdout')",
+        "detail": "server.logger",
+        "documentation": {}
+    },
+    {
+        "label": "Logger",
+        "kind": 5,
+        "importPath": "server.logger",
+        "description": "server.logger",
+        "peekOfCode": "Logger = _Logger('Yoi English backend', 'stdout')",
+        "detail": "server.logger",
+        "documentation": {}
+    },
+    {
+        "label": "TimeProvider",
+        "kind": 2,
+        "importPath": "server.tools",
+        "description": "server.tools",
+        "peekOfCode": "def TimeProvider() -> str:\n    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())\ndef DateProvider() -> str:\n    return time.strftime('%Y-%m-%d', time.localtime())\ndef RandomHashProvider() -> str:\n    random.seed(time.time())\n    return hashlib.md5(str(random.random()).encode('utf-8')).hexdigest()",
+        "detail": "server.tools",
+        "documentation": {}
+    },
+    {
+        "label": "DateProvider",
+        "kind": 2,
+        "importPath": "server.tools",
+        "description": "server.tools",
+        "peekOfCode": "def DateProvider() -> str:\n    return time.strftime('%Y-%m-%d', time.localtime())\ndef RandomHashProvider() -> str:\n    random.seed(time.time())\n    return hashlib.md5(str(random.random()).encode('utf-8')).hexdigest()",
+        "detail": "server.tools",
+        "documentation": {}
+    },
+    {
+        "label": "RandomHashProvider",
+        "kind": 2,
+        "importPath": "server.tools",
+        "description": "server.tools",
+        "peekOfCode": "def RandomHashProvider() -> str:\n    random.seed(time.time())\n    return hashlib.md5(str(random.random()).encode('utf-8')).hexdigest()",
+        "detail": "server.tools",
+        "documentation": {}
+    }
+]

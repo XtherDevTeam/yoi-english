@@ -3,7 +3,9 @@ import * as React from 'react';
 import {
   ScrollView,
   TouchableWithoutFeedback,
-  View
+  View,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import {
   Appbar,
@@ -22,6 +24,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import Message from '../components/Message';
 import * as Remote from '../shared/remote';
 import * as storage from '../shared/storage';
+import * as Speech from 'expo-speech';
 
 export default function SignIn({ navigation, route }) {
   useFocusEffect(
@@ -47,6 +50,14 @@ export default function SignIn({ navigation, route }) {
         </Row>
         <Row size={25}>
           <Col>
+          <Button style={{ margin: 10 }} mode="contained" onPress={() => {
+            Speech.getAvailableVoicesAsync().then(voices => {
+              console.log(voices)
+            })
+            Speech.speak(`Instead, let's watch the fireworks together in silence. You can record the beautiful scenery and all the things you wanna say down. Not that this is the end, of course. On the contrary, I believe that our story is only just beginning.`)
+          }}>
+              测试TTS语音功能
+            </Button>
             <Button style={{ margin: 10 }} mode="contained" onPress={() => navigation.navigate('Sign In Evaluation')}>
               以测试账号登录
             </Button>

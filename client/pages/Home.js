@@ -55,7 +55,7 @@ export default function Home({ navigation, route }) {
         navigation.navigate('Sign In')
       } else {
         console.log(r, 'wdnmd')
-        setReloadTrigger(reloadTrigger + 1)
+        setReloadTrigger(new Date())
         setUserId(r)
         Remote.recentResults().then(r => {
           console.log(r, 'wdnmd')

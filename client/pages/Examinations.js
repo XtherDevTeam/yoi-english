@@ -30,6 +30,7 @@ function ExamParticipationConfirmationDialog({ exam, setExam, onErr, type }) {
 
   function handleConfirm() {
     setExam(null)
+    console.log(exam, type)
     if (type === 'writing') {
       Remote.establishWritingExamSession(exam.id).then(r => {
         if (r.status) {
@@ -51,7 +52,16 @@ function ExamParticipationConfirmationDialog({ exam, setExam, onErr, type }) {
         console.log(e)
       })
     } else if (type === 'oral') {
-      console.log('start oral exam')
+      Remote.establishOralExamSession(exam.id).then(r => {
+        if (r.status) {
+          console.log(r.data)
+          navigation.navigate('OralExamParticipation', { examSession: r.data.sessionId, type: type })
+        } else {
+          onErr(r.message)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
     }
   }
 
@@ -64,7 +74,7 @@ function ExamParticipationConfirmationDialog({ exam, setExam, onErr, type }) {
       <Dialog visible={exam} onDismiss={handleCancel}>
         {exam && <><Dialog.Title>确认参加 {exam.title} ？</Dialog.Title>
           <Dialog.Content>
-            <Text>确认将参加 {exam.title} {examTypes[type]} 考试，时长为 {exam.duration} 分钟。</Text>
+            <Text>确认将参加 {exam.title} {examTypes[type]} 考试{exam.duration ? `，时长为 ${exam.duration} 分钟` : ''}。</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={handleCancel}>取消</Button>
@@ -159,7 +169,7 @@ export default function Examinations() {
   const [examinationList, setExaminationList] = React.useState([]);
   const [fabState, setFabState] = React.useState({ open: false });
   const [currentExamType, setCurrentExamType] = React.useState('reading');
-  const [examTypeNames, setExamTypeNames] = React.useState({ reading: '学术阅读测试', writing: '写作测试', speaking: '口语测试' });
+  const [examTypeNames, setExamTypeNames] = React.useState({ reading: '学术阅读测试', writing: '写作测试', oral: '口语测试' });
   const [message, setMessage] = React.useState(null);
   const [ongoingSessionRefresher, setOngoingSessionRefresher] = React.useState(0);
 
@@ -183,6 +193,18 @@ export default function Examinations() {
         }
       }).catch(e => {
         setMessage("Error fetching writing examination list")
+      })
+    } else if (currentExamType === 'oral') {
+      console.log('get oral exam list')
+      Remote.getOralExamList().then(r => {
+        if (r.status) {
+          console.log(r.data)
+          setExaminationList(r.data)
+        } else {
+          setMessage(r.message)
+        }
+      }).catch(e => {
+        setMessage("Error fetching oral examination list")
       })
     }
   }, [currentExamType])
@@ -228,7 +250,7 @@ export default function Examinations() {
           actions={[
             { icon: 'book', label: '学术阅读测试列表', onPress: () => setCurrentExamType('reading') },
             { icon: 'pencil', label: '写作测试列表', onPress: () => setCurrentExamType('writing') },
-            { icon: 'microphone', label: '口语测试列表', onPress: () => console.log('Pressed delete') },
+            { icon: 'microphone', label: '口语测试列表', onPress: () => setCurrentExamType('oral') },
           ]}
         ></FAB.Group>
 

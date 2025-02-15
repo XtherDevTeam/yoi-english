@@ -113,6 +113,14 @@ function getOralExamList() {
   })
 }
 
+function establishOralExamSession(examId) {
+  return axios.post(`${serverUrl}/api/v1/exam/session/oral/establish`, {
+    examId
+  }).then(r => {
+    return r.data
+  })
+}
+
 function getOngoingSession() {
   return axios.post(`${serverUrl}/api/v1/exam/session/ongoing`).then(r => {
     return r.data
@@ -210,6 +218,13 @@ function getWritingExamResultList() {
   })
 }
 
+function signOut() {
+  return axios.post(`${serverUrl}/api/v1/user/logout`, { withCredentials: true }).then(r => {
+    storage.removeItem('loginStatus', r => { })
+    return r.data
+  })
+}
+
 export {
   checkIfLoggedIn,
   getUserName,
@@ -236,5 +251,7 @@ export {
   getWritingExamResult,
   getReadingExamResult,
   getReadingExamResultList,
-  getWritingExamResultList
+  getWritingExamResultList,
+  signOut,
+  establishOralExamSession,
 };
