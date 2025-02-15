@@ -350,6 +350,15 @@ function getConfig() {
 }
 
 
+function answerSheetGeneration(examPaper) {
+  return axios.post(`${serverUrl}/api/v1/admin/generate_answer_sheet`, {
+    "examPaper": examPaper
+  }).then(r => {
+    return r.data
+  })
+}
+
+
 export default {
   checkIfLoggedIn, checkIfInitialized, refreshServerUrl, ask_ai, initialize, signin,
   userInfo, avatar, getUsers, getArtifacts, deleteArtifact, getArtifactDownloadUrl, artifactCreateUrl,
@@ -358,5 +367,6 @@ export default {
   updateWritingExamination, deleteWritingExamination, updateReadingExamination, createUser, deleteUser,
   updateUsername, updatePassword, updateEmail, getReadingExamResultList, getReadingExamResult,
   getWritingExamResultList, getWritingExamResult, signOut, getExamSessionList, getOralExaminationList, createOralExamination,
-  updateOralExamination, deleteOralExamination, getOralExamination, getPreferredExamTopics, updateConfig, getConfig
+  updateOralExamination, deleteOralExamination, getOralExamination, getPreferredExamTopics, updateConfig, getConfig,
+  answerSheetGeneration
 }

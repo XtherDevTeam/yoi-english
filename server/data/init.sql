@@ -121,3 +121,15 @@ create table essayWritingExamResult (
     feedback            string not null,
     userId              integer not null
 );
+
+create table favouriteWord (
+    id                  integer primary key autoincrement,
+    word                string not null,
+    example_sentence    string not null default '[]'
+);
+
+create table userWordList (
+    id                  integer primary key autoincrement,
+    userId              integer not null,
+    wordlist            string not null default '[]'
+);

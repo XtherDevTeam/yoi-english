@@ -410,3 +410,39 @@ Used to prompt the user to analyze the overall assessment.
 Variables:
 - recent_feedbacks: List of recent feedbacks provided to the student.
 """
+
+PROMPT_FOR_ANSWER_SHEET_GENERATION = """
+You are given an examination paper, in markdown format.
+You job is to convert the examination paper into the answer sheet in json format.
+
+For reference, this is the original examination paper:
+```markdown
+{{examPaper}}
+
+Here is the guideline of converting examination paper to answer sheet:
+1. Identify each questions and their question numbers in the examination paper.
+2. For each question, classify them into two categories: `choice` and `text`.
+   For `choice` questions, extract their available option numbers like `A`, `B`, `C` from the examination paper.
+3. Convert them into a JSON list wrapped in `[answer_sheet_format][/answer_sheet_format]` in your response.
+
+Here is an example of the answer sheet format:
+
+```
+[answer_sheet_format]
+[
+    {
+        "type": "choice", // there could be `choice` or `text` type
+        "answer": "", // leave it empty for questions in all categories
+        "candidateAnswers": [], // list of available option numbers for `choice` type.
+    },
+    {
+        "type": "text", // example for `text` type
+        "answer": "" // leave it empty
+    }
+]
+[/answer_sheet_format]
+```
+
+Notice:
+Calm down and think step by step, your thinking process can be exposed in the response. 
+"""

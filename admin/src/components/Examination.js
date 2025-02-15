@@ -104,6 +104,26 @@ const CreateReadingExaminationTab = () => {
           <Mui.Typography variant="body1">
             您需要设置此考试的答案及答题卡格式。答题卡格式由多个部分组成，每个部分包含类型（选择题或简答题）和答案。选择题类型需提供候选答案列表。您可以根据需要添加或删除部分。
           </Mui.Typography>
+          <Mui.Typography variant="body1">
+            点击此处依据测试试题生成答题卡格式。
+            <Mui.Button variant="contained" color="primary" onClick={() => {
+              Api.answerSheetGeneration(articles).then(r => {
+                if (r.status){
+                  setAnswerSheetFormat(r.data);
+                } else {
+                  setAlertDetail()
+                }
+              }).catch(err => {
+                setAlertDetail({
+                  type: "error",
+                  title: "Error",
+                  message: err.toString()
+                });
+                setAlertOpen(true);
+              });
+            }}>生成答题卡格式</Mui.Button>
+          </Mui.Typography>
+
         </Mui.Grid>
         <Mui.Grid item xs={12}>
           <AnswerSheetFormatComposer

@@ -297,6 +297,35 @@ def ask_ai():
         })
 
 
+@app.route('/v1/admin/generate_answer_sheet', methods=['POST'])
+def generate_answer_sheet():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'new_exam_paper_creat')
+    if not perm_result['status']:
+        return perm_result
+    
+    form: dict[str, typing.Any] = flask.request.json
+    examPaper = form.get('examPaper')
+    if not examPaper:
+        return DataProvider.makeResult(False, 'Exam paper text is required.')
+    else:
+        prompt = chatModel.Prompt(data.config.PROMPT_FOR_ANSWER_SHEET_GENERATION, {
+            'examPaper': examPaper
+        })
+        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.9)
+        resp = model.initiate([prompt])
+        answer_sheet_format = resp[resp.rfind('[answer_sheet_format]') + 22: resp.rfind('[/answer_sheet_format]')]
+        print(resp, '\n', answer_sheet_format)
+        try:
+            return DataProvider.makeResult(True, json.loads(answer_sheet_format))
+        except:
+            return DataProvider.makeResult(False, 'Invalid answer sheet format given in response.')
+        
+
+
 @app.route('/v1/admin/users/create', methods=['POST'])
 def create_user_admin():
     if 'userAuth' not in flask.session:
