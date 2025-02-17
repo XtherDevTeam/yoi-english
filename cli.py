@@ -56,9 +56,9 @@ def build_frontend():
         return
 
     # run npm install
-    subprocess.run(["npm", "install"], cwd=pathlib.Path.cwd() / "frontend", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["npm", "install"], cwd=pathlib.Path.cwd() / "frontend", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     # run npm build
-    subprocess.run(["npm", "run", "build"], cwd=pathlib.Path.cwd() / "frontend", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["npm", "run", "build"], cwd=pathlib.Path.cwd() / "frontend", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     args = {
         "install_to_var": {
             "description": "将前端安装到系统目录（例如 /var/www/html）。(是/否)",
@@ -84,10 +84,10 @@ def build_frontend():
         print(config_template)
         print('重要提示：请相应地修改 ssl_certificate 和 ssl_certificate_key 的路径。')
         # enable nginx config
-        subprocess.run(["sudo", "ln", "-s", nginx_config_path, "/etc/nginx/sites-enabled/yoi-english"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+        subprocess.Popen(["sudo", "ln", "-s", nginx_config_path, "/etc/nginx/sites-enabled/yoi-english"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
         print("Nginx 配置已启用。")
         # restart nginx
-        subprocess.run(["sudo", "systemctl", "restart", "nginx"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+        subprocess.Popen(["sudo", "systemctl", "restart", "nginx"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
         print("Nginx 已重启。")
 
 
@@ -102,7 +102,7 @@ def start_backend():
     if os.environ.get('CONDA_DEFAULT_ENV', '') != 'YoiEnglish':
         print("未找到名为 YoiEnglish 的默认 conda 环境。尝试使用当前环境。")
 
-    subprocess.run(["python", "app.py"], cwd=pathlib.Path.cwd() / "server", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["python", "app.py"], cwd=pathlib.Path.cwd() / "server", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
 
 
 def initialize_backend_env():
@@ -117,11 +117,11 @@ def initialize_backend_env():
         print("未找到名为 YoiEnglish 的默认 conda 环境。尝试使用当前环境。")
 
     # create conda environment
-    subprocess.run(["conda", "create", "-n", "YoiEnglish", "--file", "conda_env.txt"], cwd=pathlib.Path.cwd() / "server", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["conda", "create", "-n", "YoiEnglish", "--file", "conda_env.txt"], cwd=pathlib.Path.cwd() / "server", shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     print("Conda 环境已创建。")
 
     # activate conda environment
-    subprocess.run(["conda", "activate", "YoiEnglish"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["conda", "activate", "YoiEnglish"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     print("Conda 环境已激活。")
 
     print("后端环境设置完成。你可以通过在 server 目录下运行 'python app.py' 来启动服务器，或者直接使用命令行工具。")
@@ -136,7 +136,7 @@ def install_livekit_server():
         return
 
     # install livekit server
-    subprocess.run(["brew", "install", "livekit"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["brew", "install", "livekit"], shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
 
     print("LiveKit 服务器已安装。")
 
@@ -149,7 +149,7 @@ def run_livekit_server():
         return
 
     # run livekit server
-    subprocess.run(["livekit-server", "--config", "livekit.yaml"], cwd=pathlib.Path.cwd(), shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.Popen(["livekit-server", "--config", "livekit.yaml"], cwd=pathlib.Path.cwd(), shell=True, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
 
     print("LiveKit 服务器正在运行。")
 
