@@ -1,0 +1,19 @@
+server {
+    listen 62111 ssl;
+    client_max_body_size 114514m;
+    ssl_certificate /var/ssl_cert/ssl.pem;
+    ssl_certificate_key /var/ssl_cert/ssl.key;
+    ssl_protocols TLSv1 TLSv1.2 TLSv1.3 TLSv1.1;
+
+    location / {
+        root /var/www/html/yoi-english;
+        try_files $uri $uri/ /index.html;
+    }
+    location /api {
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://localhost:62100/;
+    }
+}

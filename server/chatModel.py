@@ -155,9 +155,9 @@ def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tu
     })
     logger.Logger.log(prompt)
     resp = ChatGoogleGenerativeAI('gemini-1.5-flash', 0.7).initiate([prompt])
-    
+    logger.Logger.log(resp)
     # get content from [result][/result]
-    final = resp[resp.find('[feedback]') + 10:resp.rfind('[/feedback]')]
+    final = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
     # get band from [band][/band]
     band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
     return band, final

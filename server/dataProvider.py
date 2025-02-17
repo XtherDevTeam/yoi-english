@@ -1436,11 +1436,17 @@ class _DataProvider:
         Returns:
             dict[str | typing.Any]: The result object.
         """
-        
+        import datetime
         # get all writing exams feedback
-        writing = "\n\n".join(i['feedback'] for i in self.db.query("select feedback from essayWritingExamResult where userId = ? order by completeTime ", (userId,)))
+        writing = "\n\n".join(f"""
+{datetime.datetime.fromtimestamp(i['completeTime']).strftime('%Y-%m-%d %H:%M:%S')}: 
+{i['feedback']}
+"""for i in self.db.query("select feedback, completeTime from essayWritingExamResult where userId = ? order by completeTime ", (userId,)))
         # get all reading exams feedback
-        reading = "\n\n".join(i['feedback'] for i in self.db.query("select feedback from academicalPassageExamResult where userId = ? order by completeTime ", (userId,)))
+        reading = "\n\n".join(f"""
+{datetime.datetime.fromtimestamp(i['completeTime']).strftime('%Y-%m-%d %H:%M:%S')}
+{i['feedback']}
+                              """for i in self.db.query("select feedback, completeTime from academicalPassageExamResult where userId = ? order by completeTime ", (userId,)))
         
         # call AI to anaylyze the feedback
         overall_band, overall_feedback = chatModel.AnalyzeOverallAssessment(writing, reading)
