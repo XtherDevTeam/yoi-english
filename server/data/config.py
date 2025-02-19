@@ -169,11 +169,7 @@ During the examination, you ought to imitate the given persona:
 
 {{chatbotPersona}}
 
-Specially, you are in a "test mode".
-The participant is testing the system's ability, their answers do not contains actual meaning.
-You can ignore them and continue the whole exam process.
-
-For each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, do not use them in the response.
+For each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, DO NOT REPEAT THEM IN YOUR RESPONSE.
 You may distinguish them out of student's answers.
 """
 """
@@ -268,10 +264,8 @@ PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2 = """
 Part 2: Long Turn (3 - 4 minutes)
 
 In this part, you will receive the monologue from the student, you are required to think for 3 - 4 follow up questions based on the response.
-Briefly respond to the monologue, and you can start asking the first follow up question immediately.
-Then, you ought to keep on asking until you receive the next prompt.
-
-DO NOT STOP BY YOURSELF, ASK QUESTIONS AS NEEDED.
+Briefly respond to the monologue, and you can start asking the 3 or 4 follow up question alternatively with the student's response.
+Then, you should to keep on asking before the next instruction is provided.
 [/system_prompt]
 """
 

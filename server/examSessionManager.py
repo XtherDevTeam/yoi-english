@@ -1,4 +1,5 @@
 import os
+import lameenc
 import json
 import queue
 import time
@@ -74,6 +75,7 @@ class BroadcastMissionManager():
         
         
     def put(self, mission: str) -> None:
+        print(mission)
         mission = mission\
                         .replace('\n', ' ')\
                         .replace('. ', '|sep|')\
@@ -417,10 +419,30 @@ class SpeakingExaminationSessionBackend():
             with wave.open(wav_buffer, 'wb') as wav_file:
                 wav_file.setnchannels(1)
                 wav_file.setsampwidth(2)
-                wav_file.setframerate(16000)
+                wav_file.setframerate(48000)
                 wav_file.writeframes(pcm_data)
             return wav_buffer.getvalue()
 
+
+    def pcmToMp3(self, pcm_data: bytes) -> bytes:
+        """
+        Convert PCM data to MP3 format.
+
+        Args:
+            pcm_data (bytes): PCM data
+
+        Returns:
+            bytes: MP3 data
+        """
+        with io.BytesIO() as mp3_buffer:
+            mp3_encoder = lameenc.Encoder()
+            mp3_encoder.set_bit_rate(128)
+            mp3_encoder.set_in_sample_rate(48000)
+            mp3_encoder.set_channels(1)
+            mp3_encoder.init_params()
+            mp3_encoder.encode(pcm_data, mp3_buffer)
+            mp3_encoder.close()
+            return mp3_buffer.getvalue()
 
     async def chat(self):
         while True:
@@ -453,9 +475,7 @@ class SpeakingExaminationSessionBackend():
                         await asyncio.sleep(0.1)
                         
                     self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
-                    user_answer = self.pcmToWav(self.userAnswers.get())
-                    with open('user_answer.wav', 'wb') as f:
-                        f.write(user_answer)
+                    user_answer = self.pcmToMp3(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartI_Conversation_Answers'].append(
                         user_answer
@@ -467,7 +487,7 @@ class SpeakingExaminationSessionBackend():
                         })
                         self.llmState = SpeakingExaminationLLMState.PARTII_STUDENT_PREPARATION
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/wav',
+                            'mime_type': 'audio/mp3',
                             'data': user_answer
                         }, chatModel.Prompt(data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1, {
                             'specific_topic': self.specificTopic
@@ -491,7 +511,7 @@ class SpeakingExaminationSessionBackend():
                     else:
                         # send to AI
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/wav',
+                            'mime_type': 'audio/mp3',
                             'data': user_answer
                         }])
                         self.ttsManager.put(resp)
@@ -520,10 +540,10 @@ class SpeakingExaminationSessionBackend():
                         await asyncio.sleep(0.1)
                         
                     # get answers
-                    self.llmStateInfo['PartII_Student_Statement_Answer'] = self.pcmToWav(self.userAnswers.get())
+                    self.llmStateInfo['PartII_Student_Statement_Answer'] = self.pcmToMp3(self.userAnswers.get())
                         
                     resp = self.llmSession.chat([data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2, {
-                        'mime_type': 'audio/wav',
+                        'mime_type': 'audio/mp3',
                         'data': self.llmStateInfo['PartII_Student_Statement_Answer']
                     }])
                     self.llmStateInfo['PartII_Follow_Up_Questions'].append(
@@ -545,7 +565,7 @@ class SpeakingExaminationSessionBackend():
                     # increase round counter
                     self.llmStateInfo['PartII_Follow_Up_Round_Counter'] += 1
                     # get answer
-                    answer = self.pcmToWav(self.userAnswers.get())
+                    answer = self.pcmToMp3(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartII_Follow_Up_Answers'].append(
                         answer
@@ -558,7 +578,7 @@ class SpeakingExaminationSessionBackend():
                         })
                         resp = self.llmSession.chat([
                             {
-                                'mime_type': 'audio/wav',
+                                'mime_type': 'audio/mp3',
                                 'data': answer,
                             },
                             data.config.PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM,
@@ -575,7 +595,7 @@ class SpeakingExaminationSessionBackend():
                             'data': 'PartII_Follow_Up_Questioning'
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/wav',
+                            'mime_type': 'audio/mp3',
                             'data': answer
                         }])
                         # send to AI
@@ -592,7 +612,7 @@ class SpeakingExaminationSessionBackend():
                     # increase the counter
                     self.llmStateInfo['PartIII_Discussion_Round_Counter'] += 1
                     # get answer
-                    answer = self.pcmToWav(self.userAnswers.get())
+                    answer = self.pcmToMp3(self.userAnswers.get())
                     # add to answer
                     self.llmStateInfo['PartIII_Discussion_Answers'].append(
                         answer
@@ -603,7 +623,7 @@ class SpeakingExaminationSessionBackend():
                             'event': 'await_for_analyze_result',
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/wav',
+                            'mime_type': 'audio/mp3',
                             'data': answer
                         }, data.config.PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT])
                         # parse feedback
@@ -622,7 +642,7 @@ class SpeakingExaminationSessionBackend():
                             'data': 'PartIII_Discussion'
                         })
                         resp = self.llmSession.chat([{
-                            'mime_type': 'audio/wav',
+                            'mime_type': 'audio/mp3',
                             'data': answer
                         }])
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
@@ -875,15 +895,20 @@ class _ExamSessionManager:
             # upload all the bytes data to database as artifacts
             if 'PartI_Conversation_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartI_Conversation_Answers']):
-                    llmStateInfo['PartI_Conversation_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+                    llmStateInfo['PartI_Conversation_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', i)['data']['id']
             if 'PartII_Student_Statement_Answer' in llmStateInfo:
-                llmStateInfo['PartII_Student_Statement_Answer'] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', llmStateInfo['PartII_Student_Statement_Answer'])['data']['id']
+                llmStateInfo['PartII_Student_Statement_Answer'] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', llmStateInfo['PartII_Student_Statement_Answer'])['data']['id']
             if 'PartII_Follow_Up_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartII_Follow_Up_Answers']):
-                    llmStateInfo['PartII_Follow_Up_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+                    llmStateInfo['PartII_Follow_Up_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', i)['data']['id']
             if 'PartIII_Discussion_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartIII_Discussion_Answers']):
-                    llmStateInfo['PartIII_Discussion_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/wav', i)['data']['id']
+                    llmStateInfo['PartIII_Discussion_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', i)['data']['id']
+            
+            # intercept the data and save it in pkl file for testing the incoming steps
+            import pickle
+            with open(f'exam_session_{sessionId}.pkl', 'wb') as f:
+                pickle.dump(llmStateInfo, f)
             
             # call judger to handle the result
             pron_eval_result = examJudger.Judger.evaluate_exam_result(llmStateInfo)
