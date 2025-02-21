@@ -82,7 +82,7 @@ function FeedbackDialog({ visible, onClose, feedback }) {
         </ScrollView>
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onClick={() => {
+        <Button onPress={() => {
           onClose()
         }}>关闭</Button>
       </Dialog.Actions>
@@ -248,6 +248,11 @@ function RoomView({ }) {
   }, [currentStage, interruption])
   return <Grid style={{ height: '100%', width: '100%' }}>
     <Row size={25}>
+      <FeedbackDialog visible={feedbackDialogVisible} onClose={() => {
+        console.log('close feedback dialog')
+        navigation.goBack()
+        setFeedbackDialogVisible(false)
+      }} feedback={feedback} />
       <AudioLevelIndicator audioLevels={audioLevels} style={{ alignSelf: 'center', justifyContent: 'center', width: '100%', height: '100%' }} />
     </Row>
     <Row size={75}>
@@ -304,11 +309,6 @@ function RoomView({ }) {
           </Text>
         </View>}
       </View>
-      <FeedbackDialog visible={feedbackDialogVisible} onClose={() => {
-        console.log('close feedback dialog')
-        navigation.goBack()
-        setFeedbackDialogVisible(false)
-      }} feedback={feedback} />
     </Row>
   </Grid >
 }

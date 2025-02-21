@@ -130,9 +130,9 @@ function OngoingExamSessionBanner({ refresher }) {
     {ongoingSession && <Card style={{ margin: 10 }}>
       <Card.Title title={`正在进行的${examTypes[ongoingSession.type]}考试`} subtitle={ongoingSession.examPaper.title} />
       <Card.Content>
-        <Text>考试时长：{ongoingSession.duration / 60} 分钟</Text>
+        {ongoingSession.type !== 'oral' && <Text>考试时长：{ongoingSession.duration / 60} 分钟</Text>}
         <Text>开始时间：{dayjs.unix(ongoingSession.startTime).format('YYYY-MM-DD HH:mm')}</Text>
-        <Text>结束时间：{dayjs.unix(ongoingSession.endTime).format('YYYY-MM-DD HH:mm')}</Text>
+        {ongoingSession.type !== 'oral' && <Text>结束时间：{dayjs.unix(ongoingSession.endTime).format('YYYY-MM-DD HH:mm')}</Text>}
       </Card.Content>
       <Card.Actions>
         <Button mode="text" onPress={() => {
@@ -150,7 +150,7 @@ function OngoingExamSessionBanner({ refresher }) {
           }
           setOngoingSession(null)
         }}>结束答题</Button>
-        <Button mode="text" onPress={() => {
+        {ongoingSession.type !== 'oral' && <Button mode="text" onPress={() => {
           if (ongoingSession.type == 'writing') {
             navigation.navigate('WritingExamParticipation', { examSession: ongoingSession.sessionId, type: ongoingSession.type })
           } else if (ongoingSession.type == 'reading') {
@@ -159,7 +159,7 @@ function OngoingExamSessionBanner({ refresher }) {
             console.log('start oral exam')
           }
           setOngoingSession(null)
-        }}>继续答题</Button>
+        }}>继续答题</Button>}
       </Card.Actions>
     </Card>}
   </>
