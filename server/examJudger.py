@@ -27,7 +27,7 @@ class PronunciationAssessment:
 
     def transcribe_audio(self, audio_file):
         """Transcribes audio using Whisper."""
-        result = self.whisper_model(audio_file)
+        result = self.whisper_model(audio_file, return_timestamps=True)
         return result["text"].strip().lower()
 
     def get_phonemes(self, text):
@@ -89,7 +89,7 @@ class PronunciationAssessment:
             }
         except Exception as e:
              print(f"Error during process: {e}")
-             return None
+             raise e
 
 
 class _Judger:
@@ -123,13 +123,21 @@ class _Judger:
         logger.Logger.log(f'Evaluating Part II Student Statement: Artifact ID {llmStateInfo["PartII_Student_Statement_Answer"]}')
         PartII_Student_Statement_Pronunciation_Assessment = {}
         wav = dataProvider.DataProvider.getArtifactContentById(llmStateInfo['PartII_Student_Statement_Answer'])
-        assess = self.Assessment.assess_pronunciation(wav)
-        PartII_Student_Statement_Pronunciation_Assessment = {
-            'reference_text': assess['reference_text'],
-            'reference_phonemes': assess['reference_phonemes'],
-            'examinee_phonemes': assess['hypothesis_phonemes_audio'],
-            'score': assess['ler_score']
-        }
+        if wav:
+            assess = self.Assessment.assess_pronunciation(wav)
+            PartII_Student_Statement_Pronunciation_Assessment = {
+                'reference_text': assess['reference_text'],
+                'reference_phonemes': assess['reference_phonemes'],
+                'examinee_phonemes': assess['hypothesis_phonemes_audio'],
+                'score': assess['ler_score']
+            }
+        else:
+            PartII_Student_Statement_Pronunciation_Assessment = {
+                'reference_text': '',
+                'reference_phonemes': '',
+                'examinee_phonemes': '',
+                'score': 0
+            }
         
         PartII_Follow_Up_Answer_Pronunciation_Assessments = []
         for i in llmStateInfo['PartII_Follow_Up_Answers']:

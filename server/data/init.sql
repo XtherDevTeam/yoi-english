@@ -46,6 +46,7 @@ create table oralEnglishExamPaper (
 create table oralEnglishExamResult (
     id                        integer primary key autoincrement,
     completeTime              integer not null,
+    examPaperId               integer not null,
     band                      integer not null,
     overallFeedback           string not null,
     contentFeedback           string not null,

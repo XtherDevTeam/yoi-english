@@ -115,6 +115,37 @@ class BroadcastMissionManager():
         return self.readyMissions.get()
 
 
+class SpeakingExaminaionVirtualExaminee():
+    def __init__(self):
+        self.prompt = f'''
+        You are a skillful IELTS Speaking Examination participant. Your task is to attend a speaking examination with your full effort.
+        You are required to speak and answer the questions the examiner asked.
+        When you receive a task card, you are required to read the task given to you and give the speech immediately.
+        All of your answers should be in no more than 200 words.
+        
+        Your personality is as follows:
+        
+        Name: Jerry Chou
+        Gender: Male
+        Age: 15
+        Hometown: Zhaoqing, Guangdong
+        Favourite Subject: English
+        Hobbies: Coding, reading
+        '''
+        self.llm = chatModel.ChatGoogleGenerativeAI("gemini-2.0-flash-thinking-exp-01-21", 0.7, system_prompt=self.prompt)
+        self.APIInstance = AIDubMiddlewareAPI(dataProvider.DataProvider.getConfig()['data']['AIDubEndpoint'])
+        self.isInitiated = False
+    
+    
+    def answer(self, question: str) -> str:
+        print('Question sent')
+        data = self.llm.chat([question]) if self.isInitiated else self.llm.initiate([question])
+        print(question, data)
+        resp = self.APIInstance.dub(data, 'Yoimiya')
+        mime, data = resp.headers['Content-Type'], resp.content
+        return mime, data
+        
+
 class SpeakingExaminationSessionBackend():
     def __init__(self, userId: int, warmUpTopics: list[str], specificTopic: str):
         self.userId = userId
@@ -126,11 +157,12 @@ class SpeakingExaminationSessionBackend():
         self.llmSession: google.genai.live.AsyncSession = None
         self.llmState: int = SpeakingExaminationLLMState.DISCONNECTED
         self.ttsManager: BroadcastMissionManager = BroadcastMissionManager()
+        self.virtualExaminee: SpeakingExaminaionVirtualExaminee = SpeakingExaminaionVirtualExaminee()
         self.llmStateInfo: dict[str, typing.Any] = {
             'PartI_Conversation_Round_Counter': 0,
             'PartI_Conversation_Questions': [],
             'PartI_Conversation_Answers': [],
-            'PartII_Student_Statement': b'',
+            'PartII_Student_Statement_Answer': b'',
             'PartII_Follow_Up_Round_Counter': 0,
             'PartII_Follow_Up_Questions': [],
             'PartII_Follow_Up_Answers': [],
@@ -155,6 +187,8 @@ class SpeakingExaminationSessionBackend():
         self.data_buffer_for_conv = b''
         self.registeredEvents: dict[str, typing.Callable] = {}
         self.audioFrameDetails = {}
+        self.latestQuestion = ''
+        self.automaticAnswering = False
         
         
     async def emitEvent(self, event: str, data: typing.Any) -> None:
@@ -419,7 +453,7 @@ class SpeakingExaminationSessionBackend():
             with wave.open(wav_buffer, 'wb') as wav_file:
                 wav_file.setnchannels(1)
                 wav_file.setsampwidth(2)
-                wav_file.setframerate(48000)
+                wav_file.setframerate(16000)
                 wav_file.writeframes(pcm_data)
             return wav_buffer.getvalue()
 
@@ -434,15 +468,34 @@ class SpeakingExaminationSessionBackend():
         Returns:
             bytes: MP3 data
         """
-        with io.BytesIO() as mp3_buffer:
-            mp3_encoder = lameenc.Encoder()
-            mp3_encoder.set_bit_rate(128)
-            mp3_encoder.set_in_sample_rate(48000)
-            mp3_encoder.set_channels(1)
-            mp3_encoder.init_params()
-            mp3_encoder.encode(pcm_data, mp3_buffer)
-            mp3_encoder.close()
-            return mp3_buffer.getvalue()
+        mp3_encoder = lameenc.Encoder()
+        mp3_encoder.set_bit_rate(128)
+        mp3_encoder.set_in_sample_rate(16000)
+        mp3_encoder.set_channels(1)
+        mp3_data: bytearray = mp3_encoder.encode(pcm_data)
+        return bytes(mp3_data)
+        
+        
+    def getVirtualExamineeAnswer(self, question: str) -> bytes:
+        """
+        Get the virtual examinee's answer to a question.
+
+        Args:
+            question (str): the question to ask the virtual examinee
+
+        Returns:
+            bytes: the virtual examinee's answer in MP3 format
+        """
+        mime, blob = self.virtualExaminee.answer(question)
+        pcm = b''
+        with av.open(io.BytesIO(blob), 'r') as container:
+            for frame in container.decode(audio=0):
+                resampledFrame = av.AudioResampler(
+                    format='s16', layout='mono', rate=16000).resample(frame)[0]
+                pcm += resampledFrame.to_ndarray().astype(numpy.int16).tobytes()
+        
+        return self.pcmToMp3(pcm)
+    
 
     async def chat(self):
         while True:
@@ -460,6 +513,7 @@ class SpeakingExaminationSessionBackend():
                     resp = self.llmSession.initiate([chatModel.Prompt(data.config.PROMPT_FOR_THE_FIRST_PART_OF_ORAL_ENGLISH_EXAM, {
                         'specific_topics': self.warmUpTopics
                     })])
+                    self.latestQuestion = resp
                     logger.Logger.log(resp)
                     self.llmStateInfo['PartI_Conversation_Questions'].append(
                         resp
@@ -475,7 +529,12 @@ class SpeakingExaminationSessionBackend():
                         await asyncio.sleep(0.1)
                         
                     self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
-                    user_answer = self.pcmToMp3(self.userAnswers.get())
+                    if self.automaticAnswering:
+                        user_answer = self.getVirtualExamineeAnswer(self.latestQuestion)
+                    else:
+                        user_answer = self.pcmToMp3(self.userAnswers.get())
+                        self.userAnswers.get()
+                    
                     # add to answer
                     self.llmStateInfo['PartI_Conversation_Answers'].append(
                         user_answer
@@ -492,6 +551,7 @@ class SpeakingExaminationSessionBackend():
                         }, chatModel.Prompt(data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_1, {
                             'specific_topic': self.specificTopic
                         })])
+                        self.latestQuestion = resp + "Now you can begin your speech."
                         print(resp)
                         
                         # parse task card
@@ -514,6 +574,7 @@ class SpeakingExaminationSessionBackend():
                             'mime_type': 'audio/mp3',
                             'data': user_answer
                         }])
+                        self.latestQuestion = resp
                         self.ttsManager.put(resp)
                         await self.emitEvent('control', {
                             'event': 'resume_recording',
@@ -540,12 +601,17 @@ class SpeakingExaminationSessionBackend():
                         await asyncio.sleep(0.1)
                         
                     # get answers
-                    self.llmStateInfo['PartII_Student_Statement_Answer'] = self.pcmToMp3(self.userAnswers.get())
-                        
+                    if self.automaticAnswering:
+                        self.userAnswers.get()
+                        self.llmStateInfo['PartII_Student_Statement_Answer'] = self.getVirtualExamineeAnswer(self.latestQuestion)
+                    else:
+                        self.llmStateInfo['PartII_Student_Statement_Answer'] = self.pcmToMp3(self.userAnswers.get())
+                    
                     resp = self.llmSession.chat([data.config.PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2, {
                         'mime_type': 'audio/mp3',
                         'data': self.llmStateInfo['PartII_Student_Statement_Answer']
                     }])
+                    self.latestQuestion = resp
                     self.llmStateInfo['PartII_Follow_Up_Questions'].append(
                         resp
                     )
@@ -565,17 +631,18 @@ class SpeakingExaminationSessionBackend():
                     # increase round counter
                     self.llmStateInfo['PartII_Follow_Up_Round_Counter'] += 1
                     # get answer
-                    answer = self.pcmToMp3(self.userAnswers.get())
+                    if self.automaticAnswering:
+                        self.userAnswers.get() # drop the answer
+                        answer = self.getVirtualExamineeAnswer(self.latestQuestion)
+                    else:
+                        answer = self.pcmToMp3(self.userAnswers.get())
+                        
                     # add to answer
                     self.llmStateInfo['PartII_Follow_Up_Answers'].append(
                         answer
                     )
                     # if all rounds are done, start discussing
                     if self.llmStateInfo['PartII_Follow_Up_Round_Counter'] == 3:
-                        await self.emitEvent('control', {
-                            'event': 'next_state',
-                            'data': 'PartIII_Discussion'
-                        })
                         resp = self.llmSession.chat([
                             {
                                 'mime_type': 'audio/mp3',
@@ -583,26 +650,32 @@ class SpeakingExaminationSessionBackend():
                             },
                             data.config.PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM,
                         ])
+                        self.latestQuestion = resp
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
                             resp
                         )
                         self.ttsManager.put(resp)
                         self.llmState = SpeakingExaminationLLMState.PARTIII_DISCUSSING
                         self.llmStateInfo['PartIII_Discussion_Round_Counter'] = 0
-                    else:
                         await self.emitEvent('control', {
-                            'event': 'resume_recording',
-                            'data': 'PartII_Follow_Up_Questioning'
+                            'event': 'next_state',
+                            'data': 'PartIII_Discussion'
                         })
+                    else:
                         resp = self.llmSession.chat([{
                             'mime_type': 'audio/mp3',
                             'data': answer
                         }])
+                        self.latestQuestion = resp
                         # send to AI
                         self.ttsManager.put(resp)
                         self.llmStateInfo['PartII_Follow_Up_Questions'].append(
                             resp
                         )
+                        await self.emitEvent('control', {
+                            'event': 'resume_recording',
+                            'data': 'PartII_Follow_Up_Questioning'
+                        })
                 case SpeakingExaminationLLMState.PARTIII_DISCUSSING:
                     # wait for user answer
                     answer = b''
@@ -612,7 +685,13 @@ class SpeakingExaminationSessionBackend():
                     # increase the counter
                     self.llmStateInfo['PartIII_Discussion_Round_Counter'] += 1
                     # get answer
-                    answer = self.pcmToMp3(self.userAnswers.get())
+                    # answer = self.pcmToMp3(self.userAnswers.get())
+                    if self.automaticAnswering:
+                        self.userAnswers.get() # drop the answer
+                        answer = self.getVirtualExamineeAnswer(self.latestQuestion)
+                    else:
+                        answer = self.pcmToMp3(self.userAnswers.get())
+                        
                     # add to answer
                     self.llmStateInfo['PartIII_Discussion_Answers'].append(
                         answer
@@ -626,6 +705,7 @@ class SpeakingExaminationSessionBackend():
                             'mime_type': 'audio/mp3',
                             'data': answer
                         }, data.config.PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT])
+                        self.latestQuestion = resp
                         # parse feedback
                         feedback = resp[resp.rfind('[feedback]')+10:resp.rfind('[/feedback]')]
                         self.llmStateInfo['Feedback'] = feedback
@@ -637,18 +717,19 @@ class SpeakingExaminationSessionBackend():
                         self.llmState = SpeakingExaminationLLMState.DISCONNECTED
                     else:
                         # start next round
-                        await self.emitEvent('control', {
-                            'event': 'next_state',
-                            'data': 'PartIII_Discussion'
-                        })
                         resp = self.llmSession.chat([{
                             'mime_type': 'audio/mp3',
                             'data': answer
                         }])
+                        self.latestQuestion = resp
                         self.llmStateInfo['PartIII_Discussion_Questions'].append(
                             resp
                         )
                         self.ttsManager.put(resp)
+                        await self.emitEvent('control', {
+                            'event': 'next_state',
+                            'data': 'PartIII_Discussion'
+                        })
         
             
     def calculateDecibel(self, audio_frame: av.AudioFrame) -> float:
@@ -678,6 +759,8 @@ class SpeakingExaminationSessionBackend():
         async for frame in stream:
             if not self.connected:
                 break
+            if self.llmState == SpeakingExaminationLLMState.AWAITING_CONNECTION:
+                self.llmState = SpeakingExaminationLLMState.PARTI_INITIATION
             last_sec_frames += 1
             frames += 1
             avFrame = av.AudioFrame.from_ndarray(numpy.frombuffer(frame.frame.remix_and_resample(16000, 1).data, dtype=numpy.int16).reshape(frame.frame.num_channels, -1), layout='mono', format='s16')
@@ -896,7 +979,7 @@ class _ExamSessionManager:
             if 'PartI_Conversation_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartI_Conversation_Answers']):
                     llmStateInfo['PartI_Conversation_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', i)['data']['id']
-            if 'PartII_Student_Statement_Answer' in llmStateInfo:
+            if 'PartII_Student_Statement_Answer' in llmStateInfo and llmStateInfo['PartII_Student_Statement_Answer']:
                 llmStateInfo['PartII_Student_Statement_Answer'] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', llmStateInfo['PartII_Student_Statement_Answer'])['data']['id']
             if 'PartII_Follow_Up_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartII_Follow_Up_Answers']):
@@ -904,11 +987,6 @@ class _ExamSessionManager:
             if 'PartIII_Discussion_Answers' in llmStateInfo:
                 for idx, i in enumerate(llmStateInfo['PartIII_Discussion_Answers']):
                     llmStateInfo['PartIII_Discussion_Answers'][idx] = dataProvider.DataProvider.createArtifact(userId, True, 'audio/mp3', i)['data']['id']
-            
-            # intercept the data and save it in pkl file for testing the incoming steps
-            import pickle
-            with open(f'exam_session_{sessionId}.pkl', 'wb') as f:
-                pickle.dump(llmStateInfo, f)
             
             # call judger to handle the result
             pron_eval_result = examJudger.Judger.evaluate_exam_result(llmStateInfo)

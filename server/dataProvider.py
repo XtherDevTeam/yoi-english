@@ -366,6 +366,10 @@ class _DataProvider:
         
         durationOfAMonth = timedelta(days=30).total_seconds()
         data = self.db.query("select * from oralEnglishExamResult where userId = ? and completeTime > ?", (userId, int(time.time() - durationOfAMonth)))
+        for i, exam in enumerate(data):
+            # get the exam paper
+            data[i]['examPaper'] = self.getOralExamById(exam['examPaperId'])['data']
+            
         return data
     
     def getRecentAcademicalEnglishExamResults(self, userId: int):
@@ -1333,7 +1337,7 @@ class _DataProvider:
                       (userId, completeTime, examId, json.dumps(answerDetails, default=lambda o: str(o)), answerDetails['Feedback'], feedbackContent, overall_feedback, overall_band))
         
         # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
+        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralEnglishExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
         return self.makeResult(True, data=res)
     
     
