@@ -181,7 +181,7 @@ class SpeakingExaminationSessionBackend():
         self.videoBroadcastingThread: threading.Thread = None
         self.loggerCallbackId: int = None
         self.exitCallback: typing.Callable = None
-        self.llmSession: chatModel.ChatGoogleGenerativeAI = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.7, system_prompt=chatModel.PromptForOralEnglishExamInitiation(
+        self.llmSession: chatModel.ChatGoogleGenerativeAI = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.7, system_prompt=chatModel.PromptForOralEnglishExamInitiation(
             chatbotName=config['chatbotName'], chatbotPersona=config['chatbotPersona']), tools=[])
         self.userManualInterruption = False
         self.userAnswers: queue.Queue[bytes] = queue.Queue()
