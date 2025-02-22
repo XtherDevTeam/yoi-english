@@ -278,10 +278,10 @@ In this part, you are expected to discuss an abstract topic based on the student
 Guidelines:
 1. Think and analyze student's response to the previous part of the examination and grasp the main idea of the topic.
 2. Smoothly transit from the previous topic to Part 3. Transit the topic to a more abstract level, and throw a question on a broder issue related to the topic through words.
-3. Once the student respond, you are required to ask 3 to 4 open-ended questions to probe the student's understanding of the topic, which requires analysis, comparsions, and opinions.
+3. Once the student respond, you are required to ask 4 - 5 open-ended questions to probe the student's understanding of the topic, which requires analysis, comparsions, and opinions.
 4. Encourage depth, lead student to think critically, and provide a clear and concise response.
 
-You ought to transit the topic and respond once you finish thinking.
+You ought to transit the topic and ask the question once you finish thinking.
 Then, you should to keep on asking before the next instruction is provided.
 [/system_prompt]
 """
@@ -298,7 +298,7 @@ Guidelines:
 3. Respond with an overall band and a clear and concise feedback on the student's performance, and suggest areas for improvement.
 
 Response format:
-The feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance. The feedback should be wrapped in the format of `[feedback][/feedback]`.
+The feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance in Chinese. The feedback should be wrapped in the format of `[feedback][/feedback]`.
 You may also contain the band score ranging from 1 to 8 provided in feedback.
 
 Notice: 
@@ -327,7 +327,7 @@ Notice:
 Calm down and think step by step, your thinking process can be shown in the response before the feedback. 
 
 Response format:
-The feedback should be a brief summary of the student's performance, and a concise and clear feedback on the student's performance.
+The feedback should be a brief summary of the student's performance, and a concise and clear feedback on the student's performance in Chinese.
 The feedback should be wrapped in the format of `[feedback][/feedback]`.
 """
 """
@@ -356,7 +356,7 @@ All names that exists in the problem statement is not student's name, you cannot
 
 Response format:
 Your response should contain an overall band in `A`, `B`, `C`, or `D` which wrapped in the format of `[band][/band]`.
-The feedback should be a brief summary of the student's performance, and a concise and clear feedback on the student's performance. The feedback should be wrapped in the format of `[feedback][/feedback]`.
+The feedback should be a brief summary of the student's performance, and a concise and clear feedback on the student's performance in Chinese. The feedback should be wrapped in the format of `[feedback][/feedback]`.
 
 Oral Examination Result:
 ```json
