@@ -218,11 +218,29 @@ function getWritingExamResultList() {
   })
 }
 
+function getOralExamResultList() {
+  return axios.post(`${serverUrl}/api/v1/exam_result/oral/list`).then(r => {
+    return r.data
+  })
+}
+
+function getOralExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/exam_result/oral/get`, {
+    id
+  }).then(r => {
+    return r.data
+  })
+}
+
 function signOut() {
   return axios.post(`${serverUrl}/api/v1/user/logout`, { withCredentials: true }).then(r => {
     storage.removeItem('loginStatus', r => { })
     return r.data
   })
+}
+
+function getArtifactDownloadUrl(id) {
+  return `${serverUrl}/api/v1/artifact/get?id=${id}`
 }
 
 export {
@@ -254,4 +272,7 @@ export {
   getWritingExamResultList,
   signOut,
   establishOralExamSession,
+  getOralExamResult,
+  getOralExamResultList,
+  getArtifactDownloadUrl
 };

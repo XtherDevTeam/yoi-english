@@ -9,8 +9,14 @@ import { Dirs } from 'react-native-file-access';
 
 import { CacheManager } from '@georstat/react-native-image-cache';
 import { registerGlobals } from '@livekit/react-native';
-
+import {Audio} from 'expo-av';
 import App from './App';
+
+Audio.setAudioModeAsync({
+  playsInSilentModeIOS: true,
+  shouldDuckAndroid: true,
+  playThroughEarpieceAndroid: true,
+});
 
 registerGlobals();
 

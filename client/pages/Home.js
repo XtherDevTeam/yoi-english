@@ -97,7 +97,7 @@ export default function Home({ navigation, route }) {
                   <DataTable.Title>测试名称</DataTable.Title>
                   <DataTable.Title>总体评分</DataTable.Title>
                 </DataTable.Header>
-                {recentRecords.oralEnglishExamResults.length > 0 && recentRecords.oralEnglishExamResults.map(record => <ExamRecordItem key={record.completeTime} record={record}></ExamRecordItem>)}
+                {recentRecords.oralEnglishExamResults.length > 0 && recentRecords.oralEnglishExamResults.map(record => <ExamRecordItem key={record.completeTime} record={record} type='oral'></ExamRecordItem>)}
                 {recentRecords.oralEnglishExamResults.length === 0 && <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center', padding: 20 }}><Text>暂无记录</Text></View>}
               </DataTable>
             </Card.Content>

@@ -28,6 +28,7 @@ import WritingExamParticipation from './pages/WritingExamParticipation';
 import ReadingExamParticipation from './pages/ReadingExamParticipation';
 import WritingExamResultView from './pages/WritingExamResultView';
 import ReadingExamResultView from './pages/ReadingExamResultView';
+import OralExamResultView from './pages/OralExamResultView';
 import ExaminationResult from './pages/ExaminationResult';
 import OralExamParticipation from './pages/OralExamParticipation';
 
@@ -101,6 +102,10 @@ export default function App() {
             />
             <Stack.Screen name="ReadingExamResultView" options={{ headerShown: false }} component={
               ReadingExamResultView
+            }
+            />
+            <Stack.Screen name="OralExamResultView" options={{ headerShown: false }} component={
+              OralExamResultView
             }
             />
           </Stack.Navigator>

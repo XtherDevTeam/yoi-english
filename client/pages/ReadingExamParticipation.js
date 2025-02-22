@@ -156,7 +156,6 @@ function AnswerSheet({ sessionDetails, progress, saveProgress, isVisible }) {
 
   React.useEffect(() => {
     if (sessionDetails && progress.length === 0) {
-      console.log('我造你妈', answers)
       setAnswers(sessionDetails.examPaper.answerSheetFormat.map(() => '')) // create a list made up of '' of length equal to the number of questions
     }
   }, [sessionDetails])
