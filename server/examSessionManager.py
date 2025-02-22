@@ -581,6 +581,10 @@ class SpeakingExaminationSessionBackend():
                         }])
                         self.latestQuestion = resp
                         self.ttsManager.put(resp)
+                        # add to question list
+                        self.llmStateInfo['PartI_Conversation_Questions'].append(
+                            resp
+                        )
                         await self.emitEvent('control', {
                             'event': 'resume_recording',
                             'data': 'PartI_Conversation'

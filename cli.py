@@ -72,7 +72,7 @@ def build_frontend():
     args = ask("自定义你的前端安装：", args)
     if args['install_to_var'].lower() == "yes":
         # copy build files to /var/www/html
-        shutil.copytree(pathlib.Path.cwd() / "admin" / "build", "/var/www/html/yoi-english")
+        shutil.copytree(pathlib.Path.cwd() / "admin" / "build", "/var/www/html/yoi-english", dirs_exist_ok=True)
         print("前端已安装到 /var/www/html/yoi-english。")
     if args['create_nginx_config'].lower() == "yes":
         # create nginx config file
