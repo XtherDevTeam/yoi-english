@@ -29,8 +29,8 @@ export default function ExaminationResult() {
   const [message, setMessage] = React.useState(null)
   const [fabState, setFabState] = React.useState({ open: false })
   const [examinationType, setExaminationType] = React.useState('reading')
-  const [examTypeNames, setExamTypeNames] = React.useState({ reading: '学术阅读测试记录', writing: '写作测试记录', speaking: '口语测试记录' });
-  const [routeMapping, setRouteMapping] = React.useState({ reading: 'ReadingExamResultView', writing: 'WritingExamResultView' });
+  const [examTypeNames, setExamTypeNames] = React.useState({ reading: '学术阅读测试记录', writing: '写作测试记录', oral: '口语测试记录' });
+  const [routeMapping, setRouteMapping] = React.useState({ reading: 'ReadingExamResultView', writing: 'WritingExamResultView', oral: 'OralExamResultView' });
 
   const fetchExamResult = () => {
     if (examinationType === 'reading') {
@@ -45,6 +45,16 @@ export default function ExaminationResult() {
       })
     } else if (examinationType === 'writing') {
       Remote.getWritingExamResultList().then(r => {
+        if (r.status) {
+          setResultList(r.data)
+        } else {
+          setMessage(r.message)
+        }
+      }).catch(e => {
+        setMessage('Network error')
+      })
+    } else if (examinationType ==='oral') {
+      Remote.getOralExamResultList().then(r => {
         if (r.status) {
           setResultList(r.data)
         } else {
@@ -95,7 +105,7 @@ export default function ExaminationResult() {
           actions={[
             { icon: 'book', label: '学术阅读测试记录列表', onPress: () => setExaminationType('reading') },
             { icon: 'pencil', label: '写作测试记录列表', onPress: () => setExaminationType('writing') },
-            { icon: 'microphone', label: '口语测试记录列表', onPress: () => console.log('Pressed delete') },
+            { icon: 'microphone', label: '口语测试记录列表', onPress: () => setExaminationType('oral') },
           ]}
         ></FAB.Group>
 

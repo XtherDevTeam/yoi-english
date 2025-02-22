@@ -70,6 +70,7 @@ function AudioMessageView({ audioUrl, style }) {
   }, [])
 
   return (<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <Text variant="titleMedium">学生回答</Text>
     <IconButton
       icon={playStatus ? 'pause' : 'play'}
       size={20}
@@ -103,10 +104,7 @@ function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnsw
       </View>}
       {sectionQuestions?.map((question, index) => <View style={{ padding: 10 }}>
         <Text variant="titleMedium">{index + 1}. <Text style={{ fontStyle: 'italic' }}>{question}</Text></Text>
-        <Text variant="titleMedium">
-          学生回答
-          <AudioMessageView audioUrl={Remote.getArtifactDownloadUrl(sectionAnswers[index])} />
-        </Text>
+        <AudioMessageView audioUrl={Remote.getArtifactDownloadUrl(sectionAnswers[index])} />
         <Text variant="titleMedium">
           发音准确率：
           <Text variant='bodyMedium'>
