@@ -163,12 +163,32 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
   </Mui.Dialog>}</>
 }
 
+function OralExamintionSectionView({ sectionQuestions, sectionAnswerDetails, sectionAnswers }) {
+  return <Mui.Grid container spacing={1} style={{ paddingY: "10px" }}>
+    {sectionQuestions.map((question, index) => <Mui.Grid item xs={12} key={index} style={{ padding: '10px' }}>
+      <Mui.Typography variant="body1" style={{ fontStyle: "italic" }}>
+        {question}
+      </Mui.Typography>
+      <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>学生回答：</Mui.Typography>
+      <Mui.Typography>
+        <audio src={Api.getArtifactDownloadUrl(sectionAnswers[index])} controls></audio>
+      </Mui.Typography>
+      <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>发音准确率：</Mui.Typography>
+      <Mui.Typography variant="body2">{sectionAnswerDetails[index].score}
+      </Mui.Typography>
+      <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>参考文本：</Mui.Typography>
+      <Mui.Typography variant="body2">{sectionAnswerDetails[index].reference_text}
+      </Mui.Typography>
+    </Mui.Grid>)}
+  </Mui.Grid>
+}
+
 function OralExaminationPreviewDialog({ examId, onClose }) {
   const [examinationResult, setExaminationResult] = React.useState(null)
 
   React.useEffect(() => {
     if (examId) {
-      Api.getOralExamination(examId).then(res => {
+      Api.getOralExamResult(examId).then(res => {
         setExaminationResult(res.data);
       });
     } else {
@@ -201,7 +221,7 @@ function OralExaminationPreviewDialog({ examId, onClose }) {
             得分：
           </Mui.Typography>
           <Mui.Typography variant="body2">
-            {examinationResult.score}
+            {examinationResult.band}
           </Mui.Typography>
         </Mui.Grid>
         <Mui.Grid item xs={12}>
@@ -216,6 +236,41 @@ function OralExaminationPreviewDialog({ examId, onClose }) {
           <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
             Part I 部分学生答案
           </Mui.Typography>
+          <OralExamintionSectionView
+            sectionAnswerDetails={examinationResult?.answerDetails?.Pronunciation_Evaluation_Result?.PartI_Answer_Pronunciation_Assessments}
+            sectionQuestions={examinationResult?.answerDetails?.PartI_Conversation_Questions}
+            sectionAnswers={examinationResult?.answerDetails?.PartI_Conversation_Answers} />
+        </Mui.Grid>
+        <Mui.Grid item xs={12}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            任务卡
+          </Mui.Typography>
+          <Markdown>
+            {examinationResult.answerDetails?.PartII_Task_Card}
+          </Markdown>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            Part II 部分学生陈述
+          </Mui.Typography>
+          <OralExamintionSectionView
+            sectionAnswerDetails={examinationResult?.answerDetails?.PartII_Begin_Word ? [examinationResult?.answerDetails?.Pronunciation_Evaluation_Result?.PartII_Student_Statement_Pronunciation_Assessment] : []}
+            sectionQuestions={examinationResult?.answerDetails?.PartII_Begin_Word ? [examinationResult?.answerDetails?.PartII_Begin_Word] : []}
+            sectionAnswers={examinationResult?.answerDetails?.PartII_Student_Statement_Answer ? [examinationResult?.answerDetails?.PartII_Student_Statement_Answer] : []} />
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            Part II 部分学生追问答案
+          </Mui.Typography>
+          <OralExamintionSectionView
+            sectionAnswerDetails={examinationResult?.answerDetails?.Pronunciation_Evaluation_Result?.PartII_Follow_Up_Answer_Pronunciation_Assessments}
+            sectionQuestions={examinationResult?.answerDetails?.PartII_Follow_Up_Questions}
+            sectionAnswers={examinationResult?.answerDetails?.PartII_Follow_Up_Answers} />
+        </Mui.Grid>
+        <Mui.Grid item xs={12}>
+          <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>
+            Part III 部分学生答案
+          </Mui.Typography>
+          <OralExamintionSectionView
+            sectionAnswerDetails={examinationResult?.answerDetails?.Pronunciation_Evaluation_Result?.PartIII_Discussion_Answer_Pronunciation_Assessments}
+            sectionQuestions={examinationResult?.answerDetails?.PartIII_Discussion_Questions}
+            sectionAnswers={examinationResult?.answerDetails?.PartIII_Discussion_Answers} />
         </Mui.Grid>
       </Mui.Grid>
     </Mui.DialogContent>
@@ -228,10 +283,12 @@ function OralExaminationPreviewDialog({ examId, onClose }) {
 function ExaminationResultRow({ examinationResult, examType }) {
   const [readingExamPreviewDialogState, setReadingExamPreviewDialogState] = React.useState(null);
   const [writingExamPreviewDialogState, setWritingExamPreviewDialogState] = React.useState(null);
+  const [oralExamPreviewDialogState, setOralExamPreviewDialogState] = React.useState(null);
 
   return <Mui.TableRow>
     <WritingExaminationPreviewDialog examId={writingExamPreviewDialogState} onClose={() => setWritingExamPreviewDialogState(null)} />
     <ReadingExaminationPreviewDialog examId={readingExamPreviewDialogState} onClose={() => setReadingExamPreviewDialogState(null)} />
+    <OralExaminationPreviewDialog examId={oralExamPreviewDialogState} onClose={() => setOralExamPreviewDialogState(null)} />
     <Mui.TableCell>{examinationResult.id}</Mui.TableCell>
     <Mui.TableCell>{examinationResult.username}</Mui.TableCell>
     <Mui.TableCell>{examinationResult.examPaper.title}</Mui.TableCell>
@@ -243,6 +300,8 @@ function ExaminationResultRow({ examinationResult, examType }) {
           setReadingExamPreviewDialogState(examinationResult.id);
         } else if (examType === "writing") {
           setWritingExamPreviewDialogState(examinationResult.id);
+        } else if (examType === "oral") {
+          setOralExamPreviewDialogState(examinationResult.id);
         }
       }}>
         <Mui.Icons.Visibility />
@@ -264,8 +323,10 @@ export default function ExaminationResult({ }) {
       Api.getReadingExamResultList().then(res => {
         setExaminationResultList(res.data);
       });
-    } else if (currentExamType === "listening") {
-      // TODO: implement listening examination result list
+    } else if (currentExamType === "oral") {
+      Api.getOralExamResultList().then(res => {
+        setExaminationResultList(res.data);
+      });
     } else if (currentExamType === "writing") {
       Api.getWritingExamResultList().then(res => {
         setExaminationResultList(res.data);
@@ -281,7 +342,7 @@ export default function ExaminationResult({ }) {
       }}>
         <Mui.Tab label="阅读" value={'reading'} />
         <Mui.Tab label="写作" value={'writing'} />
-        <Mui.Tab label="听力与口语" value={'listening'} />
+        <Mui.Tab label="听力与口语" value={'oral'} />
       </Mui.Tabs>
       <Mui.Grid container spacing={1}>
         <Mui.Grid item xs={12}>

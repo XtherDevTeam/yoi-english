@@ -45,6 +45,7 @@ class SpeakingExaminationLLMState():
     PARTII_STUDENT_STATEMENT = 3
     PARTII_FOLLOW_UP_QUESTIONING = 4
     PARTIII_DISCUSSING = 5
+    PARTIV_EVALUATING = 6
     
     def isConversationState(state: int) -> bool:
         return state in [
@@ -301,7 +302,11 @@ class SpeakingExaminationSessionBackend():
                 f"participant disconnected: {
                     participant.sid} {participant.identity}"
             )
-            self.terminateSession()
+            if self.llmState not in [
+                SpeakingExaminationLLMState.PARTIV_EVALUATING,
+                SpeakingExaminationLLMState.DISCONNECTED,
+            ]:
+                self.terminateSession()
 
         @self.chatRoom.on("connected")
         def on_connected() -> None:
@@ -698,6 +703,7 @@ class SpeakingExaminationSessionBackend():
                     )
                     if self.llmStateInfo['PartIII_Discussion_Round_Counter'] == 3:
                         # end of discussion
+                        self.llmState = SpeakingExaminationLLMState.PARTIV_EVALUATING
                         await self.emitEvent('control', {
                             'event': 'await_for_analyze_result',
                         })

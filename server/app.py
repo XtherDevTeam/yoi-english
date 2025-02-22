@@ -501,7 +501,7 @@ def download_artifact():
         artifact = DataProvider.getArtifactById(artifactId)
         if artifact is None:
             return DataProvider.makeResult(False, 'Artifact not found.')
-        if artifact['userId'] != userId or DataProvider.checkIfUserHasPermission(userId, 'administrator')['status'] == False:
+        if artifact['userId'] != userId and DataProvider.checkIfUserHasPermission(userId, 'administrator')['status'] == False:
             return DataProvider.makeResult(False, 'You do not have permission to access this artifact.')
         
         return makeFileResponse(DataProvider.getArtifactContentById(artifactId), artifact['mimetype'])
@@ -1282,7 +1282,21 @@ def get_writing_exam_result_list():
     
 @app.route('/v1/exam_result/oral/list', methods=['POST'])
 def get_oral_exam_result_list():
-    ...
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')
+    if not perm_result['status']:
+        return perm_result
+    
+    filters = {
+        'userId': userId
+    }
+    if filters is None:
+        return DataProvider.makeResult(False, 'Filters are required.')
+    else:
+        return DataProvider.makeResult(True, DataProvider.getOralExamResultList(filters))
     
     
 @app.route('/v1/exam_result/reading/get', methods=['POST'])
@@ -1336,7 +1350,7 @@ def get_oral_exam_result():
     if recordId is None:
         return DataProvider.makeResult(False, 'Exam ID is required.')
     else:
-        ...
+        return DataProvider.getOralEnglishExamResultById(recordId)
 
 
 @app.route('/v1/admin/exam_session/list', methods=['POST'])
@@ -1403,7 +1417,7 @@ def get_oral_exam_result_list_admin():
     if filters is None:
         return DataProvider.makeResult(False, 'Filters are required.')
     else:
-        ...
+        return DataProvider.makeResult(True, DataProvider.getOralExamResultList(filters))
 
 
 @app.route('/v1/admin/exam_result/reading/get', methods=['POST'])
@@ -1440,6 +1454,24 @@ def get_writing_exam_result_admin():
         return DataProvider.makeResult(False, 'Exam result ID is required.')
     else:
         return DataProvider.getWritingExamResultById(recordId)
+
+
+@app.route('/v1/admin/exam_result/oral/get', methods=['POST'])
+def get_oral_exam_result_admin():
+    if 'userAuth' not in flask.session:
+        return DataProvider.makeResult(False, 'Please login first.')
+    
+    userId = flask.session['userAuth']
+    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')
+    if not perm_result['status']:
+        return perm_result
+    
+    form = flask.request.json
+    recordId = form.get('id')
+    if recordId is None:
+        return DataProvider.makeResult(False, 'Exam result ID is required.')
+    else:
+        return DataProvider.getOralEnglishExamResultById(recordId)
 
 
 if __name__ == '__main__':

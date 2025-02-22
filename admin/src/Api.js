@@ -282,6 +282,18 @@ function getOralExaminationList(filters = {}) {
   })
 }
 
+function getOralExamResult(id) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/oral/get`, { id }).then(r => {
+    return r.data
+  })
+}
+
+function getOralExamResultList(filters = {}) {
+  return axios.post(`${serverUrl}/api/v1/admin/exam_result/oral/list`, { "filters": filters }).then(r => {
+    return r.data
+  })
+}
+
 function createOralExamination(title, availableTime, warmUpTopics, mainTopic) {
   return axios.post(`${serverUrl}/api/v1/admin/examination/oral/create`, {
     "title": title,
@@ -368,5 +380,5 @@ export default {
   updateUsername, updatePassword, updateEmail, getReadingExamResultList, getReadingExamResult,
   getWritingExamResultList, getWritingExamResult, signOut, getExamSessionList, getOralExaminationList, createOralExamination,
   updateOralExamination, deleteOralExamination, getOralExamination, getPreferredExamTopics, updateConfig, getConfig,
-  answerSheetGeneration
+  answerSheetGeneration, getOralExamResult, getOralExamResultList
 }

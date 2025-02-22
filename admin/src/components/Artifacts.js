@@ -12,8 +12,6 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
     title: "",
     message: ""
   });
-  const [createTime, setCreateTime] = React.useState(Date(artifact.createTime).toLocaleString());
-  const [expireTime, setExpireTime] = React.useState(Date(artifact.expireTime).toLocaleString());
 
   const handleDelete = () => {
     Api.deleteArtifact(artifact.id).then((response) => {
@@ -47,14 +45,19 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
         {artifact.userId}
       </Mui.TableCell>
       <Mui.TableCell>
-        {artifact.createTime}
+        {dayjs.unix(artifact.createTime).format("YYYY-MM-DD HH:mm:ss")}
       </Mui.TableCell>
       <Mui.TableCell>
-        {artifact.expireTime}
+        {dayjs.unix(artifact.expireTime).format("YYYY-MM-DD HH:mm:ss")}
       </Mui.TableCell>
       <Mui.TableCell>
         <Mui.IconButton aria-label="toggle details" color="secondary" onClick={handleToggleDetails}>
           {showDetails ? <Mui.Icons.ExpandLess /> : <Mui.Icons.ExpandMore />}
+        </Mui.IconButton>
+        <Mui.IconButton aria-label="download" color="secondary" onClick={() => {
+          window.open(Api.getArtifactDownloadUrl(artifact.id))
+        }}>
+          <Mui.Icons.CloudDownload />
         </Mui.IconButton>
         <Mui.IconButton aria-label="delete" color="secondary" onClick={handleDelete}>
           <Mui.Icons.Delete />
@@ -87,7 +90,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
                   {'创建时间: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
-                  {createTime}
+                  {dayjs.unix(artifact.createTime).format("YYYY-MM-DD HH:mm:ss")}
                 </Mui.Typography>
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={6}>
@@ -95,7 +98,7 @@ const ArtifactTableRow = ({ artifact, setArtifacts, artifacts }) => {
                   {'过期时间: '}
                 </Mui.Typography>
                 <Mui.Typography variant='body2' component={'span'}>
-                  {expireTime}
+                  {dayjs.unix(artifact.expireTime).format("YYYY-MM-DD HH:mm:ss")}
                 </Mui.Typography>
               </Mui.Grid>
               <Mui.Grid item xs={12} sm={12}>

@@ -434,8 +434,12 @@ class _DataProvider:
             dict[str | typing.Any]: The oral English exam result.
         """
         
-        return self.db.query("select * from oralEnglishExamResult where id = ?", (examId,), one=True)
-    
+        data = self.db.query("select * from oralEnglishExamResult where id = ?", (examId,), one=True)
+        data['examPaper'] = self.getOralExamById(data['examPaperId'])['data']
+        data['answerDetails'] = json.loads(data['answerDetails'])
+        return self.makeResult(True, data=data)
+
+
     def getAcademicalEnglishExamResultById(self, examId: int) -> dict[str | typing.Any]:
         """
         Get academical English exam result by ID.
@@ -807,6 +811,8 @@ class _DataProvider:
         Returns:
             dict[str | typing.Any]: The result object.
         """
+        if type(artifactContent) != bytes:
+            raise TypeError("Artifact content must be bytes")
         
         self.db.query("insert into artifact (userId, isPrivate, createTime, expireTime, mimetype, content) values (?,?,?,?,?,?)", (userId, isPrivate, int(time.time()), expireTime, mimeType, artifactContent))
         # get id (the latest inserted sorted by time)
@@ -1424,9 +1430,11 @@ class _DataProvider:
         if 'completeTime' in filter:
             filterSqlCond += f" and completeTime >= {filter['completeTime'][0]} and completeTime <= {filter['completeTime'][1]}"
         
-        res = self.db.query(f"select * from oralExamResult where 1=1 {filterSqlCond} order by completeTime desc")
+        res = self.db.query(f"select id, completeTime, examPaperId, userId, band from oralEnglishExamResult where 1=1 {filterSqlCond} order by completeTime desc")
         for i in res:
             i['examPaper'] = self.getOralExamById(i['examPaperId'])['data']
+            i['username'] = self.getUserInfoByID(i['userId'])['username']
+            
         return res
     
     
