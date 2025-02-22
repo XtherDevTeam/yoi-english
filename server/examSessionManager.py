@@ -535,10 +535,10 @@ class SpeakingExaminationSessionBackend():
                         
                     self.llmStateInfo['PartI_Conversation_Round_Counter'] += 1
                     if self.automaticAnswering:
+                        self.userAnswers.get()
                         user_answer = self.getVirtualExamineeAnswer(self.latestQuestion)
                     else:
                         user_answer = self.pcmToMp3(self.userAnswers.get())
-                        self.userAnswers.get()
                     
                     # add to answer
                     self.llmStateInfo['PartI_Conversation_Answers'].append(
