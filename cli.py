@@ -16,6 +16,7 @@ parser.add_argument('-b', '--start-backend', help='使用 Python 启动后端服
 parser.add_argument('-e', '--initialize-backend-env', help='使用 Python 为后端服务器设置环境', action='store_true')
 parser.add_argument('-l', '--install-livekit-server', help='安装 LiveKit 服务器', action='store_true')
 parser.add_argument('-i', '--run-livekit-server', help='使用默认配置运行 LiveKit 服务器', action='store_true')
+parser.add_argument('-s', '--silent', help='静默模式，不输出任何信息', action='store_true')
 
 
 def tempFilepathProvider(ext: str):
@@ -44,7 +45,7 @@ def ask(preprompt: str, arg_desp: dict[str, dict]) -> dict[str, str]:
         prompt = f"{arg}: {info['description']}"
         if 'default' in info:
             prompt += f" (默认值: {info['default']})"
-        result[arg] = input(prompt) or info.get('default', '')
+        result[arg] = (input(prompt) or info.get('default', '')) if not args.silent else info.get('default', '')
     return result
 
 
@@ -62,7 +63,7 @@ def build_frontend():
     args = {
         "install_to_var": {
             "description": "将前端安装到系统目录（例如 /var/www/html）。(是/否)",
-            "default": "no"
+            "default": "yes"
         },
         "create_nginx_config": {
             "description": "从模板为前端创建一个 nginx 配置文件。(是/否)",
