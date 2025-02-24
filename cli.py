@@ -122,6 +122,7 @@ def initialize_backend_env():
     print("Conda 环境已创建。")
 
     # activate conda environment
+    subprocess.run(["conda", "init"], shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     subprocess.run(["conda", "activate", "YoiEnglish"], shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     print("Conda 环境已激活。")
 

@@ -174,18 +174,18 @@ class _Judger:
         
         for i in PartI_Answer_Pronunciation_Assessments:
             PartI_Avg += i['score']
-        PartI_Avg = PartI_Avg / len(PartI_Answer_Pronunciation_Assessments)
+        PartI_Avg = PartI_Avg / len(PartI_Answer_Pronunciation_Assessments) if PartI_Answer_Pronunciation_Assessments else 0
         overall_score += PartI_Avg
         
         PartII_Avg += PartII_Student_Statement_Pronunciation_Assessment['score']
         for i in PartII_Follow_Up_Answer_Pronunciation_Assessments:
             PartII_Avg += i['score']
-        PartII_Avg = PartII_Avg / (len(PartII_Follow_Up_Answer_Pronunciation_Assessments) + 1)
+        PartII_Avg = PartII_Avg / (len(PartII_Follow_Up_Answer_Pronunciation_Assessments) + 1) if PartII_Follow_Up_Answer_Pronunciation_Assessments else 0
         overall_score += PartII_Avg
         
         for i in PartIII_Discussion_Answer_Pronunciation_Assessments:
             PartIII_Avg += i['score']
-        PartIII_Avg = PartIII_Avg / len(PartIII_Discussion_Answer_Pronunciation_Assessments)
+        PartIII_Avg = PartIII_Avg / len(PartIII_Discussion_Answer_Pronunciation_Assessments) if PartIII_Discussion_Answer_Pronunciation_Assessments else 0
         overall_score += PartIII_Avg
         
         overall_score = overall_score / 3
