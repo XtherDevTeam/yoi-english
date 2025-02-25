@@ -118,7 +118,7 @@ def initialize_backend_env():
         print("未找到名为 YoiEnglish 的默认 conda 环境。尝试使用当前环境。")
 
     # create conda environment
-    subprocess.run(["conda", "create", "-n", "YoiEnglish", "--file", "conda_env.txt"], cwd=pathlib.Path.cwd() / "server", shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.run(["conda", "env", "create", "--file", "environment.yml"], cwd=pathlib.Path.cwd() / "server", shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
     print("Conda 环境已创建。")
 
     # activate conda environment
