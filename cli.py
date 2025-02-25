@@ -151,7 +151,7 @@ def run_livekit_server():
         return
 
     # run livekit server
-    subprocess.run(["livekit-server", "--config", "livekit.yaml"], cwd=pathlib.Path.cwd(), shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
+    subprocess.run(["livekit-server", "--config", "livekit.yml"], cwd=pathlib.Path.cwd(), shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())
 
     print("LiveKit 服务器正在运行。")
 
