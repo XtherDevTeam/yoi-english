@@ -66,6 +66,11 @@ class BroadcastMissionManager():
         self.processThread.start()
         
         
+    def doCancelAllMissions(self) -> None:
+        self.broadcastMissions.queue.clear()
+        self.readyMissions.queue.clear()
+        
+        
     def onClearBuffer(self, callback: typing.Callable) -> None:
         self.clearBufferTrigger = callback
         
@@ -173,6 +178,7 @@ class SpeakingExaminationSessionBackend():
             'PartIII_Discussion_Round_Counter': 0,
             'PartIII_Discussion_Questions': [],
             'PartIII_Discussion_Answers': [],
+            'Feedback': '',
         }
         config = dataProvider.DataProvider.getConfig()['data']
         self.warmUpTopics = warmUpTopics
@@ -381,6 +387,7 @@ class SpeakingExaminationSessionBackend():
         """
         # self.bot.terminateChat()
         self.connected = False
+        self.ttsManager.doCancelAllMissions()
         logger.Logger.log('Triggering terminate session callback')
         if self.exitCallback is not None:
             self.exitCallback(self.llmStateInfo)
