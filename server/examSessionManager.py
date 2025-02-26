@@ -510,12 +510,18 @@ class SpeakingExaminationSessionBackend():
     
 
     async def chat(self):
+        self.AWAIT_CONNECTION_TIMEOUT_CNT = 0
         while True:
             match self.llmState:
                 case SpeakingExaminationLLMState.DISCONNECTED:
                     logger.Logger.log('LLM state: DISCONNECTED')
                     break
                 case SpeakingExaminationLLMState.AWAITING_CONNECTION:
+                    if self.AWAIT_CONNECTION_TIMEOUT_CNT > 10 * 2:
+                        self.terminateSession()
+                        self.llmState = SpeakingExaminationLLMState.DISCONNECTED
+                        break
+                    
                     logger.Logger.log('LLM state: AWAITING_CONNECTION')
                     await asyncio.sleep(0.5)
                     continue

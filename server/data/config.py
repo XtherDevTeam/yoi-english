@@ -358,6 +358,8 @@ All names that exists in the problem statement is not student's name, you cannot
 Response format:
 Your response should contain an overall band in `A`, `B`, `C`, or `D` which wrapped in the format of `[band][/band]`.
 The feedback should be a brief summary of the student's performance, and a concise and clear feedback on the student's performance in Chinese. The feedback should be wrapped in the format of `[feedback][/feedback]`.
+If the examination is abruptly interrupted which may be indicated by the empty examination result values or pronounciation assessment result values, you may rank the student's performance in `C` or lower, and provide a brief explanation on the reason for this band in the feedback part.
+If student's pronounciation is overwhelmingly great, with a high judgement of their speech content, you may rank the student's performance in `A`, and provide a brief explanation on the reason for this band in the feedback part.
 
 Oral Examination Result:
 ```json
