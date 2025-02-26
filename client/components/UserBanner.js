@@ -14,6 +14,8 @@ import {
 } from 'react-native-paper';
 import * as Remote from '../shared/remote'
 import { useFocusEffect } from '@react-navigation/native';
+import Markdown from 'react-native-markdown-display';
+import { mdTheme, markedTheme } from '../shared/styles';
 
 export default function UserBanner({ userId, style, children, onRecv, reloadTrigger }) {
   const [userDetails, setUserDetails] = React.useState({
@@ -25,6 +27,7 @@ export default function UserBanner({ userId, style, children, onRecv, reloadTrig
   });
   const [avatarUrl, setAvatarUrl] = React.useState(null);
   const [infoDialogOpen, infoDialogSetOpen] = React.useState(false);
+  const mkedTheme = markedTheme()
 
   React.useEffect(() => {
     console.log('triggered reload', userId)
@@ -63,7 +66,9 @@ export default function UserBanner({ userId, style, children, onRecv, reloadTrig
         <Dialog.Title>用户近期训练情况</Dialog.Title>
         <Dialog.Content>
           <ScrollView style={{ maxHeight: 300 }}>
-          <Text>{userDetails?.overallPerformance}</Text>
+          <Markdown style={mkedTheme}>
+            {userDetails?.overallPerformance}
+          </Markdown>
           </ScrollView>
         </Dialog.Content>
         <Dialog.Actions>

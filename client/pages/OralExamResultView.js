@@ -79,9 +79,9 @@ function AudioMessageView({ audioUrl, style }) {
           setIsInitialState(false)
         } else {
           if (playStatus) {
-            sound.current.pauseAsync().then(r => setPlayStatus(false))
+            sound.current?.pauseAsync().then(r => setPlayStatus(false))
           } else {
-            sound.current.playAsync().then(r => setPlayStatus(true))
+            sound.current?.playAsync().then(r => setPlayStatus(true))
           }
         }
       }}
@@ -108,13 +108,13 @@ function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnsw
         <Text variant="titleMedium">
           发音准确率：
           <Text variant='bodyMedium'>
-            {Math.round(sectionAnswerDetails[index].score * 100)}%
+            {Math.round(sectionAnswerDetails[index]?.score * 100)}%
           </Text>
         </Text>
         <Text variant="titleMedium">
           参考文本：
           <Text variant='bodyMedium'>
-            {sectionAnswerDetails[index].reference_text?.substring(0, 200)}{sectionAnswerDetails[index].reference_text.length > 200 ? '...' : ''}
+            {sectionAnswerDetails[index]?.reference_text?.substring(0, 200)}{sectionAnswerDetails[index]?.reference_text?.length > 200 ? '...' : ''}
           </Text>
         </Text>
       </View>)}

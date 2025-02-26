@@ -135,7 +135,7 @@ function OngoingExamSessionBanner({ refresher }) {
         {ongoingSession.type !== 'oral' && <Text>结束时间：{dayjs.unix(ongoingSession.endTime).format('YYYY-MM-DD HH:mm')}</Text>}
       </Card.Content>
       <Card.Actions>
-        <Button mode="text" onPress={() => {
+        {ongoingSession.type !== 'oral' && <Button mode="text" onPress={() => {
           // exam type enum
           if (ongoingSession.type == 'reading') {
             Remote.finalizeReadingExamSession(ongoingSession.sessionId).then(r => {
@@ -149,7 +149,7 @@ function OngoingExamSessionBanner({ refresher }) {
             console.log('finalize oral exam')
           }
           setOngoingSession(null)
-        }}>结束答题</Button>
+        }}>结束答题</Button>}
         {ongoingSession.type !== 'oral' && <Button mode="text" onPress={() => {
           if (ongoingSession.type == 'writing') {
             navigation.navigate('WritingExamParticipation', { examSession: ongoingSession.sessionId, type: ongoingSession.type })
