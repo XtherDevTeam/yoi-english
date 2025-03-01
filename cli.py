@@ -77,7 +77,7 @@ def build_frontend():
         print("前端已安装到 /var/www/html/yoi-english。")
     if args['create_nginx_config'].lower() == "yes":
         # create nginx config file
-        nginx_config_path = "/etc/nginx/sites-available/yoi-english"
+        nginx_config_path = pathlib.Path("/etc/nginx/sites-available/yoi-english.conf")
         nginx_config_template_path = pathlib.Path.cwd() / "nginx.conf.template"
         config_template = nginx_config_template_path.read_text()
         nginx_config_path.write_text(config_template)
