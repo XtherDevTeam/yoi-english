@@ -165,7 +165,7 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
 
 function OralExamintionSectionView({ sectionQuestions, sectionAnswerDetails, sectionAnswers }) {
   return <Mui.Grid container spacing={1} style={{ paddingY: "10px" }}>
-    {sectionQuestions.map((question, index) => <Mui.Grid item xs={12} key={index} style={{ padding: '10px' }}>
+    {sectionQuestions?.map((question, index) => <Mui.Grid item xs={12} key={index} style={{ padding: '10px' }}>
       <Mui.Typography variant="body1" style={{ fontStyle: "italic" }}>
         {question}
       </Mui.Typography>
@@ -174,10 +174,10 @@ function OralExamintionSectionView({ sectionQuestions, sectionAnswerDetails, sec
         <audio src={Api.getArtifactDownloadUrl(sectionAnswers[index])} controls></audio>
       </Mui.Typography>
       <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>发音准确率：</Mui.Typography>
-      <Mui.Typography variant="body2">{sectionAnswerDetails[index].score}
+      <Mui.Typography variant="body2">{sectionAnswerDetails[index]?.score}
       </Mui.Typography>
       <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>参考文本：</Mui.Typography>
-      <Mui.Typography variant="body2">{sectionAnswerDetails[index].reference_text}
+      <Mui.Typography variant="body2">{sectionAnswerDetails[index]?.reference_text}
       </Mui.Typography>
     </Mui.Grid>)}
   </Mui.Grid>
