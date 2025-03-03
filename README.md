@@ -1,4 +1,70 @@
-# Yoi English 部署与使用教程
+# Yoi English: LLM model-based application development of English online learning system
+# 优易英语: 基于语言大模型的英语在线学习系统的开发和应用
+
+## 项目背景
+
+在互联网和大语言模型的浪潮下，人工智能走进了我们的生活，各大应用程序也纷纷内置AI搜索等功能。学生获取信息和学习的方式被极大地改变了。对于英语学科的学习，AI赋能尤其重要。通过人工智能判断语音准确度，以及针对性地给出练习建议，是提升英语学习效率的有效方法。这成为了本项目的重要背景。
+
+## 项目简介
+
+Yoi English 借助 Gemini 2.0 Flash 多模态大模型，实现了AI赋能英语学科学习，利用模型的多模态特点，搭建了能进行实时人机交流的口语训练模块。此外，借助whisper等传统AI模型，通过计算最短编辑距离，实现了对用户的读音评分功能。另外，在测试完成、指定数量测试完成后都会给出用户弱点和反馈建议，辅助用户进行针对性提高。
+
+## 第三方资源使用说明
+
+本项目使用了以下第三方资源：在[此处](THIRDPARTY.md)查看详情
+
+## 部署与使用教程
+
+### WebServer 及 Livekit Server 部署
+
+为简化部署，我们提供了 WebService 和 Livekit Server 的 Docker 镜像，你可以直接拉取镜像并运行。
+由于镜像大小，镜像并未包含最新代码，可能需要手动进入 `/var/yoi-english/` 目录，执行 `git pull` 命令拉取最新代码。
+
+- [WebService Docker 镜像](https://hub.docker.com/repository/docker/xiaokang00010/yoi-english-web-service)
+- [Livekit Server Docker 镜像](https://hub.docker.com/repository/docker/xiaokang00010/yoi-english-livekit-server)
+
+### AIDub 集成
+
+AIDub 为本项目所使用的 TTS 配音引擎，不属于本项目的一部分，对口语测试运行起基础性支持作用。
+
+<!-- AIDub中间件需在拉取AIDub仓库源代码后使用conda依据conda_env.txt配置环境后，按照GPT-SoVITs仓库README.md文件在thirdparty/GPTSoVITs目录下载整合包并安装到该目录。再按照AIDub的README.md文件完成1、2、3步骤或使用middleware API完成对应步骤设置好语音模型后即可。 -->
+
+1. 下载并安装 AIDub 仓库源代码
+    ```sh
+    git clone http://www.xiaokang00010.top:4001/xiaokang00010/AIDub.git
+    ```
+2. 配置 AIDub 环境
+    ```sh
+    cd <path to AI Dub>
+    conda env create --file environment.yml
+    ```
+    其中，`environment.yml` 文件位于 `AIDub` 仓库根目录下。
+    完成后，将创建名为 middleware 的 conda 环境，并安装所需的 Python 包。
+    随后，激活 middleware 环境：
+    ```sh
+    conda init
+    conda activate middleware
+    ```
+3. 下载并安装 GPT-SoVITs 仓库源代码
+    ```sh
+    wget https://huggingface.co/lj1995/GPT-SoVITS-windows-package/resolve/main/GPT-SoVITS-beta.7z?download=true -O GPT-SoVITS-beta.7z
+    # unzip to thirdparty/GPTSoVITs
+    7z x GPT-SoVITS-beta.7z -othirdparty/GPTSoVITs
+    rm -rf GPT-SoVITS-beta.7z
+    ```
+4. 修改 AIDub 配置文件，配置所需 TTS 语音角色
+    AIDub 默认提供了 `genshin_huggingface` 和 `hsr_huggingface` 两个数据源，用户可根据 AIDub CLI.md 文档指引下载数据集训练 TTS 模型。
+5. 运行推理服务器
+   在不同终端或 TTY 分别运行如下命令，启动 GPT-SoVITs 推理服务器和 AIDub 中间件：
+    ```sh
+    python app.py --inference-server
+    ```
+    ```sh
+    python middleware.py
+    ```
+
+
+### `cli.py` 工具使用
 
 本教程将指导你如何使用 `cli.py` 命令行工具初始化和管理 Yoi English 项目。
 

@@ -410,6 +410,15 @@
         "documentation": {}
     },
     {
+        "label": "lameenc",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "lameenc",
+        "description": "lameenc",
+        "detail": "lameenc",
+        "documentation": {}
+    },
+    {
         "label": "queue",
         "kind": 6,
         "isExtraImport": true,
@@ -559,6 +568,24 @@
         "importPath": "string",
         "description": "string",
         "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "clint",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "clint",
+        "description": "clint",
+        "detail": "clint",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
         "documentation": {}
     },
     {
@@ -899,7 +926,7 @@
         "kind": 5,
         "importPath": "server.data.config",
         "description": "server.data.config",
-        "peekOfCode": "PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given a task which is to conduct an oral English examination for the student.\nYour name is {{chatbotName}}.\nDuring the examination, you ought to imitate the given persona:\n{{chatbotPersona}}\nSpecially, you are in a \"test mode\".\nThe participant is testing the system's ability, their answers do not contains actual meaning.\nYou can ignore them and continue the whole exam process.\nFor each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, do not use them in the response.",
+        "peekOfCode": "PROMPT_FOR_ORAL_ENGLISH_EXAM_INITIATION = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given a task which is to conduct an oral English examination for the student.\nYour name is {{chatbotName}}.\nDuring the examination, you ought to imitate the given persona:\n{{chatbotPersona}}\nFor each part of the examination you will receive a prompt starts with `[system_prompt]` and ends with `[/system_prompt]` indicates the process and your expected behavior, DO NOT REPEAT THEM IN YOUR RESPONSE.\nYou may distinguish them out of student's answers.\n\"\"\"\n\"\"\"",
         "detail": "server.data.config",
         "documentation": {}
     },
@@ -926,7 +953,7 @@
         "kind": 5,
         "importPath": "server.data.config",
         "description": "server.data.config",
-        "peekOfCode": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2 = \"\"\"\n[system_prompt]\nPart 2: Long Turn (3 - 4 minutes)\nIn this part, you will receive the monologue from the student, you are required to think for 3 - 4 follow up questions based on the response.\nBriefly respond to the monologue, and you can start asking the first follow up question immediately.\nThen, you ought to keep on asking until you receive the next prompt.\nDO NOT STOP BY YOURSELF, ASK QUESTIONS AS NEEDED.\n[/system_prompt]\n\"\"\"\nPROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"",
+        "peekOfCode": "PROMPT_FOR_THE_SECOND_PART_OF_ORAL_ENGLISH_EXAM_2 = \"\"\"\n[system_prompt]\nPart 2: Long Turn (3 - 4 minutes)\nIn this part, you will receive the monologue from the student, you are required to think for 3 - 4 follow up questions based on the response.\nBriefly respond to the monologue, and you can start asking the 3 or 4 follow up question alternatively with the student's response.\nThen, you should to keep on asking before the next instruction is provided.\n[/system_prompt]\n\"\"\"\nPROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"\n[system_prompt]",
         "detail": "server.data.config",
         "documentation": {}
     },
@@ -935,7 +962,7 @@
         "kind": 5,
         "importPath": "server.data.config",
         "description": "server.data.config",
-        "peekOfCode": "PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"\n[system_prompt]\nPart 3: Discussion (4 - 5 minutes)\nIn this part, you are expected to discuss an abstract topic based on the student's responses in the previous part.\nGuidelines:\n1. Think and analyze student's response to the previous part of the examination and grasp the main idea of the topic.\n2. Smoothly transit from the previous topic to Part 3. Transit the topic to a more abstract level, and throw a question on a broder issue related to the topic through words.\n3. Once the student respond, you are required to ask a few open-ended questions to probe the student's understanding of the topic, which requires analysis, comparsions, and opinions.\n4. Encourage depth, lead student to think critically, and provide a clear and concise response.\nYou ought to transit the topic and respond once you finish thinking.",
+        "peekOfCode": "PROMPT_FOR_THE_THIRD_PART_OF_ORAL_ENGLISH_EXAM = \"\"\"\n[system_prompt]\nPart 3: Discussion (4 - 5 minutes)\nIn this part, you are expected to discuss an abstract topic based on the student's responses in the previous part.\nGuidelines:\n1. Think and analyze student's response to the previous part of the examination and grasp the main idea of the topic.\n2. Smoothly transit from the previous topic to Part 3. Transit the topic to a more abstract level, and throw a question on a broder issue related to the topic through words.\n3. Once the student respond, you are required to ask 4 - 5 open-ended questions to probe the student's understanding of the topic, which requires analysis, comparsions, and opinions.\n4. Encourage depth, lead student to think critically, and provide a clear and concise response.\nYou ought to transit the topic and ask the question once you finish thinking.",
         "detail": "server.data.config",
         "documentation": {}
     },
@@ -944,7 +971,7 @@
         "kind": 5,
         "importPath": "server.data.config",
         "description": "server.data.config",
-        "peekOfCode": "PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT = \"\"\"\n[system_prompt]\nPart 4: Conclusion\nIn this part, you are required to analyze the summary of the student's performance and provide feedback to the student.\nGuidelines:\n1. Rethink, and analyze the student's fluency, relevance in accordance with the provided topics and context.\n2. Conclude the student's performance comprehensively based on the mentioned meausurements with your memory of the conversation.\n3. Respond with an overall band and a clear and concise feedback on the student's performance, and suggest areas for improvement.\nResponse format:\nThe feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance. The feedback should be wrapped in the format of `[feedback][/feedback]`.",
+        "peekOfCode": "PROMPT_FOR_ANALYZE_THE_ORAL_ENGLISH_EXAM_RESULT = \"\"\"\n[system_prompt]\nPart 4: Conclusion\nIn this part, you are required to analyze the summary of the student's performance and provide feedback to the student.\nGuidelines:\n1. Rethink, and analyze the student's fluency, relevance in accordance with the provided topics and context.\n2. Conclude the student's performance comprehensively based on the mentioned meausurements with your memory of the conversation.\n3. Respond with an overall band and a clear and concise feedback on the student's performance, and suggest areas for improvement.\nResponse format:\nThe feedback should be a brief summary of the student's performance, and a detailed feedback on the student's performance in Chinese. The feedback should be wrapped in the format of `[feedback][/feedback]`.",
         "detail": "server.data.config",
         "documentation": {}
     },
@@ -971,7 +998,7 @@
         "kind": 5,
         "importPath": "server.data.config",
         "description": "server.data.config",
-        "peekOfCode": "PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYou are given the recent reading and writing feedback of the student which ordered from old to new, from the oldest to the newest. Here you should analyze the result and provide feedback to the student.\nGuidelines:\n- Check all the recent feedbacks, reading them carefully, and analyze the improvements of students in accordance with the timeline of feedbacks.\n- Assess student's performance on the following points:\n    - Overall performance of the student.\n    - The strengths and weaknesses of the student.\n    - Improvements in reading and writing skills.\n    - Any suggestions for improvement.",
+        "peekOfCode": "PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT = \"\"\"\nYou are an skilled, professional English teacher which aims to improve the English language skills of Chinese students.\nYour response should be in Chinese.\nYou are given the recent reading and writing feedback of the student which ordered from old to new, from the oldest to the newest. Here you should analyze the result and provide feedback to the student.\nHere is the recent feedback from oral, reading, and writing examinations.\n{{recent_feedbacks}}\nGuidelines:\n- Check all the recent feedbacks, reading them carefully, and analyze the improvements of students in accordance with the timeline of feedbacks.\n- Assess student's performance on the following points:\n    - Overall performance of the student.",
         "detail": "server.data.config",
         "documentation": {}
     },
@@ -1646,7 +1673,7 @@
         "kind": 2,
         "importPath": "server.app",
         "description": "server.app",
-        "peekOfCode": "def get_oral_exam_result_list():\n    ...\n@app.route('/v1/exam_result/reading/get', methods=['POST'])\ndef get_reading_exam_result():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result",
+        "peekOfCode": "def get_oral_exam_result_list():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'exam_rw')\n    if not perm_result['status']:\n        return perm_result\n    filters = {\n        'userId': userId\n    }",
         "detail": "server.app",
         "documentation": {}
     },
@@ -1728,6 +1755,15 @@
         "importPath": "server.app",
         "description": "server.app",
         "peekOfCode": "def get_writing_exam_result_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
+        "detail": "server.app",
+        "documentation": {}
+    },
+    {
+        "label": "get_oral_exam_result_admin",
+        "kind": 2,
+        "importPath": "server.app",
+        "description": "server.app",
+        "peekOfCode": "def get_oral_exam_result_admin():\n    if 'userAuth' not in flask.session:\n        return DataProvider.makeResult(False, 'Please login first.')\n    userId = flask.session['userAuth']\n    perm_result = DataProvider.checkIfUserHasPermission(userId, 'administrator')\n    if not perm_result['status']:\n        return perm_result\n    form = flask.request.json\n    recordId = form.get('id')\n    if recordId is None:",
         "detail": "server.app",
         "documentation": {}
     },
@@ -1871,7 +1907,7 @@
         "kind": 6,
         "importPath": "server.examJudger",
         "description": "server.examJudger",
-        "peekOfCode": "class PronunciationAssessment:\n    def __init__(self, whisper_model_name=\"small\", wav2vec_model_name=\"facebook/wav2vec2-base-960h\"):\n        self.whisper_model = pipeline(\"automatic-speech-recognition\", model=\"openai/whisper-\" + whisper_model_name)\n        self.wav2vec_processor = Wav2Vec2Processor.from_pretrained(wav2vec_model_name)\n        self.wav2vec_model = Wav2Vec2ForCTC.from_pretrained(wav2vec_model_name)\n    def transcribe_audio(self, audio_file):\n        \"\"\"Transcribes audio using Whisper.\"\"\"\n        result = self.whisper_model(audio_file)\n        return result[\"text\"].strip().lower()\n    def get_phonemes(self, text):",
+        "peekOfCode": "class PronunciationAssessment:\n    def __init__(self, whisper_model_name=\"small\", wav2vec_model_name=\"facebook/wav2vec2-base-960h\"):\n        self.whisper_model = pipeline(\"automatic-speech-recognition\", model=\"openai/whisper-\" + whisper_model_name)\n        self.wav2vec_processor = Wav2Vec2Processor.from_pretrained(wav2vec_model_name)\n        self.wav2vec_model = Wav2Vec2ForCTC.from_pretrained(wav2vec_model_name)\n    def transcribe_audio(self, audio_file):\n        \"\"\"Transcribes audio using Whisper.\"\"\"\n        result = self.whisper_model(audio_file, return_timestamps=True)\n        return result[\"text\"].strip().lower()\n    def get_phonemes(self, text):",
         "detail": "server.examJudger",
         "documentation": {}
     },
@@ -1907,7 +1943,16 @@
         "kind": 6,
         "importPath": "server.examSessionManager",
         "description": "server.examSessionManager",
-        "peekOfCode": "class BroadcastMissionManager():\n    def __init__(self):\n        self.APIInstance = AIDubMiddlewareAPI(dataProvider.DataProvider.getConfig()['data']['AIDubEndpoint'])\n        self.broadcastMissions: queue.Queue[str] = queue.Queue()\n        self.readyMissions: queue.Queue[av.container.InputContainer | av.container.OutputContainer] = queue.Queue()\n        self.processThread: threading.Thread = threading.Thread(target=self.processMissions, daemon=True)\n        self.finished = False\n        self.clearBufferTrigger: typing.Callable = None\n        self.processThread.start()\n    def onClearBuffer(self, callback: typing.Callable) -> None:",
+        "peekOfCode": "class BroadcastMissionManager():\n    def __init__(self):\n        self.APIInstance = AIDubMiddlewareAPI(dataProvider.DataProvider.getConfig()['data']['AIDubEndpoint'])\n        self.broadcastMissions: queue.Queue[str] = queue.Queue()\n        self.readyMissions: queue.Queue[av.container.InputContainer | av.container.OutputContainer] = queue.Queue()\n        self.processThread: threading.Thread = threading.Thread(target=self.processMissions, daemon=True)\n        self.finished = False\n        self.clearBufferTrigger: typing.Callable = None\n        self.processThread.start()\n    def doCancelAllMissions(self) -> None:",
+        "detail": "server.examSessionManager",
+        "documentation": {}
+    },
+    {
+        "label": "SpeakingExaminaionVirtualExaminee",
+        "kind": 6,
+        "importPath": "server.examSessionManager",
+        "description": "server.examSessionManager",
+        "peekOfCode": "class SpeakingExaminaionVirtualExaminee():\n    def __init__(self):\n        self.prompt = f'''\n        You are a skillful IELTS Speaking Examination participant. Your task is to attend a speaking examination with your full effort.\n        You are required to speak and answer the questions the examiner asked.\n        When you receive a task card, you are required to read the task given to you and give the speech immediately.\n        All of your answers should be in no more than 200 words.\n        Your personality is as follows:\n        Name: Jerry Chou\n        Gender: Male",
         "detail": "server.examSessionManager",
         "documentation": {}
     },
@@ -1981,6 +2026,87 @@
         "description": "server.tools",
         "peekOfCode": "def RandomHashProvider() -> str:\n    random.seed(time.time())\n    return hashlib.md5(str(random.random()).encode('utf-8')).hexdigest()",
         "detail": "server.tools",
+        "documentation": {}
+    },
+    {
+        "label": "tempFilepathProvider",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def tempFilepathProvider(ext: str):\n    return pathlib.Path(tempfile.mkstemp(suffix=ext)[1])\ndef downloader(url: str, filename: str):\n    if os.path.exists(filename):\n        print(f\"{filename} 已存在。跳过下载。\")\n        return\n    print(f\"正在下载 {url} 到 {filename}...\")\n    response = requests.get(url, stream=True)\n    with open(filename, 'wb') as f:\n        for chunk in response.iter_content(chunk_size=8192):",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "downloader",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def downloader(url: str, filename: str):\n    if os.path.exists(filename):\n        print(f\"{filename} 已存在。跳过下载。\")\n        return\n    print(f\"正在下载 {url} 到 {filename}...\")\n    response = requests.get(url, stream=True)\n    with open(filename, 'wb') as f:\n        for chunk in response.iter_content(chunk_size=8192):\n            if chunk:\n                f.write(chunk)",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "ask",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def ask(preprompt: str, arg_desp: dict[str, dict]) -> dict[str, str]:\n    print(preprompt)\n    result = {}\n    for arg, info in arg_desp.items():\n        prompt = f\"{arg}: {info['description']}\"\n        if 'default' in info:\n            prompt += f\" (默认值: {info['default']})\"\n        result[arg] = (input(prompt) or info.get('default', '')) if not args.silent else info.get('default', '')\n    return result\ndef build_frontend():",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "build_frontend",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def build_frontend():\n    print(\"正在构建前端...\")\n    # check if node.js is installed\n    if shutil.which(\"node\") is None:\n        print(\"Node.js 未安装。请安装 Node.js (>= 18.18.2) 后重试。\")\n        return\n    # run npm install\n    subprocess.run([\"npm\", \"install\"], cwd=pathlib.Path.cwd() / \"admin\", shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())\n    # run npm build\n    subprocess.run([\"npm\", \"run\", \"build\"], cwd=pathlib.Path.cwd() / \"admin\", shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "start_backend",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def start_backend():\n    print(\"正在启动后端服务器...\")\n    # check if python is installed\n    if shutil.which(\"conda\") is None:\n        print(\"Conda 未安装。请安装 conda 后重试。\")\n        return\n    # check if conda environment exists\n    if os.environ.get('CONDA_DEFAULT_ENV', '') != 'YoiEnglish':\n        print(\"未找到名为 YoiEnglish 的默认 conda 环境。尝试使用当前环境。\")\n    subprocess.run([\"python\", \"app.py\"], cwd=pathlib.Path.cwd() / \"server\", shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_backend_env",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def initialize_backend_env():\n    print(\"正在设置后端环境...\")\n    # check if python is installed\n    if shutil.which(\"conda\") is None:\n        print(\"Conda 未安装。请安装 conda 后重试。\")\n        return\n    # check if conda environment exists\n    if os.environ.get('CONDA_DEFAULT_ENV', '') != 'YoiEnglish':\n        print(\"未找到名为 YoiEnglish 的默认 conda 环境。尝试使用当前环境。\")\n    # create conda environment",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "install_livekit_server",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def install_livekit_server():\n    print(\"正在安装 LiveKit 服务器...\")\n    # check if brew is installed\n    if shutil.which(\"brew\") is None:\n        print(\"Homebrew 未安装。请安装 Homebrew 后重试。\")\n        return\n    # install livekit server\n    subprocess.run([\"brew\", \"install\", \"livekit\"], shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())\n    print(\"LiveKit 服务器已安装。\")\ndef run_livekit_server():",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "run_livekit_server",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def run_livekit_server():\n    print(\"正在运行 LiveKit 服务器...\")\n    # check if livekit is installed\n    if shutil.which(\"livekit-server\") is None:\n        print(\"LiveKit 服务器未安装。请安装 LiveKit 服务器后重试。\")\n        return\n    # run livekit server\n    subprocess.run([\"livekit-server\", \"--config\", \"livekit.yml\"], cwd=pathlib.Path.cwd(), shell=False, stdout=sys.stdout.fileno(), stderr=sys.stderr.fileno(), stdin=sys.stdin.fileno())\n    print(\"LiveKit 服务器正在运行。\")\nif __name__ == '__main__':",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "parser",
+        "kind": 5,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "parser = argparse.ArgumentParser(description='Yoi English 命令行工具')\nparser.add_argument('-f', '--build-frontend', help='使用 node.js 构建前端生产环境', action='store_true')\nparser.add_argument('-b', '--start-backend', help='使用 Python 启动后端服务器', action='store_true')\nparser.add_argument('-e', '--initialize-backend-env', help='使用 Python 为后端服务器设置环境', action='store_true')\nparser.add_argument('-l', '--install-livekit-server', help='安装 LiveKit 服务器', action='store_true')\nparser.add_argument('-i', '--run-livekit-server', help='使用默认配置运行 LiveKit 服务器', action='store_true')\nparser.add_argument('-s', '--silent', help='静默模式，不输出任何信息', action='store_true')\ndef tempFilepathProvider(ext: str):\n    return pathlib.Path(tempfile.mkstemp(suffix=ext)[1])\ndef downloader(url: str, filename: str):",
+        "detail": "cli",
         "documentation": {}
     }
 ]

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Remote from '../shared/remote'
 import Message from '../components/Message'
-import { Platform, View, ScrollView } from 'react-native';
+import { Platform, View, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import {
   Appbar,
   PaperProvider,
@@ -91,6 +91,24 @@ function AudioMessageView({ audioUrl, style }) {
   </View>)
 }
 
+function StudentTextMessageView({ text }) {
+  const theme = mdTheme()
+  const [isTextExpanded, setIsTextExpanded] = React.useState(false)
+  const [renderText, setRenderText] = React.useState('')
+
+  React.useEffect(() => {
+    setRenderText(text ? text : '')
+  }, [text])
+
+  return <Text variant="titleMedium">
+    参考文本：
+    <Text variant='bodyMedium'>
+      {isTextExpanded ? renderText : renderText?.substring(0, 200) + (renderText?.length > 200 ? '...' : '')}
+      {!isTextExpanded && renderText?.length > 200 && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>展开</Text></TouchableWithoutFeedback>}
+      {isTextExpanded && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>收起</Text></TouchableWithoutFeedback>}
+    </Text>
+  </Text>
+}
 
 function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnswerDetails, sectionAnswers, sectionTaskCard }) {
   const mkedTheme = markedTheme()
@@ -111,12 +129,7 @@ function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnsw
             {Math.round(sectionAnswerDetails[index]?.score * 100)}%
           </Text>
         </Text>
-        <Text variant="titleMedium">
-          参考文本：
-          <Text variant='bodyMedium'>
-            {sectionAnswerDetails[index]?.reference_text?.substring(0, 200)}{sectionAnswerDetails[index]?.reference_text?.length > 200 ? '...' : ''}
-          </Text>
-        </Text>
+        <StudentTextMessageView text={sectionAnswerDetails[index]?.reference_text}></StudentTextMessageView>
       </View>)}
     </Card.Content>
   </Card>
@@ -125,6 +138,7 @@ function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnsw
 function OralExamResultView({ route, navigation }) {
   const [examResult, setExamResult] = React.useState(null)
   const [message, setMessage] = React.useState(null);
+  const [loading, setLoading] = React.useState(false)
   let theme = mdTheme()
   let mkedTheme = markedTheme()
 
@@ -133,8 +147,9 @@ function OralExamResultView({ route, navigation }) {
       Remote.getOralExamResult(route.params.id).then(r => {
         if (r.status) {
           setExamResult(r.data)
+          setLoading(false)
         } else {
-
+          setLoading(false)
         }
       })
     }, [])
@@ -144,7 +159,13 @@ function OralExamResultView({ route, navigation }) {
       <Appbar.BackAction onPress={() => navigation.goBack()} />
       <Appbar.Content title="口语测试结果" />
     </Appbar.Header>
-    <ScrollView style={{ flex: 1 }}>
+    {loading && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator size="large" />
+      <Text style={{ marginTop: 10 }} variant="">加载中...</Text>
+
+    </View>}
+
+    {!loading && examResult && <ScrollView style={{ flex: 1 }}>
       <Card style={{ margin: 10 }}>
         <Card.Title title={<Text variant="titleLarge">{examResult?.examPaper?.title}</Text>} />
         <Card.Content>
@@ -188,7 +209,7 @@ function OralExamResultView({ route, navigation }) {
           setMessage(null);
         }} />}
       </Portal>
-    </ScrollView></View>
+    </ScrollView>}</View>
 }
 
 export default OralExamResultView;
