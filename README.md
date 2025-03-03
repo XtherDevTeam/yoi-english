@@ -18,7 +18,7 @@ Yoi English 借助 Gemini 2.0 Flash 多模态大模型，实现了AI赋能英语
 ### WebServer 及 Livekit Server 部署
 
 为简化部署，我们提供了 WebService 和 Livekit Server 的 Docker 镜像，你可以直接拉取镜像并运行。
-由于镜像大小，镜像并未包含最新代码，可能需要手动进入 `/var/yoi-english/` 目录，执行 `git pull` 命令拉取最新代码。
+由于镜像大小及 Docker Hub 访问限制，镜像并未包含最新代码，可能需要手动进入 `/var/yoi-english/` 目录，执行 `git pull` 命令拉取最新代码。
 
 - [WebService Docker 镜像](https://hub.docker.com/repository/docker/xiaokang00010/yoi-english-web-service)
 - [Livekit Server Docker 镜像](https://hub.docker.com/repository/docker/xiaokang00010/yoi-english-livekit-server)
