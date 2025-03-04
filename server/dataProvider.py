@@ -1325,7 +1325,7 @@ class _DataProvider:
         prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT, {
             'student_result': json.dumps(answerDetails['Pronunciation_Evaluation_Result'], indent=4, ensure_ascii=False, default=lambda o: str(o)),
         })
-        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.8)
+        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.8)
         resp = model.initiate([prompt])
         feedbackContent = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
         
@@ -1459,9 +1459,16 @@ class _DataProvider:
 {datetime.datetime.fromtimestamp(i['completeTime']).strftime('%Y-%m-%d %H:%M:%S')}
 {i['feedback']}
                               """for i in self.db.query("select feedback, completeTime from academicalPassageExamResult where userId = ? order by completeTime ", (userId,)))
+        oral = "\n\n".join(f"""
+{datetime.datetime.fromtimestamp(i['completeTime']).strftime('%Y-%m-%d %H:%M:%S')}
+{i['contentFeedback']}
+{i['pronounciationFeedback']}
+{i['overallFeedback']}
+                              """for i in self.db.query("select contentFeedback, pronounciationFeedback, overallFeedback, completeTime from oralEnglishExamResult where userId = ? order by completeTime ", (userId,)))
+        
         
         # call AI to anaylyze the feedback
-        overall_band, overall_feedback = chatModel.AnalyzeOverallAssessment(writing, reading)
+        overall_band, overall_feedback = chatModel.AnalyzeOverallAssessment(writing, reading, oral)
         self.db.query("update users set overallBand = ?, overallPerformance = ? where id = ?", (overall_band, overall_feedback, userId))
         return self.makeResult(True)
     

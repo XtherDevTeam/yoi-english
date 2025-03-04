@@ -277,7 +277,7 @@ def update_config():
 @app.route('/v1/admin/ask_ai', methods=['POST'])
 def ask_ai():
     form: dict[str, typing.Any] = flask.request.json
-    model = form.get('model', 'gemini-1.5-flash-002')
+    model = form.get('model', 'gemini-2.0-flash-thinking-exp-01-21')
     temperature = form.get('temperature', 0.9)
     system_prompt = form.get('system_prompt', None)
     user_prompt = form.get('user_prompt', None)
@@ -315,7 +315,7 @@ def generate_answer_sheet():
         prompt = chatModel.Prompt(data.config.PROMPT_FOR_ANSWER_SHEET_GENERATION, {
             'examPaper': examPaper
         })
-        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-exp', 0.9)
+        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.9)
         resp = model.initiate([prompt])
         answer_sheet_format = resp[resp.rfind('[answer_sheet_format]') + 22: resp.rfind('[/answer_sheet_format]')]
         print(resp, '\n', answer_sheet_format)

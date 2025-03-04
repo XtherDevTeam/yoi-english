@@ -156,7 +156,7 @@ function Stage4({ onBack, onNext, onErr, currentFields }) {
           }
           setPendingAIInvocation(setTimeout(() => {
             // fetch a possible persona from the AI
-            Api.ask_ai('gemini-1.5-flash', 0.5, "", PromptForGeneratingChatbotPersona.replace("{{charName}}", e.target.value), currentFields.google_api_key).then(response => {
+            Api.ask_ai('gemini-2.0-flash-thinking-exp-01-21', 0.5, "", PromptForGeneratingChatbotPersona.replace("{{charName}}", e.target.value), currentFields.google_api_key).then(response => {
               // console.log(response.status, response)
               if (response.status) {
                 setChatbotPersona(response.data.answer)

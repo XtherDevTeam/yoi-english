@@ -99,7 +99,7 @@ def AnalyzeReadingExamResult(exam_paper: str, correct_ans_count: int, total_ans_
         'answer_sheet_format': answer_sheet_format,
     })
     logger.Logger.log(prompt)
-    resp = ChatGoogleGenerativeAI('gemini-1.5-flash', 0.7).initiate([prompt])
+    resp = ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.7).initiate([prompt])
     # get content from [result][/result]
     final = resp[resp.find('[feedback]') + 10:resp.rfind('[/feedback]')]
     return final
@@ -124,7 +124,7 @@ def AnalyzeWritingExamResult(problem_statement: str, one_possible_version: str, 
         'composition': compositon,
     })
     logger.Logger.log(prompt)
-    resp = ChatGoogleGenerativeAI('gemini-1.5-flash', 0.7).initiate([prompt])
+    resp = ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.7).initiate([prompt])
     # get content from [result][/result]
     final = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
     # get band from [band][/band]
@@ -132,13 +132,14 @@ def AnalyzeWritingExamResult(problem_statement: str, one_possible_version: str, 
     return band, final
 
 
-def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tuple[str, str]:
+def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str, oral_feedback: str) -> tuple[str, str]:
     """
     Analyze the overall assessment and generate a report.
 
     Args:
         reading_feedback (str): The reading feedback.
         writing_feedback (str): The writing feedback.
+        oral_feedback (str): The oral feedback.
 
     Returns:
         tuple[str, str]: The band and the report.
@@ -149,12 +150,15 @@ def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tu
     
     Writing Feedback:
     {writing_feedback}
+    
+    Oral Examinations Feedback:
+    {oral_feedback}
     """
     prompt = Prompt(data.config.PROMPT_FOR_ANALYZING_OVERALL_ASSESSMENT, {
        "recent_feedbacks": overall
     })
     logger.Logger.log(prompt)
-    resp = ChatGoogleGenerativeAI('gemini-1.5-flash', 0.7).initiate([prompt])
+    resp = ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.7).initiate([prompt])
     logger.Logger.log(resp)
     # get content from [result][/result]
     final = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
