@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import MonacoEditor from "./MonacoEditor";
 import theme from "../theme";
 import Markdown from "react-markdown";
+import stringDiff from "../stringDiff";
 
 function ReadingExaminationPreviewDialog({ examId, onClose }) {
   const [examinationResult, setExaminationResult] = React.useState(null);
@@ -164,6 +165,17 @@ function WritingExaminationPreviewDialog({ examId, onClose }) {
 }
 
 function OralExamintionSectionView({ sectionQuestions, sectionAnswerDetails, sectionAnswers }) {
+  const currentTheme = theme.theme()
+  const [diffArray, setDiffArray] = React.useState(null)
+
+  React.useEffect(() => {
+    setDiffArray(sectionQuestions?.map((_, index) => {
+      if (sectionAnswerDetails[index]) {
+        return stringDiff.getHighLightDifferent(sectionAnswerDetails[index]?.examinee_phonemes, sectionAnswerDetails[index]?.reference_phonemes)[0]
+      }
+    }))
+  }, [sectionAnswers])
+
   return <Mui.Grid container spacing={1} style={{ paddingY: "10px" }}>
     {sectionQuestions?.map((question, index) => <Mui.Grid item xs={12} key={index} style={{ padding: '10px' }}>
       <Mui.Typography variant="body1" style={{ fontStyle: "italic" }}>
@@ -178,6 +190,14 @@ function OralExamintionSectionView({ sectionQuestions, sectionAnswerDetails, sec
       </Mui.Typography>
       <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>参考文本：</Mui.Typography>
       <Mui.Typography variant="body2">{sectionAnswerDetails[index]?.reference_text}
+      </Mui.Typography>
+      <Mui.Typography variant="body1" style={{ fontWeight: "bold" }}>学生发音详情：</Mui.Typography>
+      <Mui.Typography variant="body2">
+        <Mui.Typography variant='body2'>
+          {diffArray && diffArray[index]?.map((item, index) => <Mui.Typography key={index} style={{ display: 'inline', color: item.isDifferent ? currentTheme.palette.error.main : null, fontWeight: item.isDifferent ? 'bold' : null }}>
+            {item.value}
+          </Mui.Typography>)}
+        </Mui.Typography>
       </Mui.Typography>
     </Mui.Grid>)}
   </Mui.Grid>

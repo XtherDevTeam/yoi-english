@@ -778,16 +778,25 @@ class SpeakingExaminationSessionBackend():
         limit_to_send = 100
         data_chunk = b''
         self.data_buffer_for_conv = b''
+        resampler: livekit.rtc.AudioResampler = None
 
         async for frame in stream:
             if not self.connected:
                 break
             if self.llmState == SpeakingExaminationLLMState.AWAITING_CONNECTION:
                 self.llmState = SpeakingExaminationLLMState.PARTI_INITIATION
+                
             last_sec_frames += 1
             frames += 1
-            avFrame = av.AudioFrame.from_ndarray(numpy.frombuffer(frame.frame.remix_and_resample(16000, 1).data, dtype=numpy.int16).reshape(frame.frame.num_channels, -1), layout='mono', format='s16')
+            if not resampler:
+                resampler = livekit.rtc.AudioResampler(frame.frame.sample_rate, 16000, quality=livekit.rtc.AudioResamplerQuality.VERY_HIGH)
+            
+            resampler.push(frame.frame)
+            # avFrame = av.AudioFrame.from_ndarray(numpy.frombuffer(frame.frame.remix_and_resample(16000, 1).data, dtype=numpy.int16).reshape(frame.frame.num_channels, -1), layout='mono', format='s16')
+
+            avFrame = av.AudioFrame.from_ndarray(numpy.frombuffer(resampler.flush()[0].data, dtype=numpy.int16).reshape(frame.frame.num_channels, -1), layout='mono', format='s16')
             data_chunk += avFrame.to_ndarray().tobytes()
+            
             if frames % 25 == 0:
                 # emit audio level per 0.25 seconds
                 await self.emitEvent('audio_level', self.calculateDecibel(avFrame))
