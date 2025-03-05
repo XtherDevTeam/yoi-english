@@ -28,6 +28,7 @@ import { markedTheme, mdTheme } from '../shared/styles';
 import Markdown from 'react-native-markdown-display';
 import theme from '../shared/theme';
 import { Audio } from 'expo-av';
+import stringDiff from '../stringDiff';
 
 
 function AudioMessageView({ audioUrl, style }) {
@@ -91,23 +92,44 @@ function AudioMessageView({ audioUrl, style }) {
   </View>)
 }
 
-function StudentTextMessageView({ text }) {
+function StudentTextMessageView({ text, answerDetails }) {
   const theme = mdTheme()
   const [isTextExpanded, setIsTextExpanded] = React.useState(false)
+  const [isDiffExpanded, setIsDiffExpanded] = React.useState(false)
   const [renderText, setRenderText] = React.useState('')
+  const [diffArray, setDiffArray] = React.useState([])
 
   React.useEffect(() => {
     setRenderText(text ? text : '')
+    if (text) {
+      let diff = stringDiff.getHighLightDifferent(answerDetails?.examinee_phonemes, answerDetails?.reference_phonemes)[0]
+      console.log(diff)
+      setDiffArray(diff);
+    }
   }, [text])
 
-  return <Text variant="titleMedium">
-    参考文本：
-    <Text variant='bodyMedium'>
-      {isTextExpanded ? renderText : renderText?.substring(0, 200) + (renderText?.length > 200 ? '...' : '')}
-      {!isTextExpanded && renderText?.length > 200 && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>展开</Text></TouchableWithoutFeedback>}
-      {isTextExpanded && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>收起</Text></TouchableWithoutFeedback>}
+  return <>
+    <Text variant="titleMedium">
+      参考文本：
+      <Text variant='bodyMedium'>
+        {isTextExpanded ? renderText : renderText?.substring(0, 200) + (renderText?.length > 200 ? '...' : '')}
+        {!isTextExpanded && renderText?.length > 200 && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>展开</Text></TouchableWithoutFeedback>}
+        {isTextExpanded && <TouchableWithoutFeedback onPress={() => setIsTextExpanded(!isTextExpanded)}><Text style={{ color: theme.colors.primary }}>收起</Text></TouchableWithoutFeedback>}
+      </Text>
     </Text>
-  </Text>
+    <Text variant="titleMedium">
+      发音详情：
+      <Text variant='bodyMedium'>
+        {isDiffExpanded && <>
+          {diffArray?.map((item, index) => <Text key={index} variant={item.isDifferent ? 'titleMedium' : 'bodyMedium'} style={{ color: item.isDifferent ? theme.colors.error : null }}>
+            {item.value}
+          </Text>)}
+        </>}
+      </Text>
+      {!isDiffExpanded && <TouchableWithoutFeedback onPress={() => setIsDiffExpanded(!isDiffExpanded)}><Text variant='bodyMedium' style={{ color: theme.colors.primary }}>展开</Text></TouchableWithoutFeedback>}
+      {isDiffExpanded && <TouchableWithoutFeedback onPress={() => setIsDiffExpanded(!isDiffExpanded)}><Text variant='bodyMedium' style={{ color: theme.colors.primary }}>收起</Text></TouchableWithoutFeedback>}
+    </Text>
+  </>
 }
 
 function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnswerDetails, sectionAnswers, sectionTaskCard }) {
@@ -129,7 +151,7 @@ function OralExamintionSectionView({ sectionTitle, sectionQuestions, sectionAnsw
             {Math.round(sectionAnswerDetails[index]?.score * 100)}%
           </Text>
         </Text>
-        <StudentTextMessageView text={sectionAnswerDetails[index]?.reference_text}></StudentTextMessageView>
+        <StudentTextMessageView text={sectionAnswerDetails[index]?.reference_text} answerDetails={sectionAnswerDetails[index]}></StudentTextMessageView>
       </View>)}
     </Card.Content>
   </Card>

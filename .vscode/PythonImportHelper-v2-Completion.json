@@ -1232,7 +1232,7 @@
         "kind": 2,
         "importPath": "server.app",
         "description": "server.app",
-        "peekOfCode": "def ask_ai():\n    form: dict[str, typing.Any] = flask.request.json\n    model = form.get('model', 'gemini-1.5-flash-002')\n    temperature = form.get('temperature', 0.9)\n    system_prompt = form.get('system_prompt', None)\n    user_prompt = form.get('user_prompt', None)\n    token = form.get('token', DataProvider.getGoogleApiKey())\n    print(form)\n    if system_prompt is None or user_prompt is None or not token:\n        return DataProvider.makeResult(ok=False, data='System prompt, user prompt and Google API key is required.')",
+        "peekOfCode": "def ask_ai():\n    form: dict[str, typing.Any] = flask.request.json\n    model = form.get('model', 'gemini-2.0-flash-thinking-exp-01-21')\n    temperature = form.get('temperature', 0.9)\n    system_prompt = form.get('system_prompt', None)\n    user_prompt = form.get('user_prompt', None)\n    token = form.get('token', DataProvider.getGoogleApiKey())\n    print(form)\n    if system_prompt is None or user_prompt is None or not token:\n        return DataProvider.makeResult(ok=False, data='System prompt, user prompt and Google API key is required.')",
         "detail": "server.app",
         "documentation": {}
     },
@@ -1853,7 +1853,7 @@
         "kind": 2,
         "importPath": "server.chatModel",
         "description": "server.chatModel",
-        "peekOfCode": "def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str) -> tuple[str, str]:\n    \"\"\"\n    Analyze the overall assessment and generate a report.\n    Args:\n        reading_feedback (str): The reading feedback.\n        writing_feedback (str): The writing feedback.\n    Returns:\n        tuple[str, str]: The band and the report.\n    \"\"\"\n    overall = f\"\"\"",
+        "peekOfCode": "def AnalyzeOverallAssessment(reading_feedback: str, writing_feedback: str, oral_feedback: str) -> tuple[str, str]:\n    \"\"\"\n    Analyze the overall assessment and generate a report.\n    Args:\n        reading_feedback (str): The reading feedback.\n        writing_feedback (str): The writing feedback.\n        oral_feedback (str): The oral feedback.\n    Returns:\n        tuple[str, str]: The band and the report.\n    \"\"\"",
         "detail": "server.chatModel",
         "documentation": {}
     },
