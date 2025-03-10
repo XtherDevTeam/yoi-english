@@ -146,6 +146,7 @@ Guidelines:
 Notice: 
 Calm down and think step by step, your thinking process can be shown in the response before the feedback. 
 All names that exists in the problem statement is not student's name, you cannot address the student by those names.
+If no evident grammer or vocabulary errors are found with excellent fluency and coherence, you should give an A band.
 
 Response format:
 Your response should contain an overall band in `A`, `B`, `C`, or `D` which wrapped in the format of `[band][/band]`.

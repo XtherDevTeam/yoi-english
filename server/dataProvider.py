@@ -10,6 +10,48 @@ import hashlib
 import pathlib
 import tools
 import chatModel
+import threading
+
+
+class ExamJudgerLock():
+    def __init__(self):
+        self.readingExamQueue: list[threading.Lock] = [None] * 8
+        self.writingExamQueue: list[threading.Lock] = [None] * 8
+        self.oralExamQueue: list[threading.Lock] = [None] * 4
+        logger.Logger.log('Initializing exam judger lock')
+        logger.Logger.log(f'Reading exam judger concurrency limit: {len(self.readingExamQueue)}')
+        logger.Logger.log(f'Writing exam judger concurrency limit: {len(self.writingExamQueue)}')
+        logger.Logger.log(f'Oral exam judger concurrency limit: {len(self.oralExamQueue)}')
+        for i, x in enumerate(self.readingExamQueue):
+            self.readingExamQueue[i] = threading.Lock()
+        for i, x in enumerate(self.writingExamQueue):
+            self.writingExamQueue[i] = threading.Lock()
+        for i, x in enumerate(self.oralExamQueue):
+            self.oralExamQueue[i] = threading.Lock()
+        
+        
+    
+    def acquireReadingExamJudger(self) -> threading.Lock:
+        for i in self.readingExamQueue:
+            if not i.locked():
+                return i
+        return self.readingExamQueue[0]
+    
+    
+    def acquireWritingExamJudger(self) -> threading.Lock:
+        for i in self.writingExamQueue:
+            if not i.locked():
+                return i
+        return self.writingExamQueue[0]
+    
+    
+    def acquireOralExamJudger(self) -> threading.Lock:
+        for i in self.oralExamQueue:
+            if not i.locked():
+                return i
+        return self.oralExamQueue[0]
+        
+
 
 class DatabaseObject:
     """
@@ -74,6 +116,7 @@ class DatabaseObject:
 class _DataProvider:
     def __init__(self, db_path: str = './blob/database.db'):
         self.db = DatabaseObject(db_path)
+        self.judgerLock = ExamJudgerLock()
         if not self.checkIfInitialized():
             logger.Logger.log('Database not initialized')
         pass
@@ -1235,46 +1278,53 @@ class _DataProvider:
         Returns:
             dict[str | typing.Any]: The result object.
         """
-        exam = self.getReadingExamById(examId)['data']
         
-        problem_count = len(exam['answerSheetFormat'])
-        correct_count = 0
-        error_answers = []
-        band = ''
-        
-        # check the submission
-        for ori, ans in zip(exam['answerSheetFormat'], answerSheet):
-            if ori['answer'] == ans:
-                correct_count += 1
-            else:
-                error_answers.append(ori['answer'])
-                
-        # judge overall band
-        if correct_count >= problem_count * 0.7:
-            band = 'A'
-        elif correct_count >= problem_count * 0.5:
-            band = 'B'
-        elif correct_count >= problem_count * 0.3:
-            band = 'C'
-        else:
-            band = 'D'
+        with self.judgerLock.acquireOralExamJudger():
+            exam = self.getReadingExamById(examId)['data']
             
-        # call AI to anaylyze the answer sheet
-        feedback = chatModel.AnalyzeReadingExamResult(
-            exam['passages'],
-            correct_count, 
-            problem_count,
-            band,
-            error_answers,
-            exam['answerSheetFormat']
-        )
-        
-        # insert the result
-        self.db.query("insert into academicalPassageExamResult (userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback) values (?,?,?,?,?,?,?)", (userId, completeTime, examId, json.dumps(answerSheet), correct_count, band, feedback))
-        
-        # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
-        return self.makeResult(True, data=res)
+            problem_count = len(exam['answerSheetFormat'])
+            correct_count = 0
+            error_answers = []
+            current_ans = 0
+            band = ''
+            
+            # check the submission
+            for ori, ans in zip(exam['answerSheetFormat'], answerSheet):
+                if ori['answer'] == ans:
+                    correct_count += 1
+                else:
+                    error_answers.append({
+                        'user_ans': ori['answer'],
+                        'index': current_ans,
+                    })
+                current_ans += 1
+                    
+            # judge overall band
+            if correct_count >= problem_count * 0.7:
+                band = 'A'
+            elif correct_count >= problem_count * 0.5:
+                band = 'B'
+            elif correct_count >= problem_count * 0.3:
+                band = 'C'
+            else:
+                band = 'D'
+                
+            # call AI to anaylyze the answer sheet
+            feedback = chatModel.AnalyzeReadingExamResult(
+                exam['passages'],
+                correct_count, 
+                problem_count,
+                band,
+                error_answers,
+                exam['answerSheetFormat']
+            )
+            
+            # insert the result
+            self.db.query("insert into academicalPassageExamResult (userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback) values (?,?,?,?,?,?,?)", (userId, completeTime, examId, json.dumps(answerSheet), correct_count, band, feedback))
+            
+            # fetch the result back from the database
+            res = self.db.query("select id, userId, completeTime, examPaperId, answerSheet, correctAnsCount, band, feedback from academicalPassageExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
+            return self.makeResult(True, data=res)
     
     
     def submitWritingExamResult(self, userId: int, completeTime: int, examId: int, composition: str) -> dict[str | typing.Any]:
@@ -1291,21 +1341,22 @@ class _DataProvider:
             dict[str | typing.Any]: The result object.
         """
         
-        exam = self.getWritingExamById(examId)['data']
+        with self.judgerLock.acquireWritingExamJudger():
+            exam = self.getWritingExamById(examId)['data']
 
-        # call AI to anaylyze the composition
-        band, feedback = chatModel.AnalyzeWritingExamResult(
-            exam['problemStatement'],
-            exam['onePossibleVersion'],
-            composition
-        )
-        
-        # insert the result
-        self.db.query("insert into essayWritingExamResult (userId, completeTime, examPaperId, answer, band, feedback) values (?,?,?,?,?,?)", (userId, completeTime, examId, composition, band, feedback))
-        
-        # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
-        return self.makeResult(True, data=res)
+            # call AI to anaylyze the composition
+            band, feedback = chatModel.AnalyzeWritingExamResult(
+                exam['problemStatement'],
+                exam['onePossibleVersion'],
+                composition
+            )
+            
+            # insert the result
+            self.db.query("insert into essayWritingExamResult (userId, completeTime, examPaperId, answer, band, feedback) values (?,?,?,?,?,?)", (userId, completeTime, examId, composition, band, feedback))
+            
+            # fetch the result back from the database
+            res = self.db.query("select id, userId, completeTime, examPaperId, answer, band, feedback from essayWritingExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
+            return self.makeResult(True, data=res)
     
     
     def submitOralExamResult(self, userId: int, completeTime: int, examId: int, answerDetails: dict[str | typing.Any]) -> dict[str | typing.Any]:
@@ -1322,29 +1373,30 @@ class _DataProvider:
             dict[str | typing.Any]: The result object.
         """
         
-        prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT, {
-            'student_result': json.dumps(answerDetails['Pronunciation_Evaluation_Result'], indent=4, ensure_ascii=False, default=lambda o: str(o)),
-        })
-        model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.8)
-        resp = model.initiate([prompt])
-        feedbackContent = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
-        
-        
-        prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAMINATION_OVERALL_FEEDBACK, {
-            'oral_exam_result': answerDetails['Feedback'],
-            'pronunciation_assessment_result': feedbackContent,
-        })
-        resp = model.initiate([prompt])
-        overall_feedback = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
-        overall_band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
-        
-        # insert the result
-        self.db.query("insert into oralEnglishExamResult (userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band) values (?,?,?,?,?,?,?,?)", 
-                      (userId, completeTime, examId, json.dumps(answerDetails, default=lambda o: str(o)), answerDetails['Feedback'], feedbackContent, overall_feedback, overall_band))
-        
-        # fetch the result back from the database
-        res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralEnglishExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
-        return self.makeResult(True, data=res)
+        with self.judgerLock.acquireOralExamJudger():
+            prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAM_ENGLISH_PRONUNCIATION_ASSESSMENT, {
+                'student_result': json.dumps(answerDetails['Pronunciation_Evaluation_Result'], indent=4, ensure_ascii=False, default=lambda o: str(o)),
+            })
+            model = chatModel.ChatGoogleGenerativeAI('gemini-2.0-flash-thinking-exp-01-21', 0.8)
+            resp = model.initiate([prompt])
+            feedbackContent = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
+            
+            
+            prompt = chatModel.Prompt(data.config.PROMPT_FOR_ORAL_EXAMINATION_OVERALL_FEEDBACK, {
+                'oral_exam_result': answerDetails['Feedback'],
+                'pronunciation_assessment_result': feedbackContent,
+            })
+            resp = model.initiate([prompt])
+            overall_feedback = resp[resp.rfind('[feedback]') + 10:resp.rfind('[/feedback]')]
+            overall_band = resp[resp.rfind('[band]') + 6:resp.rfind('[/band]')]
+            
+            # insert the result
+            self.db.query("insert into oralEnglishExamResult (userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band) values (?,?,?,?,?,?,?,?)", 
+                        (userId, completeTime, examId, json.dumps(answerDetails, default=lambda o: str(o)), answerDetails['Feedback'], feedbackContent, overall_feedback, overall_band))
+            
+            # fetch the result back from the database
+            res = self.db.query("select id, userId, completeTime, examPaperId, answerDetails, contentFeedback, pronounciationFeedback, overallFeedback, band from oralEnglishExamResult where userId = ? and examPaperId = ? order by id desc limit 1", (userId, examId), one=True)
+            return self.makeResult(True, data=res)
     
     
     def getReadingExamResultList(self, filter: dict[str | typing.Any] = None) -> list[dict[str | typing.Any]]:
